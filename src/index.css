@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, .font-heading {
+    font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  header, footer, #modify-trip-section, .print\:hidden {
+    display: none !important;
+  }
+
+  #trip-summary-card, #itinerary-section, #recommended-places-section, #food-recommendations-section, #budget-section, #travel-tips-section, #alternative-plan-section {
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    page-break-inside: avoid;
+    margin-bottom: 24px !important;
+  }
+}

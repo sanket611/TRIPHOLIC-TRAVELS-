@@ -1,0 +1,6 @@
+{
+  "name": "Tripholic",
+  "description": "A complete, modern AI travel-planning web application that generates personalized itineraries, budget breakdowns, curated places, food guides, travel tips, and alternative plans.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
