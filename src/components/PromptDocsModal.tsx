@@ -62,20 +62,34 @@ The user wants a personalized travel plan based on:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div
-        className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-scale-up"
+        style={{
+          border: '1.5px solid #000000',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+        }}
+        className="bg-white rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white">
+        <div
+          style={{
+            borderBottom: '1.5px solid #000000',
+          }}
+          className="p-4 sm:p-6 flex items-center justify-between bg-black text-white"
+        >
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-500/30 border border-indigo-400/40 flex items-center justify-center text-indigo-300 shrink-0">
+            <div
+              style={{
+                border: '1.5px solid #000000',
+              }}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white text-black flex items-center justify-center shrink-0 shadow-xs"
+            >
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base sm:text-xl font-bold leading-tight">AI Prompt Documentation</h3>
-              <p className="text-[11px] sm:text-xs text-slate-300">
+              <h3 className="text-base sm:text-xl font-extrabold leading-tight">AI Prompt Documentation</h3>
+              <p className="text-xs sm:text-sm text-slate-300 font-medium">
                 Academic Mini-Project Prompt Iteration History
               </p>
             </div>
@@ -83,40 +97,60 @@ The user wants a personalized travel plan based on:
 
           <button
             onClick={onClose}
-            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+            style={{
+              border: '1.5px solid #ffffff',
+            }}
+            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center text-white hover:bg-white hover:text-black rounded-xl transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab Controls */}
-        <div className="flex border-b border-slate-200 bg-slate-50/80 px-3 sm:px-6 pt-2 gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <div
+          style={{
+            borderBottom: '1.5px solid #000000',
+          }}
+          className="flex bg-slate-100 px-3 sm:px-6 pt-2 gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar whitespace-nowrap"
+        >
           <button
             onClick={() => setActiveTab('iterations')}
-            className={`px-3 py-2 min-h-[40px] text-xs font-mono font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+            style={{
+              border: activeTab === 'iterations' ? '1.5px solid #000000' : '1.5px solid transparent',
+              borderBottom: activeTab === 'iterations' ? 'none' : 'transparent',
+            }}
+            className={`px-4 py-2.5 min-h-[40px] text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider transition-all cursor-pointer rounded-t-xl ${
               activeTab === 'iterations'
-                ? 'border-slate-900 text-slate-900 bg-white rounded-t-lg shadow-2xs'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'text-black bg-white shadow-xs'
+                : 'text-slate-700 hover:text-black'
             }`}
           >
             3 Prompt Iterations
           </button>
           <button
             onClick={() => setActiveTab('comparison')}
-            className={`px-3 py-2 min-h-[40px] text-xs font-mono font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+            style={{
+              border: activeTab === 'comparison' ? '1.5px solid #000000' : '1.5px solid transparent',
+              borderBottom: activeTab === 'comparison' ? 'none' : 'transparent',
+            }}
+            className={`px-4 py-2.5 min-h-[40px] text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider transition-all cursor-pointer rounded-t-xl ${
               activeTab === 'comparison'
-                ? 'border-slate-900 text-slate-900 bg-white rounded-t-lg shadow-2xs'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'text-black bg-white shadow-xs'
+                : 'text-slate-700 hover:text-black'
             }`}
           >
             Comparative Matrix
           </button>
           <button
             onClick={() => setActiveTab('architecture')}
-            className={`px-3 py-2 min-h-[40px] text-xs font-mono font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+            style={{
+              border: activeTab === 'architecture' ? '1.5px solid #000000' : '1.5px solid transparent',
+              borderBottom: activeTab === 'architecture' ? 'none' : 'transparent',
+            }}
+            className={`px-4 py-2.5 min-h-[40px] text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider transition-all cursor-pointer rounded-t-xl ${
               activeTab === 'architecture'
-                ? 'border-slate-900 text-slate-900 bg-white rounded-t-lg shadow-2xs'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'text-black bg-white shadow-xs'
+                : 'text-slate-700 hover:text-black'
             }`}
           >
             Schema & Delta Architecture
@@ -128,21 +162,36 @@ The user wants a personalized travel plan based on:
           {activeTab === 'iterations' && (
             <div className="space-y-5">
               {/* Version 1 */}
-              <div className="p-5 rounded-xl border border-rose-200 bg-rose-50/20">
+              <div
+                style={{
+                  border: '1.5px solid #000000',
+                }}
+                className="p-5 rounded-xl bg-slate-50"
+              >
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-rose-100 text-rose-800 rounded border border-rose-200">
+                  <span
+                    style={{
+                      border: '1px solid #000000',
+                    }}
+                    className="px-2.5 py-0.5 text-xs font-mono font-extrabold bg-rose-100 text-rose-950 rounded"
+                  >
                     V1 (NAIVE BASELINE)
                   </span>
-                  <span className="text-xs font-mono font-semibold text-rose-700 flex items-center gap-1">
-                    <XCircle className="w-3.5 h-3.5" /> FLAWED & UNPREDICTABLE
+                  <span className="text-xs font-mono font-extrabold text-rose-800 flex items-center gap-1">
+                    <XCircle className="w-4 h-4" /> FLAWED & UNPREDICTABLE
                   </span>
                 </div>
-                <div className="bg-white p-3 rounded-lg border border-rose-200 font-mono text-xs text-slate-800 mb-3 shadow-2xs">
-                  "Plan my trip to Goa."
+                <div
+                  style={{
+                    border: '1.5px solid #000000',
+                  }}
+                  className="bg-white p-3.5 rounded-lg font-mono text-xs sm:text-sm text-black mb-3 font-bold shadow-xs"
+                >
+                  &ldquo;Plan my trip to Goa.&rdquo;
                 </div>
-                <div className="text-xs text-slate-700 space-y-1.5 leading-relaxed">
-                  <p className="font-bold text-rose-900 font-heading">Why Version 1 is Insufficient:</p>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-600">
+                <div className="text-xs sm:text-sm text-black space-y-1.5 leading-relaxed font-bold">
+                  <p className="font-extrabold text-rose-950 font-heading text-sm">Why Version 1 is Insufficient:</p>
+                  <ul className="list-disc pl-5 space-y-1 text-black">
                     <li><strong>No Duration:</strong> LLM guesses arbitrary 3 or 5 days without temporal boundaries.</li>
                     <li><strong>No Budget Constraint:</strong> Mixes $500 luxury yacht clubs with ₹50 street stalls indiscriminately.</li>
                     <li><strong>No Dietary or Preference Awareness:</strong> Fails to respect vegetarian/vegan needs or travel styles.</li>
@@ -152,55 +201,88 @@ The user wants a personalized travel plan based on:
               </div>
 
               {/* Version 2 */}
-              <div className="p-5 rounded-xl border border-amber-200 bg-amber-50/20">
+              <div
+                style={{
+                  border: '1.5px solid #000000',
+                }}
+                className="p-5 rounded-xl bg-slate-50"
+              >
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-amber-100 text-amber-800 rounded border border-amber-200">
+                  <span
+                    style={{
+                      border: '1px solid #000000',
+                    }}
+                    className="px-2.5 py-0.5 text-xs font-mono font-extrabold bg-amber-100 text-amber-950 rounded"
+                  >
                     V2 (PARAMETRIC PROMPT)
                   </span>
-                  <span className="text-xs font-mono font-semibold text-amber-700 flex items-center gap-1">
-                    <AlertTriangle className="w-3.5 h-3.5" /> PARTIALLY FUNCTIONAL
+                  <span className="text-xs font-mono font-extrabold text-amber-800 flex items-center gap-1">
+                    <AlertTriangle className="w-4 h-4" /> PARTIALLY FUNCTIONAL
                   </span>
                 </div>
-                <div className="bg-white p-3 rounded-lg border border-amber-200 font-mono text-xs text-slate-800 mb-3 shadow-2xs">
-                  "Plan a 4-day Goa trip for 2 people with a ₹20,000 budget. Include places, food, and activities."
+                <div
+                  style={{
+                    border: '1.5px solid #000000',
+                  }}
+                  className="bg-white p-3.5 rounded-lg font-mono text-xs sm:text-sm text-black mb-3 font-bold shadow-xs"
+                >
+                  &ldquo;Plan a 4-day Goa trip for 2 people with a ₹20,000 budget. Include places, food, and activities.&rdquo;
                 </div>
-                <div className="text-xs text-slate-700 space-y-1.5 leading-relaxed">
-                  <p className="font-bold text-amber-900 font-heading">Improvements & Remaining Gaps:</p>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-600">
-                    <li><strong className="text-emerald-700">✓ Improvements:</strong> Added explicit duration (4 days), group size (2 travelers), and budget ceiling (₹20,000).</li>
-                    <li><strong className="text-rose-700">✗ Remaining Gaps:</strong> Over-schedules activities (e.g. 8 spots per day with impossible travel distances); output formatting is still fragile text/tables; lacks alternative contingency plans and categorized budget math.</li>
+                <div className="text-xs sm:text-sm text-black space-y-1.5 leading-relaxed font-bold">
+                  <p className="font-extrabold text-black font-heading text-sm">Improvements & Remaining Gaps:</p>
+                  <ul className="list-disc pl-5 space-y-1 text-black">
+                    <li><strong className="text-emerald-800">✓ Improvements:</strong> Added explicit duration (4 days), group size (2 travelers), and budget ceiling (₹20,000).</li>
+                    <li><strong className="text-rose-800">✗ Remaining Gaps:</strong> Over-schedules activities (e.g. 8 spots per day with impossible travel distances); output formatting is still fragile text/tables; lacks alternative contingency plans and categorized budget math.</li>
                   </ul>
                 </div>
               </div>
 
               {/* Version 3 */}
-              <div className="p-5 rounded-xl border border-emerald-300 bg-emerald-50/20">
+              <div
+                style={{
+                  border: '1.5px solid #000000',
+                }}
+                className="p-5 rounded-xl bg-slate-50"
+              >
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 rounded border border-emerald-300">
+                  <span
+                    style={{
+                      border: '1px solid #000000',
+                    }}
+                    className="px-2.5 py-0.5 text-xs font-mono font-extrabold bg-emerald-100 text-emerald-950 rounded"
+                  >
                     V3 (PRODUCTION SPECIFICATION)
                   </span>
-                  <span className="text-xs font-mono font-semibold text-emerald-700 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> DETERMINISTIC JSON SCHEMA
+                  <span className="text-xs font-mono font-extrabold text-emerald-800 flex items-center gap-1">
+                    <CheckCircle2 className="w-4 h-4" /> DETERMINISTIC JSON SCHEMA
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs text-emerald-900 font-bold font-heading">
+                  <p className="text-xs sm:text-sm text-black font-extrabold font-heading">
                     Complete Structured System Prompt (Role + Context + Rules + JSON Schema)
                   </p>
                   <button
                     onClick={handleCopyPrompt}
-                    className="px-2.5 py-1 text-[11px] font-mono font-bold uppercase bg-slate-900 hover:bg-slate-800 text-white rounded-md transition-all flex items-center gap-1 cursor-pointer"
+                    style={{
+                      border: '1.5px solid #000000',
+                    }}
+                    className="px-3 py-1 text-xs font-mono font-extrabold uppercase bg-black hover:bg-slate-900 text-white rounded-md transition-all flex items-center gap-1 cursor-pointer"
                   >
-                    {copiedPrompt ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                    {copiedPrompt ? <Check className="w-3.5 h-3.5 text-amber-300" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedPrompt ? 'Copied' : 'Copy'}</span>
                   </button>
                 </div>
-                <pre className="bg-slate-900 text-slate-200 p-4 rounded-xl font-mono text-[11px] overflow-x-auto max-h-72 leading-relaxed border border-slate-800">
+                <pre
+                  style={{
+                    border: '1.5px solid #000000',
+                  }}
+                  className="bg-black text-slate-100 p-4 rounded-xl font-mono text-xs overflow-x-auto max-h-72 leading-relaxed"
+                >
                   {version3Text}
                 </pre>
-                <div className="mt-3 text-xs text-slate-700 leading-relaxed">
-                  <p className="font-bold text-emerald-950 font-heading">Why Version 3 Succeeds:</p>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-600 mt-1">
+                <div className="mt-3 text-xs sm:text-sm text-black leading-relaxed font-bold">
+                  <p className="font-extrabold text-black font-heading text-sm">Why Version 3 Succeeds:</p>
+                  <ul className="list-disc pl-5 space-y-1 text-black mt-1">
                     <li><strong>Deterministic JSON Hydration:</strong> Guaranteed parseable structure matching TypeScript interfaces.</li>
                     <li><strong>Geographical Clustering:</strong> Enforces morning/afternoon/evening slots grouped by zone, preventing unrealistic travel.</li>
                     <li><strong>Mathematical Financial Balance:</strong> Categorizes accommodation, food, transport, activities, and misc within the user budget.</li>
@@ -213,49 +295,59 @@ The user wants a personalized travel plan based on:
 
           {activeTab === 'comparison' && (
             <div className="space-y-4">
-              <h4 className="text-sm font-bold text-slate-900 font-heading">
+              <h4 className="text-base font-extrabold text-black font-heading">
                 Evaluation Matrix Across Iterations
               </h4>
-              <div className="overflow-x-auto border border-slate-200 rounded-xl">
-                <table className="w-full text-xs text-left text-slate-700">
-                  <thead className="bg-slate-100 text-slate-900 font-mono text-[11px] font-bold border-b border-slate-200 uppercase tracking-wider">
+              <div
+                style={{
+                  border: '1.5px solid #000000',
+                }}
+                className="overflow-x-auto rounded-xl"
+              >
+                <table className="w-full text-xs sm:text-sm text-left text-black">
+                  <thead
+                    style={{
+                      borderBottom: '1.5px solid #000000',
+                    }}
+                    className="bg-slate-100 text-black font-mono text-xs font-extrabold uppercase tracking-wider"
+                  >
                     <tr>
-                      <th className="p-3">Evaluation Criteria</th>
-                      <th className="p-3">Version 1 (Naive)</th>
-                      <th className="p-3">Version 2 (Parametric)</th>
-                      <th className="p-3 text-slate-900 bg-indigo-50/60">Version 3 (Tripholic)</th>
+                      <th className="p-3.5">Evaluation Criteria</th>
+                      <th className="p-3.5">Version 1 (Naive)</th>
+                      <th className="p-3.5">Version 2 (Parametric)</th>
+                      <th className="p-3.5 text-black bg-amber-100">Version 3 (Tripholic)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200">
+                  <tbody className="divide-y divide-black/20 font-bold">
                     <tr>
-                      <td className="p-3 font-semibold">Output Structure</td>
-                      <td className="p-3 text-rose-600">❌ Free-form unstructured prose</td>
-                      <td className="p-3 text-amber-600">⚠️ Mixed Markdown tables</td>
-                      <td className="p-3 text-emerald-700 font-bold bg-indigo-50/20 font-mono">✅ Validated JSON Schema</td>
+                      <td className="p-3.5 font-extrabold">Output Structure</td>
+                      <td className="p-3.5 text-rose-700">❌ Free-form unstructured prose</td>
+                      <td className="p-3.5 text-amber-700">⚠️ Mixed Markdown tables</td>
+                      <td className="p-3.5 text-black font-extrabold bg-amber-50 font-mono">✅ Validated JSON Schema</td>
                     </tr>
                     <tr>
-                      <td className="p-3 font-semibold">Budget Adherence</td>
-                      <td className="p-3 text-rose-600">❌ None (hallucinated)</td>
-                      <td className="p-3 text-amber-600">⚠️ Single total estimate</td>
-                      <td className="p-3 text-emerald-700 font-bold bg-indigo-50/20 font-mono">✅ 5-Category Math + Buffer</td>
+                      <td className="p-3.5 font-extrabold">Budget Adherence</td>
+                      <td className="p-3.5 text-rose-700">❌ None (hallucinated)</td>
+                      <td className="p-3.5 text-amber-700">⚠️ Single total estimate</td>
+                      <td className="p-3.5 text-black font-extrabold bg-amber-50 font-mono">✅ 5-Category Math + Buffer</td>
                     </tr>
                     <tr>
-                      <td className="p-3 font-semibold">Dietary Compliance</td>
-                      <td className="p-3 text-rose-600">❌ Random / Unchecked</td>
-                      <td className="p-3 text-amber-600">⚠️ Generic suggestions</td>
-                      <td className="p-3 text-emerald-700 font-bold bg-indigo-50/20 font-mono">✅ 100% Strict Filtering</td>
+                      <td className="p-3.5 font-extrabold">Dietary Compliance</td>
+                      <td className="p-3.5 text-rose-700">❌ Random / Unchecked</td>
+                      <td className="p-3.5 text-amber-700">⚠️ Generic suggestions</td>
+                      <td className="p-3.5 text-black font-extrabold bg-amber-50 font-mono">✅ 100% Strict Filtering</td>
                     </tr>
                     <tr>
-                      <td className="p-3 font-semibold">Schedule Realism</td>
-                      <td className="p-3 text-rose-600">❌ Impossible cross-city rush</td>
-                      <td className="p-3 text-amber-600">⚠️ Overcrowded activities</td>
-                      <td className="p-3 text-emerald-700 font-bold bg-indigo-50/20 font-mono">✅ Morning/Aft/Eve Clusters</td>
+                      <td className="p-3.5 font-extrabold">Schedule Realism</td>
+                      <td className="p-3.5 text-rose-700">❌ Impossible cross-city rush</td>
+                      <td className="p-3.5 text-amber-700">⚠️ Overcrowded activities</td>
+                      <td className="p-3.5 text-black font-extrabold bg-amber-50 font-mono">✅ Morning/Aft/Eve Clusters</td>
                     </tr>
                     <tr>
-                      <td className="p-3 font-semibold">Modifiability</td>
-                      <td className="p-3 text-rose-600">❌ Full regeneration only</td>
-                      <td className="p-3 text-rose-600">❌ Full regeneration only</td>
-                      <td className="p-3 text-emerald-700 font-bold bg-indigo-50/20 font-mono">✅ Delta & Targeted Updates</td>
+                      <td className="p-3.5 font-extrabold">Modifiability</td>
+                      <td className="p-3.5 text-rose-700">❌ Full regeneration only</td>
+                      <td className="p-3.5 text-rose-700">❌ Full regeneration only</td>
+                      <td className="p-3.5 text-black font-extrabold bg-amber-50 font-mono">✅ Delta & Targeted Updates</td>
                     </tr>
                   </tbody>
                 </table>
@@ -264,30 +356,43 @@ The user wants a personalized travel plan based on:
           )}
 
           {activeTab === 'architecture' && (
-            <div className="space-y-4 text-xs text-slate-700 leading-relaxed">
-              <h4 className="text-sm font-bold text-slate-900 font-heading">
+            <div className="space-y-4 text-xs sm:text-sm text-black leading-relaxed font-bold">
+              <h4 className="text-base font-extrabold text-black font-heading">
                 Modify & Regenerate Delta Prompting Architecture
               </h4>
               <p>
-                When a user requests a modification (e.g. <em>"Make Day 2 more adventurous"</em> or <em>"Reduce budget by 30%"</em>), Tripholic executes a stateful context injection:
+                When a user requests a modification (e.g. <em>&ldquo;Make Day 2 more adventurous&rdquo;</em> or <em>&ldquo;Reduce budget by 30%&rdquo;</em>), Tripholic executes a stateful context injection:
               </p>
-              <div className="p-4 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] space-y-2 border border-slate-800">
+              <div
+                style={{
+                  border: '1.5px solid #000000',
+                }}
+                className="p-4 rounded-xl bg-black text-slate-100 font-mono text-xs sm:text-sm space-y-2"
+              >
                 <p className="text-amber-300">1. Current Plan State Serialization: JSON.stringify(currentPlan)</p>
                 <p className="text-sky-300">2. Delta Prompt Construction: Inject existing days + targeted modification rule</p>
                 <p className="text-emerald-300">3. Schema Validation & Safe UI Patching</p>
               </div>
               <p>
-                This ensures that days that did not require changes remain consistent and unchanged, preserving the traveler's preferred bookings while updating only the target segment.
+                This ensures that days that did not require changes remain consistent and unchanged, preserving the traveler&rsquo;s preferred bookings while updating only the target segment.
               </p>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <div
+          style={{
+            borderTop: '1.5px solid #000000',
+          }}
+          className="p-4 bg-slate-100 flex justify-end"
+        >
           <button
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-mono font-bold uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-colors cursor-pointer"
+            style={{
+              border: '1.5px solid #000000',
+            }}
+            className="px-5 py-2.5 min-h-[40px] text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider bg-black hover:bg-slate-900 text-white rounded-xl transition-colors cursor-pointer"
           >
             Close Documentation
           </button>

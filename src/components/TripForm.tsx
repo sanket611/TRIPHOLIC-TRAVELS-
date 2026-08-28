@@ -363,32 +363,32 @@ export const TripForm: React.FC<TripFormProps> = ({
     <div
       id="planner-form-section"
       style={{
-        background: 'rgba(255, 255, 255, 0.25)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255, 255, 255, 0.35)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+        background: 'rgba(255, 255, 255, 0.18)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1.5px solid #000000',
+        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.18), 0 2px 10px rgba(0, 0, 0, 0.08)',
       }}
       className="rounded-[28px] overflow-hidden transition-all duration-300"
     >
       {/* Translucent Card Header with Quick Actions */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.18)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.30)',
+          background: 'rgba(255, 255, 255, 0.75)',
+          borderBottom: '1.5px solid #000000',
         }}
         className="px-4 py-4 sm:px-8 sm:py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
       >
         <div>
           <div className="flex items-center gap-2 mb-0.5 sm:mb-1">
-            <span className="p-1.5 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-600/30 flex items-center justify-center">
-              <Compass className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="p-1.5 bg-gradient-to-tr from-violet-700 to-indigo-700 text-white rounded-xl shadow-md flex items-center justify-center border border-black">
+              <Compass className="w-5 h-5 sm:w-6 sm:h-6" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-heading">
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-950 font-heading">
               Travel Preferences
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-slate-800 font-medium">
+          <p className="text-sm sm:text-base text-slate-950 font-bold">
             Define destination, travel date, duration, financial constraints, group size, and dietary parameters.
           </p>
         </div>
@@ -398,10 +398,13 @@ export const TripForm: React.FC<TripFormProps> = ({
             type="button"
             id="try-example-btn"
             onClick={handleTryExample}
-            className="flex-1 sm:flex-none px-4 py-2.5 min-h-[44px] text-xs font-bold bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl transition-all shadow-md shadow-blue-600/30 hover:shadow-lg hover:shadow-blue-600/40 flex items-center justify-center gap-1.5 cursor-pointer"
+            style={{
+              border: '1.5px solid #000000',
+            }}
+            className="flex-1 sm:flex-none px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-extrabold bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 text-white rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
             title="Auto-fill with Academic Goa Example"
           >
-            <Zap className="w-3.5 h-3.5 fill-current" />
+            <Zap className="w-4 h-4 fill-current text-amber-300" />
             <span>Try Example (Goa)</span>
           </button>
 
@@ -410,13 +413,13 @@ export const TripForm: React.FC<TripFormProps> = ({
             id="clear-form-btn"
             onClick={handleClearForm}
             style={{
-              background: 'rgba(255, 255, 255, 0.35)',
-              border: '1px solid rgba(255, 255, 255, 0.40)',
+              background: 'rgba(255, 255, 255, 0.90)',
+              border: '1.5px solid #000000',
             }}
-            className="px-3.5 py-2.5 min-h-[44px] text-xs font-semibold text-slate-900 hover:text-blue-900 hover:bg-white/50 active:bg-white/70 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs backdrop-blur-md"
+            className="px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white active:bg-slate-900 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm backdrop-blur-md"
             title="Reset form and hide generated results"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-4 h-4" />
             <span>Reset All</span>
           </button>
         </div>
@@ -428,12 +431,12 @@ export const TripForm: React.FC<TripFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6">
           {/* Destination Field */}
           <div className="md:col-span-5">
-            <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900 mb-2" htmlFor="destination-input">
+            <label className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-2" htmlFor="destination-input">
               Destination <span className="text-rose-600">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-blue-700">
-                <MapPin className="w-5 h-5 text-blue-600" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-violet-700">
+                <MapPin className="w-5 h-5 text-violet-700 font-bold" />
               </div>
               <input
                 id="destination-input"
@@ -445,45 +448,45 @@ export const TripForm: React.FC<TripFormProps> = ({
                 }}
                 placeholder="e.g. Goa, Manali, Paris, Tokyo, Bali, Kerala, Rajasthan..."
                 style={{
-                  background: 'rgba(255, 255, 255, 0.30)',
-                  border: errors.destination ? '1px solid rgba(244, 63, 94, 0.6)' : '1px solid rgba(255, 255, 255, 0.45)',
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: errors.destination ? '2px solid #e11d48' : '1.5px solid #000000',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
                 }}
-                className={`w-full pl-11 pr-4 py-3 min-h-[44px] rounded-xl text-slate-900 font-semibold placeholder-slate-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-blue-600 hover:bg-white/40 focus:bg-white/60 transition-all text-base sm:text-sm shadow-xs`}
+                className={`w-full pl-11 pr-4 py-3 min-h-[46px] rounded-xl text-slate-950 font-bold placeholder-slate-600 focus:outline-hidden focus:ring-2 focus:ring-black hover:bg-white focus:bg-white transition-all text-base sm:text-base shadow-sm`}
               />
             </div>
             {errors.destination ? (
-              <p className="mt-1.5 text-xs text-rose-700 font-bold flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5" />
+              <p className="mt-1.5 text-xs sm:text-sm text-rose-800 font-extrabold flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
                 {errors.destination}
               </p>
             ) : (
-              <p className="mt-1.5 text-[11px] text-slate-800 font-medium">City, state, country, or specific travel region.</p>
+              <p className="mt-1.5 text-xs text-slate-950 font-bold">City, state, country, or specific travel region.</p>
             )}
           </div>
 
           {/* Date & Day Column (Dedicated travel date column) */}
           <div className="md:col-span-4">
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900" htmlFor="start-date-input">
-                Travel Date & Day <span className="text-blue-800 font-normal text-[10px]">(Optional)</span>
+              <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black" htmlFor="start-date-input">
+                Travel Date & Day <span className="text-slate-800 font-normal text-xs">(Optional)</span>
               </label>
               {startDayName && (
                 <span
                   style={{
-                    background: 'rgba(255, 255, 255, 0.40)',
-                    border: '1px solid rgba(255, 255, 255, 0.50)',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    border: '1.5px solid #000000',
                   }}
-                  className="text-[11px] font-mono font-bold px-2 py-0.5 text-blue-950 rounded-md backdrop-blur-md shadow-2xs"
+                  className="text-xs font-mono font-extrabold px-2.5 py-0.5 text-black rounded-md backdrop-blur-md shadow-xs"
                 >
                   {startDayName}
                 </span>
               )}
             </div>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-blue-700">
-                <Calendar className="w-4 h-4 text-blue-600" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-violet-700">
+                <Calendar className="w-4 h-4 text-violet-700 font-bold" />
               </div>
               <input
                 id="start-date-input"
@@ -491,20 +494,20 @@ export const TripForm: React.FC<TripFormProps> = ({
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.30)',
-                  border: '1px solid rgba(255, 255, 255, 0.45)',
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
                 }}
-                className="w-full pl-10 pr-3 py-3 min-h-[44px] rounded-xl text-slate-900 font-semibold focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-blue-600 hover:bg-white/40 focus:bg-white/60 transition-all text-base sm:text-sm shadow-xs"
+                className="w-full pl-10 pr-3 py-3 min-h-[46px] rounded-xl text-slate-950 font-bold focus:outline-hidden focus:ring-2 focus:ring-black hover:bg-white focus:bg-white transition-all text-base sm:text-base shadow-sm"
               />
             </div>
-            <div className="mt-1.5 flex items-center justify-between text-[11px] text-slate-800 font-medium">
+            <div className="mt-1.5 flex items-center justify-between text-xs text-slate-950 font-bold">
               <span>{formattedStartDate ? `Starts on ${formattedStartDate}` : 'Select your departure date'}</span>
               <button
                 type="button"
                 onClick={() => setStartDate(getTomorrowDateStr())}
-                className="text-blue-800 hover:text-blue-950 font-bold cursor-pointer text-[10px] uppercase font-mono hover:underline"
+                className="text-indigo-950 hover:text-black font-extrabold cursor-pointer text-xs uppercase font-mono hover:underline"
               >
                 Tomorrow
               </button>
@@ -514,23 +517,23 @@ export const TripForm: React.FC<TripFormProps> = ({
           {/* Duration Field */}
           <div className="md:col-span-3">
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900" htmlFor="duration-input">
+              <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black" htmlFor="duration-input">
                 Days <span className="text-rose-600">*</span>
               </label>
               <span
                 style={{
-                  background: 'rgba(255, 255, 255, 0.40)',
-                  border: '1px solid rgba(255, 255, 255, 0.50)',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '1.5px solid #000000',
                 }}
-                className="text-xs font-mono font-bold px-2 py-0.5 text-slate-900 rounded-md backdrop-blur-md shadow-2xs"
+                className="text-xs font-mono font-extrabold px-2.5 py-0.5 text-black rounded-md backdrop-blur-md shadow-xs"
               >
                 {duration} {duration === 1 ? 'Day' : 'Days'}
               </span>
             </div>
             <div className="relative flex items-center gap-1.5">
               <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-blue-700">
-                  <Clock className="w-4 h-4 text-blue-600" />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-violet-700">
+                  <Clock className="w-4 h-4 text-violet-700 font-bold" />
                 </div>
                 <input
                   id="duration-input"
@@ -543,25 +546,25 @@ export const TripForm: React.FC<TripFormProps> = ({
                     if (errors.duration) setErrors({ ...errors, duration: '' });
                   }}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.30)',
-                    border: errors.duration ? '1px solid rgba(244, 63, 94, 0.6)' : '1px solid rgba(255, 255, 255, 0.45)',
+                    background: 'rgba(255, 255, 255, 0.90)',
+                    border: errors.duration ? '2px solid #e11d48' : '1.5px solid #000000',
                     backdropFilter: 'blur(8px)',
                     WebkitBackdropFilter: 'blur(8px)',
                   }}
-                  className="w-full pl-9 pr-2 py-3 min-h-[44px] rounded-xl text-slate-900 font-semibold focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-blue-600 hover:bg-white/40 focus:bg-white/60 transition-all text-base sm:text-sm shadow-xs"
+                  className="w-full pl-9 pr-2 py-3 min-h-[46px] rounded-xl text-slate-950 font-bold focus:outline-hidden focus:ring-2 focus:ring-black hover:bg-white focus:bg-white transition-all text-base sm:text-base shadow-sm"
                 />
               </div>
 
               {/* Stepper buttons with >= 44px touch targets */}
-              <div className="flex items-center gap-1 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setDuration((prev) => Math.max(1, prev - 1))}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.35)',
-                    border: '1px solid rgba(255, 255, 255, 0.45)',
+                    background: 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #000000',
                   }}
-                  className="w-10 h-11 min-h-[44px] min-w-[40px] rounded-xl hover:bg-white/55 active:bg-blue-100 text-slate-900 font-bold text-lg flex items-center justify-center transition-colors cursor-pointer select-none shadow-2xs backdrop-blur-md"
+                  className="w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl hover:bg-black hover:text-white active:bg-slate-900 text-black font-extrabold text-xl flex items-center justify-center transition-colors cursor-pointer select-none shadow-sm backdrop-blur-md"
                   aria-label="Decrease days"
                 >
                   -
@@ -570,10 +573,10 @@ export const TripForm: React.FC<TripFormProps> = ({
                   type="button"
                   onClick={() => setDuration((prev) => Math.min(30, prev + 1))}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.35)',
-                    border: '1px solid rgba(255, 255, 255, 0.45)',
+                    background: 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #000000',
                   }}
-                  className="w-10 h-11 min-h-[44px] min-w-[40px] rounded-xl hover:bg-white/55 active:bg-blue-100 text-slate-900 font-bold text-lg flex items-center justify-center transition-colors cursor-pointer select-none shadow-2xs backdrop-blur-md"
+                  className="w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl hover:bg-black hover:text-white active:bg-slate-900 text-black font-extrabold text-xl flex items-center justify-center transition-colors cursor-pointer select-none shadow-sm backdrop-blur-md"
                   aria-label="Increase days"
                 >
                   +
@@ -581,12 +584,12 @@ export const TripForm: React.FC<TripFormProps> = ({
               </div>
             </div>
             {errors.duration ? (
-              <p className="mt-1.5 text-xs text-rose-700 font-bold flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5" />
+              <p className="mt-1.5 text-xs sm:text-sm text-rose-800 font-extrabold flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
                 {errors.duration}
               </p>
             ) : (
-              <p className="mt-1.5 text-[11px] text-slate-800 font-medium">1 to 30 days.</p>
+              <p className="mt-1.5 text-xs text-slate-950 font-bold">1 to 30 days.</p>
             )}
           </div>
         </div>
@@ -596,15 +599,15 @@ export const TripForm: React.FC<TripFormProps> = ({
           {/* Budget Field with Currency selector */}
           <div className="md:col-span-7">
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900" htmlFor="budget-input">
+              <label className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black" htmlFor="budget-input">
                 Total Budget <span className="text-rose-600">*</span>
               </label>
               <span
                 style={{
-                  background: 'rgba(16, 185, 129, 0.18)',
-                  border: '1px solid rgba(16, 185, 129, 0.35)',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '1.5px solid #000000',
                 }}
-                className="text-[10px] font-mono font-bold text-emerald-950 px-2 py-0.5 rounded-md backdrop-blur-md"
+                className="text-xs font-mono font-extrabold text-black px-2.5 py-0.5 rounded-md backdrop-blur-md shadow-xs"
               >
                 ANY AMOUNT SUPPORTED
               </span>
@@ -615,23 +618,23 @@ export const TripForm: React.FC<TripFormProps> = ({
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.35)',
-                  border: '1px solid rgba(255, 255, 255, 0.45)',
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
                 }}
-                className="w-28 sm:w-32 px-2.5 sm:px-3 py-3 min-h-[44px] rounded-xl font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-blue-600 hover:bg-white/45 transition-all cursor-pointer text-sm font-mono shrink-0 shadow-xs"
+                className="w-28 sm:w-36 px-3 py-3 min-h-[46px] rounded-xl font-extrabold text-black focus:outline-hidden focus:ring-2 focus:ring-black hover:bg-white transition-all cursor-pointer text-sm sm:text-base font-mono shrink-0 shadow-sm"
               >
                 {CURRENCIES.map((c) => (
-                  <option key={c.code} value={c.code} className="bg-white text-slate-900 font-sans">
+                  <option key={c.code} value={c.code} className="bg-white text-black font-sans font-bold">
                     {c.name}
                   </option>
                 ))}
               </select>
 
               <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-700">
-                  <DollarSign className="w-4 h-4 text-emerald-700 font-bold" />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-800 font-extrabold">
+                  <DollarSign className="w-5 h-5 text-emerald-800 font-extrabold" />
                 </div>
                 <input
                   id="budget-input"
@@ -645,19 +648,19 @@ export const TripForm: React.FC<TripFormProps> = ({
                   }}
                   placeholder="Enter any budget amount..."
                   style={{
-                    background: 'rgba(255, 255, 255, 0.30)',
-                    border: errors.budget ? '1px solid rgba(244, 63, 94, 0.6)' : '1px solid rgba(255, 255, 255, 0.45)',
+                    background: 'rgba(255, 255, 255, 0.90)',
+                    border: errors.budget ? '2px solid #e11d48' : '1.5px solid #000000',
                     backdropFilter: 'blur(8px)',
                     WebkitBackdropFilter: 'blur(8px)',
                   }}
-                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl text-slate-900 font-bold placeholder-slate-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-blue-600 hover:bg-white/40 focus:bg-white/60 transition-all font-mono text-base sm:text-sm shadow-xs"
+                  className="w-full pl-11 pr-4 py-3 min-h-[46px] rounded-xl text-black font-extrabold placeholder-slate-600 focus:outline-hidden focus:ring-2 focus:ring-black hover:bg-white focus:bg-white transition-all font-mono text-base sm:text-base shadow-sm"
                 />
               </div>
             </div>
 
             {/* Quick Budget Suggestion Tier Chips */}
-            <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-              <span className="text-[10px] font-mono text-slate-800 font-bold uppercase mr-0.5">Quick Scale:</span>
+            <div className="flex flex-wrap items-center gap-2 mt-2.5">
+              <span className="text-xs font-mono text-black font-extrabold uppercase mr-0.5">Quick Scale:</span>
               {(currency === '₹'
                 ? [
                     { label: 'Backpacker', val: '5000' },
@@ -686,18 +689,14 @@ export const TripForm: React.FC<TripFormProps> = ({
                     setBudget(preset.val);
                     if (errors.budget) setErrors({ ...errors, budget: '' });
                   }}
-                  style={
+                  style={{
+                    background: budget === preset.val ? '#000000' : 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #000000',
+                  }}
+                  className={`px-3 py-1.5 min-h-[38px] text-xs sm:text-sm font-mono rounded-xl transition-all cursor-pointer flex items-center backdrop-blur-md shadow-sm ${
                     budget === preset.val
-                      ? {}
-                      : {
-                          background: 'rgba(255, 255, 255, 0.35)',
-                          border: '1px solid rgba(255, 255, 255, 0.45)',
-                        }
-                  }
-                  className={`px-2.5 py-1.5 min-h-[36px] text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center backdrop-blur-md ${
-                    budget === preset.val
-                      ? 'bg-blue-600 text-white border border-blue-600 shadow-md shadow-blue-600/30 font-bold'
-                      : 'text-slate-900 hover:bg-white/55 active:bg-blue-100 hover:text-blue-950'
+                      ? 'bg-black text-white font-extrabold shadow-md'
+                      : 'text-black font-bold hover:bg-black hover:text-white active:bg-slate-900'
                   }`}
                 >
                   {preset.label} ({currency}{Number(preset.val).toLocaleString()})
@@ -706,12 +705,12 @@ export const TripForm: React.FC<TripFormProps> = ({
             </div>
 
             {errors.budget ? (
-              <p className="mt-1.5 text-xs text-rose-700 font-bold flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5" />
+              <p className="mt-1.5 text-xs sm:text-sm text-rose-800 font-extrabold flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
                 {errors.budget}
               </p>
             ) : (
-              <p className="mt-1.5 text-[11px] text-slate-800 font-medium">
+              <p className="mt-1.5 text-xs text-slate-950 font-bold">
                 You decide the total budget: enter any amount. AI dynamically scales stay, dining, and activities to fit your exact figure.
               </p>
             )}
@@ -719,13 +718,13 @@ export const TripForm: React.FC<TripFormProps> = ({
 
           {/* Travelers Field */}
           <div className="md:col-span-5">
-            <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900 mb-2" htmlFor="travelers-input">
+            <label className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-2" htmlFor="travelers-input">
               Number of Travelers <span className="text-rose-600">*</span>
             </label>
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-blue-700">
-                  <Users className="w-4 h-4 text-blue-600" />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-violet-700">
+                  <Users className="w-5 h-5 text-violet-700 font-bold" />
                 </div>
                 <input
                   id="travelers-input"
@@ -738,12 +737,12 @@ export const TripForm: React.FC<TripFormProps> = ({
                     if (errors.travelers) setErrors({ ...errors, travelers: '' });
                   }}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.30)',
-                    border: errors.travelers ? '1px solid rgba(244, 63, 94, 0.6)' : '1px solid rgba(255, 255, 255, 0.45)',
+                    background: 'rgba(255, 255, 255, 0.90)',
+                    border: errors.travelers ? '2px solid #e11d48' : '1.5px solid #000000',
                     backdropFilter: 'blur(8px)',
                     WebkitBackdropFilter: 'blur(8px)',
                   }}
-                  className="w-full pl-10 pr-3 py-3 min-h-[44px] rounded-xl text-slate-900 font-semibold focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-blue-600 hover:bg-white/40 focus:bg-white/60 transition-all text-base sm:text-sm shadow-xs"
+                  className="w-full pl-11 pr-3 py-3 min-h-[46px] rounded-xl text-slate-950 font-bold focus:outline-hidden focus:ring-2 focus:ring-black hover:bg-white focus:bg-white transition-all text-base sm:text-base shadow-sm"
                 />
               </div>
 
@@ -758,18 +757,14 @@ export const TripForm: React.FC<TripFormProps> = ({
                     key={p.count}
                     type="button"
                     onClick={() => setTravelers(p.count)}
-                    style={
+                    style={{
+                      background: travelers === p.count ? '#000000' : 'rgba(255, 255, 255, 0.90)',
+                      border: '1.5px solid #000000',
+                    }}
+                    className={`px-3.5 py-2.5 min-h-[46px] text-xs sm:text-sm font-extrabold rounded-xl transition-all cursor-pointer flex items-center justify-center backdrop-blur-md shadow-sm ${
                       travelers === p.count
-                        ? {}
-                        : {
-                            background: 'rgba(255, 255, 255, 0.35)',
-                            border: '1px solid rgba(255, 255, 255, 0.45)',
-                          }
-                    }
-                    className={`px-3 py-2.5 min-h-[44px] text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center backdrop-blur-md ${
-                      travelers === p.count
-                        ? 'bg-blue-600 text-white border border-blue-600 shadow-md shadow-blue-600/30'
-                        : 'text-slate-900 hover:bg-white/55 active:bg-blue-100'
+                        ? 'bg-black text-white shadow-md'
+                        : 'text-black hover:bg-black hover:text-white active:bg-slate-900'
                     }`}
                   >
                     {p.label}
@@ -778,12 +773,12 @@ export const TripForm: React.FC<TripFormProps> = ({
               </div>
             </div>
             {errors.travelers ? (
-              <p className="mt-1.5 text-xs text-rose-700 font-bold flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5" />
+              <p className="mt-1.5 text-xs sm:text-sm text-rose-800 font-extrabold flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
                 {errors.travelers}
               </p>
             ) : (
-              <p className="mt-1.5 text-[11px] text-slate-800 font-medium">
+              <p className="mt-1.5 text-xs text-slate-950 font-bold">
                 {travelers === 1 ? 'Solo Trip' : travelers === 2 ? 'Couple / 2 Friends' : `${travelers} People Group`}
               </p>
             )}
@@ -794,20 +789,20 @@ export const TripForm: React.FC<TripFormProps> = ({
         <div>
           <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2.5">
             <div className="flex items-center gap-2">
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
+              <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black">
                 Travel Style <span className="text-rose-600">*</span>
               </label>
               <span
                 style={{
-                  background: 'rgba(37, 99, 235, 0.15)',
-                  border: '1px solid rgba(37, 99, 235, 0.30)',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '1.5px solid #000000',
                 }}
-                className="text-[10px] sm:text-[11px] font-mono font-bold px-2 py-0.5 rounded-full text-blue-950 backdrop-blur-md"
+                className="text-xs font-mono font-extrabold px-2.5 py-0.5 rounded-full text-black backdrop-blur-md shadow-xs"
               >
                 Select 1, 2 or more options
               </span>
             </div>
-            <span className="text-xs font-mono font-bold text-slate-900">
+            <span className="text-xs sm:text-sm font-mono font-extrabold text-black">
               {selectedTravelStyles.length === 0
                 ? 'None selected'
                 : selectedTravelStyles.length === 1
@@ -817,8 +812,8 @@ export const TripForm: React.FC<TripFormProps> = ({
           </div>
 
           {/* Quick Combo Presets */}
-          <div className="flex flex-wrap items-center gap-1.5 mb-3">
-            <span className="text-[10px] font-mono text-slate-800 font-bold uppercase mr-0.5">Popular Combos:</span>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="text-xs font-mono text-black font-extrabold uppercase mr-0.5">Popular Combos:</span>
             {[
               { label: '🧗 + 🍜 Adventure & Foodie', styles: ['Adventure', 'Foodie & Culinary'] as TravelStyle[] },
               { label: '🏛️ + 🏖️ Cultural & Relaxed', styles: ['Cultural & Heritage', 'Relaxed'] as TravelStyle[] },
@@ -836,18 +831,14 @@ export const TripForm: React.FC<TripFormProps> = ({
                     setSelectedTravelStyles(combo.styles);
                     if (errors.travelStyle) setErrors({ ...errors, travelStyle: '' });
                   }}
-                  style={
+                  style={{
+                    background: isComboActive ? '#000000' : 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #000000',
+                  }}
+                  className={`px-3 py-1.5 min-h-[36px] text-xs sm:text-sm font-mono rounded-xl transition-all cursor-pointer flex items-center backdrop-blur-md shadow-sm ${
                     isComboActive
-                      ? {}
-                      : {
-                          background: 'rgba(255, 255, 255, 0.35)',
-                          border: '1px solid rgba(255, 255, 255, 0.45)',
-                        }
-                  }
-                  className={`px-2.5 py-1 min-h-[32px] text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center backdrop-blur-md ${
-                    isComboActive
-                      ? 'bg-blue-600 text-white border border-blue-600 shadow-md shadow-blue-600/30 font-bold'
-                      : 'text-slate-900 hover:bg-blue-50/80 hover:text-blue-950 hover:border-blue-300'
+                      ? 'bg-black text-white font-extrabold shadow-md'
+                      : 'text-black font-bold hover:bg-black hover:text-white active:bg-slate-900'
                   }`}
                 >
                   {combo.label}
@@ -856,7 +847,7 @@ export const TripForm: React.FC<TripFormProps> = ({
             })}
           </div>
 
-          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 gap-3">
             {TRAVEL_STYLES.map((style) => {
               const isSelected = selectedTravelStyles.includes(style.id);
               const selectionIndex = selectedTravelStyles.indexOf(style.id);
@@ -867,46 +858,39 @@ export const TripForm: React.FC<TripFormProps> = ({
                   id={`style-btn-${style.id.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
                   onClick={() => handleTravelStyleToggle(style.id)}
                   aria-pressed={isSelected}
-                  style={
-                    isSelected
-                      ? {
-                          background: 'rgba(239, 246, 255, 0.90)',
-                          border: '2px solid rgb(37, 99, 235)',
-                          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.18)',
-                        }
-                      : {
-                          background: 'rgba(255, 255, 255, 0.30)',
-                          border: '1px solid rgba(255, 255, 255, 0.45)',
-                        }
-                  }
-                  className="p-3 min-h-[64px] text-left rounded-2xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between active:scale-[0.98] backdrop-blur-md hover:bg-white/50"
+                  style={{
+                    background: isSelected ? 'rgba(238, 242, 255, 0.98)' : 'rgba(255, 255, 255, 0.85)',
+                    border: isSelected ? '2.5px solid #000000' : '1.5px solid #000000',
+                    boxShadow: isSelected ? '0 4px 14px rgba(0, 0, 0, 0.25)' : '0 2px 6px rgba(0,0,0,0.06)',
+                  }}
+                  className="p-3.5 min-h-[70px] text-left rounded-2xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between active:scale-[0.98] backdrop-blur-md hover:bg-white"
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{style.icon}</span>
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-blue-950' : 'text-slate-900'}`}>
+                      <span className="text-xl">{style.icon}</span>
+                      <span className="text-sm sm:text-base font-extrabold text-black">
                         {style.label}
                       </span>
                     </div>
                     {isSelected && (
-                      <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 shadow-xs">
+                      <span className="w-5 h-5 rounded-full bg-black text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-xs border border-white">
                         {selectedTravelStyles.length > 1 ? selectionIndex + 1 : '✓'}
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-slate-800 font-medium line-clamp-1">{style.desc}</p>
+                  <p className="text-xs text-slate-950 font-bold line-clamp-1">{style.desc}</p>
                 </button>
               );
             })}
           </div>
 
           {errors.travelStyle ? (
-            <p className="mt-2 text-xs text-rose-700 font-bold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="mt-2 text-xs sm:text-sm text-rose-800 font-extrabold flex items-center gap-1">
+              <AlertCircle className="w-4 h-4" />
               {errors.travelStyle}
             </p>
           ) : (
-            <p className="mt-2 text-[11px] text-slate-800 font-medium">
+            <p className="mt-2 text-xs text-slate-950 font-bold">
               {selectedTravelStyles.length > 1
                 ? `AI will cross-optimize your itinerary to blend all ${selectedTravelStyles.length} chosen styles (${selectedTravelStyles.join(' + ')}).`
                 : 'You can select multiple styles simultaneously to combine outdoor thrills, relaxation, dining, and culture.'}
@@ -918,21 +902,21 @@ export const TripForm: React.FC<TripFormProps> = ({
         <div>
           <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2.5">
             <div className="flex items-center gap-2">
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                <Utensils className="w-4 h-4 text-blue-600" />
+              <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black flex items-center gap-1.5">
+                <Utensils className="w-4 h-4 text-violet-700" />
                 <span>Food Preference <span className="text-rose-600">*</span></span>
               </label>
               <span
                 style={{
-                  background: 'rgba(37, 99, 235, 0.15)',
-                  border: '1px solid rgba(37, 99, 235, 0.30)',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '1.5px solid #000000',
                 }}
-                className="text-[10px] sm:text-[11px] font-mono font-bold px-2 py-0.5 rounded-full text-blue-950 backdrop-blur-md"
+                className="text-xs font-mono font-extrabold px-2.5 py-0.5 rounded-full text-black backdrop-blur-md shadow-xs"
               >
                 Multi-select enabled
               </span>
             </div>
-            <span className="text-xs font-mono font-bold text-slate-900">
+            <span className="text-xs sm:text-sm font-mono font-extrabold text-black">
               {selectedFoodPreferences.length === 0
                 ? 'None selected'
                 : selectedFoodPreferences.length === 1
@@ -942,8 +926,8 @@ export const TripForm: React.FC<TripFormProps> = ({
           </div>
 
           {/* Quick Dietary Combos */}
-          <div className="flex flex-wrap items-center gap-1.5 mb-3">
-            <span className="text-[10px] font-mono text-slate-800 font-bold uppercase mr-0.5">Popular Combos:</span>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="text-xs font-mono text-black font-extrabold uppercase mr-0.5">Popular Combos:</span>
             {POPULAR_FOOD_COMBOS.map((combo) => {
               const isComboActive =
                 combo.prefs.length === selectedFoodPreferences.length &&
@@ -956,18 +940,14 @@ export const TripForm: React.FC<TripFormProps> = ({
                     setSelectedFoodPreferences(combo.prefs);
                     if (errors.foodPreference) setErrors({ ...errors, foodPreference: '' });
                   }}
-                  style={
+                  style={{
+                    background: isComboActive ? '#000000' : 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #000000',
+                  }}
+                  className={`px-3 py-1.5 min-h-[36px] text-xs sm:text-sm font-mono rounded-xl transition-all cursor-pointer flex items-center backdrop-blur-md shadow-sm ${
                     isComboActive
-                      ? {}
-                      : {
-                          background: 'rgba(255, 255, 255, 0.35)',
-                          border: '1px solid rgba(255, 255, 255, 0.45)',
-                        }
-                  }
-                  className={`px-2.5 py-1 min-h-[32px] text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center backdrop-blur-md ${
-                    isComboActive
-                      ? 'bg-blue-600 text-white border border-blue-600 shadow-md shadow-blue-600/30 font-bold'
-                      : 'text-slate-900 hover:bg-blue-50/80 hover:text-blue-950 hover:border-blue-300'
+                      ? 'bg-black text-white font-extrabold shadow-md'
+                      : 'text-black font-bold hover:bg-black hover:text-white active:bg-slate-900'
                   }`}
                 >
                   {combo.label}
@@ -976,7 +956,7 @@ export const TripForm: React.FC<TripFormProps> = ({
             })}
           </div>
 
-          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {FOOD_PREFERENCES.map((food) => {
               const isSelected = selectedFoodPreferences.includes(food.id);
               const selectionIndex = selectedFoodPreferences.indexOf(food.id);
@@ -987,46 +967,39 @@ export const TripForm: React.FC<TripFormProps> = ({
                   id={`food-btn-${food.id.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
                   onClick={() => handleFoodPreferenceToggle(food.id)}
                   aria-pressed={isSelected}
-                  style={
-                    isSelected
-                      ? {
-                          background: 'rgba(239, 246, 255, 0.90)',
-                          border: '2px solid rgb(37, 99, 235)',
-                          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.18)',
-                        }
-                      : {
-                          background: 'rgba(255, 255, 255, 0.30)',
-                          border: '1px solid rgba(255, 255, 255, 0.45)',
-                        }
-                  }
-                  className="p-3 min-h-[58px] text-left rounded-2xl transition-all cursor-pointer active:scale-[0.98] relative backdrop-blur-md hover:bg-white/50"
+                  style={{
+                    background: isSelected ? 'rgba(238, 242, 255, 0.98)' : 'rgba(255, 255, 255, 0.85)',
+                    border: isSelected ? '2.5px solid #000000' : '1.5px solid #000000',
+                    boxShadow: isSelected ? '0 4px 14px rgba(0, 0, 0, 0.25)' : '0 2px 6px rgba(0,0,0,0.06)',
+                  }}
+                  className="p-3.5 min-h-[64px] text-left rounded-2xl transition-all cursor-pointer active:scale-[0.98] relative backdrop-blur-md hover:bg-white"
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{food.icon}</span>
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-blue-950' : 'text-slate-900'}`}>
+                      <span className="text-xl">{food.icon}</span>
+                      <span className="text-sm sm:text-base font-extrabold text-black">
                         {food.label}
                       </span>
                     </div>
                     {isSelected && (
-                      <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 shadow-xs">
+                      <span className="w-5 h-5 rounded-full bg-black text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-xs border border-white">
                         {selectedFoodPreferences.length > 1 ? selectionIndex + 1 : '✓'}
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-slate-800 font-medium">{food.note}</p>
+                  <p className="text-xs text-slate-950 font-bold">{food.note}</p>
                 </button>
               );
             })}
           </div>
 
           {errors.foodPreference ? (
-            <p className="mt-2 text-xs text-rose-700 font-bold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="mt-2 text-xs sm:text-sm text-rose-800 font-extrabold flex items-center gap-1">
+              <AlertCircle className="w-4 h-4" />
               {errors.foodPreference}
             </p>
           ) : (
-            <p className="mt-2 text-[11px] text-slate-800 font-medium">
+            <p className="mt-2 text-xs text-slate-950 font-bold">
               {selectedFoodPreferences.length > 1
                 ? `AI will strictly match menus catering to all chosen preferences (${selectedFoodPreferences.join(' + ')}).`
                 : 'Select 1 or more options (e.g. Vegetarian + Jain, or Non-Veg + Halal + Seafood).'}
@@ -1037,11 +1010,11 @@ export const TripForm: React.FC<TripFormProps> = ({
         {/* Row 5: Interests and Preferences (Multi-Select) */}
         <div>
           <div className="flex items-center justify-between mb-2.5">
-            <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-              <Tag className="w-4 h-4 text-blue-600" />
+            <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black flex items-center gap-1.5">
+              <Tag className="w-4 h-4 text-violet-700" />
               <span>Interests & Activities (Optional)</span>
             </label>
-            <span className="text-xs font-mono font-bold text-slate-900">{selectedInterests.length} selected</span>
+            <span className="text-xs sm:text-sm font-mono font-extrabold text-black">{selectedInterests.length} selected</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {INTEREST_OPTIONS.map((interest) => {
@@ -1051,22 +1024,18 @@ export const TripForm: React.FC<TripFormProps> = ({
                   key={interest}
                   type="button"
                   onClick={() => handleInterestToggle(interest)}
-                  style={
+                  style={{
+                    background: isSelected ? '#000000' : 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #000000',
+                  }}
+                  className={`px-3.5 py-2 min-h-[40px] rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 backdrop-blur-md shadow-sm ${
                     isSelected
-                      ? {}
-                      : {
-                          background: 'rgba(255, 255, 255, 0.35)',
-                          border: '1px solid rgba(255, 255, 255, 0.45)',
-                        }
-                  }
-                  className={`px-3 py-2 min-h-[38px] rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 backdrop-blur-md ${
-                    isSelected
-                      ? 'bg-blue-600 text-white border border-blue-600 shadow-md shadow-blue-600/30 font-bold'
-                      : 'text-slate-900 hover:bg-white/55 active:bg-blue-100'
+                      ? 'bg-black text-white shadow-md'
+                      : 'text-black hover:bg-black hover:text-white active:bg-slate-900'
                   }`}
                 >
                   <span>{interest}</span>
-                  {isSelected && <span className="text-[10px] font-bold text-white">✓</span>}
+                  {isSelected && <span className="text-xs font-extrabold text-white">✓</span>}
                 </button>
               );
             })}
@@ -1076,7 +1045,7 @@ export const TripForm: React.FC<TripFormProps> = ({
         {/* Submit CTA */}
         <div
           style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.30)',
+            borderTop: '1.5px solid #000000',
           }}
           className="pt-5"
         >
@@ -1085,10 +1054,13 @@ export const TripForm: React.FC<TripFormProps> = ({
               type="submit"
               id="generate-my-trip-btn"
               disabled={isLoading}
-              className={`flex-1 w-full py-4 min-h-[50px] px-6 sm:px-8 rounded-2xl font-bold text-sm sm:text-base text-white shadow-lg shadow-blue-600/35 hover:shadow-xl hover:shadow-blue-600/50 transition-all flex items-center justify-center gap-3 cursor-pointer ${
+              style={{
+                border: '1.5px solid #000000',
+              }}
+              className={`flex-1 w-full py-4 min-h-[52px] px-6 sm:px-8 rounded-2xl font-extrabold text-base sm:text-lg text-white shadow-lg transition-all flex items-center justify-center gap-3 cursor-pointer ${
                 isLoading
-                  ? 'bg-blue-400/80 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 hover:-translate-y-0.5 active:translate-y-0 border border-blue-400'
+                  ? 'bg-indigo-900/80 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-violet-700 via-indigo-700 to-blue-700 hover:from-violet-800 hover:via-indigo-800 hover:to-blue-800 active:scale-[0.99]'
               }`}
             >
               <Sparkles className="w-5 h-5 text-amber-300 fill-amber-300" />
@@ -1100,18 +1072,18 @@ export const TripForm: React.FC<TripFormProps> = ({
               id="reset-all-bottom-btn"
               onClick={handleClearForm}
               style={{
-                background: 'rgba(255, 255, 255, 0.35)',
-                border: '1px solid rgba(255, 255, 255, 0.45)',
+                background: 'rgba(255, 255, 255, 0.90)',
+                border: '1.5px solid #000000',
               }}
-              className="w-full sm:w-auto px-6 py-3.5 min-h-[44px] rounded-2xl font-mono font-semibold text-xs uppercase tracking-wider text-slate-900 hover:text-blue-950 hover:bg-white/55 active:bg-white/70 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs backdrop-blur-md"
+              className="w-full sm:w-auto px-6 py-3.5 min-h-[46px] rounded-2xl font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider text-black hover:bg-black hover:text-white active:bg-slate-900 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm backdrop-blur-md"
               title="Reset all form fields and hide generated trip plan"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Reset All</span>
             </button>
           </div>
-          <div className="flex items-center justify-center gap-2 mt-3.5 text-[11px] sm:text-xs text-slate-900 font-mono font-medium text-center">
-            <Info className="w-3.5 h-3.5 text-blue-700 shrink-0" />
+          <div className="flex items-center justify-center gap-2 mt-3.5 text-xs sm:text-sm text-black font-mono font-bold text-center">
+            <Info className="w-4 h-4 text-violet-700 shrink-0" />
             <span>Structured JSON verification with realistic transit clustering and budget clamping.</span>
           </div>
         </div>

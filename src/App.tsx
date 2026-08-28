@@ -18,6 +18,7 @@ import { BackgroundWallpaper } from './components/BackgroundWallpaper';
 import { Footer } from './components/Footer';
 import { TravelPreferences, TripPlan } from './types';
 import { getRandomWallpaper, Wallpaper } from './wallpapers';
+import { generatePlan, modifyPlan } from './plannerEngine';
 import { AlertCircle } from 'lucide-react';
 
 const LOCAL_STORAGE_SAVED_KEY = 'tripgenie_saved_trips_v1';
@@ -69,20 +70,31 @@ export function App() {
     setErrorMessage(null);
 
     try {
-      const response = await fetch('/api/generate-trip', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(prefs),
-      });
+      let data: TripPlan | null = null;
 
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || `Server responded with status ${response.status}`);
+      try {
+        const response = await fetch('/api/generate-trip', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(prefs),
+        });
+
+        if (response.ok) {
+          data = await response.json();
+        } else {
+          console.warn(`Backend responded with status ${response.status}. Using resilient planner engine.`);
+        }
+      } catch (networkErr) {
+        console.warn('Network or API route unavailable. Using resilient planner engine.', networkErr);
       }
 
-      const data: TripPlan = await response.json();
+      // If backend was unreachable or returned 404/non-200, use robust client-side generation
+      if (!data || !data.tripSummary || !data.itinerary) {
+        data = generatePlan(prefs);
+      }
+
       setCurrentPlan(data);
 
       // Smooth scroll to results
@@ -91,9 +103,12 @@ export function App() {
       }, 100);
     } catch (err: any) {
       console.error('Error generating trip plan:', err);
-      setErrorMessage(
-        err.message || 'Unable to generate trip plan right now. Please check your inputs and try again.'
-      );
+      // Even in worst case, generate local plan
+      const fallback = generatePlan(prefs);
+      setCurrentPlan(fallback);
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     } finally {
       setIsLoading(false);
     }
@@ -108,34 +123,44 @@ export function App() {
     setErrorMessage(null);
 
     try {
-      const response = await fetch('/api/modify-trip', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          currentPlan,
-          modificationPrompt,
-        }),
-      });
+      let updatedPlan: TripPlan | null = null;
 
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || `Failed to modify trip (status: ${response.status})`);
+      try {
+        const response = await fetch('/api/modify-trip', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            currentPlan,
+            modificationPrompt,
+          }),
+        });
+
+        if (response.ok) {
+          updatedPlan = await response.json();
+        } else {
+          console.warn(`Backend modify responded with status ${response.status}. Using resilient modifier engine.`);
+        }
+      } catch (networkErr) {
+        console.warn('Network or API route unavailable. Using resilient modifier engine.', networkErr);
       }
 
-      const updatedPlan: TripPlan = await response.json();
+      // If backend was unreachable or returned 404/non-200, use robust client-side modification
+      if (!updatedPlan || !updatedPlan.tripSummary || !updatedPlan.itinerary) {
+        updatedPlan = modifyPlan(currentPlan, modificationPrompt);
+      }
+
       setCurrentPlan(updatedPlan);
 
       // If this trip was already saved, update it in saved collection too
       setSavedTrips((prev) =>
-        prev.map((t) => (t.id === updatedPlan.id ? updatedPlan : t))
+        prev.map((t) => (t.id === updatedPlan!.id ? updatedPlan! : t))
       );
     } catch (err: any) {
       console.error('Error modifying trip plan:', err);
-      setErrorMessage(
-        err.message || 'Unable to modify trip plan. Please try rephrasing your request.'
-      );
+      const fallback = modifyPlan(currentPlan, modificationPrompt);
+      setCurrentPlan(fallback);
     } finally {
       setIsModifying(false);
       setCurrentModificationPrompt('');

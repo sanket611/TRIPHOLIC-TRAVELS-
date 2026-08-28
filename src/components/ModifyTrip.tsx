@@ -50,31 +50,31 @@ export const ModifyTrip: React.FC<ModifyTripProps> = ({
     <section
       id="modify-trip-section"
       style={{
-        background: 'rgba(255, 255, 255, 0.25)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255, 255, 255, 0.35)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+        background: 'rgba(255, 255, 255, 0.18)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1.5px solid #000000',
+        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.18), 0 2px 10px rgba(0, 0, 0, 0.08)',
       }}
       className="rounded-[28px] p-4 sm:p-8 mb-8 relative overflow-hidden transition-all"
     >
       {/* Header */}
       <div
         style={{
-          borderBottom: '1px solid rgba(255, 255, 255, 0.30)',
+          borderBottom: '1.5px solid #000000',
         }}
         className="pb-4 sm:pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
       >
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="p-1.5 rounded-xl bg-blue-500/20 text-blue-700 border border-blue-500/30">
+            <span className="p-2 rounded-xl bg-black text-amber-300 border border-black shadow-sm">
               <Edit3 className="w-5 h-5" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight font-heading">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-950 tracking-tight font-heading">
               Modify Your Trip
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-slate-800 font-medium">
+          <p className="text-xs sm:text-base text-slate-950 font-bold">
             Instruct AI to adjust specific days, tweak budget targets, swap activities, or alter dining preferences.
           </p>
         </div>
@@ -82,12 +82,12 @@ export const ModifyTrip: React.FC<ModifyTripProps> = ({
         {history.length > 0 && (
           <span
             style={{
-              background: 'rgba(255, 255, 255, 0.45)',
-              border: '1px solid rgba(59, 130, 246, 0.35)',
+              background: 'rgba(255, 255, 255, 0.90)',
+              border: '1.5px solid #000000',
             }}
-            className="px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold text-blue-900 flex items-center gap-1.5 self-start sm:self-auto shrink-0 shadow-2xs backdrop-blur-xs"
+            className="px-3 py-1.5 rounded-xl text-xs font-mono font-extrabold text-black flex items-center gap-1.5 self-start sm:self-auto shrink-0 shadow-xs backdrop-blur-xs"
           >
-            <History className="w-3.5 h-3.5" />
+            <History className="w-4 h-4 text-black" />
             <span>{history.length} {history.length === 1 ? 'MODIFICATION' : 'MODIFICATIONS'}</span>
           </span>
         )}
@@ -95,7 +95,7 @@ export const ModifyTrip: React.FC<ModifyTripProps> = ({
 
       {/* Preset Quick Chips */}
       <div className="mt-4 sm:mt-5">
-        <p className="text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-2">
+        <p className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-2">
           Quick Suggestion Presets
         </p>
         <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -105,10 +105,10 @@ export const ModifyTrip: React.FC<ModifyTripProps> = ({
               type="button"
               onClick={() => handleSelectPreset(preset)}
               style={{
-                background: 'rgba(255, 255, 255, 0.35)',
-                border: '1px solid rgba(255, 255, 255, 0.45)',
+                background: 'rgba(255, 255, 255, 0.90)',
+                border: '1.5px solid #000000',
               }}
-              className="px-3 py-2 min-h-[38px] rounded-xl text-xs font-semibold text-slate-800 hover:bg-white/60 hover:text-blue-900 active:bg-white/80 transition-all cursor-pointer text-left shadow-2xs backdrop-blur-xs"
+              className="px-3.5 py-2 min-h-[38px] rounded-xl text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white active:scale-98 transition-all cursor-pointer text-left shadow-xs backdrop-blur-xs"
             >
               ▪ {preset}
             </button>
@@ -129,26 +129,26 @@ export const ModifyTrip: React.FC<ModifyTripProps> = ({
             }}
             placeholder="e.g. 'Make Day 2 more adventurous with water sports', 'Reduce the budget by 30%', 'Add more scenic spots'..."
             style={{
-              background: 'rgba(255, 255, 255, 0.40)',
-              border: '1px solid rgba(255, 255, 255, 0.50)',
+              background: 'rgba(255, 255, 255, 0.90)',
+              border: '1.5px solid #000000',
             }}
-            className={`w-full p-3.5 rounded-xl text-slate-900 font-medium placeholder-slate-500 focus:outline-hidden focus:ring-2 transition-all resize-none text-base sm:text-sm shadow-2xs backdrop-blur-xs ${
+            className={`w-full p-4 rounded-xl text-black font-bold placeholder-slate-600 focus:outline-hidden focus:ring-2 transition-all resize-none text-base sm:text-sm shadow-sm backdrop-blur-xs ${
               error
-                ? 'border-rose-400 focus:ring-rose-200'
-                : 'focus:border-blue-500 focus:ring-blue-100'
+                ? 'border-rose-600 focus:ring-rose-200'
+                : 'focus:border-black focus:ring-black/20'
             }`}
           />
         </div>
 
         {error && (
-          <p className="text-xs text-rose-600 font-semibold flex items-center gap-1">
-            <AlertCircle className="w-3.5 h-3.5" />
+          <p className="text-xs sm:text-sm text-rose-700 font-extrabold flex items-center gap-1">
+            <AlertCircle className="w-4 h-4" />
             {error}
           </p>
         )}
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1 sm:pt-2">
-          <p className="text-xs text-slate-700 font-medium text-center sm:text-left">
+          <p className="text-xs sm:text-sm text-slate-950 font-bold text-center sm:text-left">
             Tripholic precision updates target parameters while preserving unaffected schedule points.
           </p>
 
@@ -156,22 +156,25 @@ export const ModifyTrip: React.FC<ModifyTripProps> = ({
             type="submit"
             id="apply-ai-modification-btn"
             disabled={isModifying || !promptInput.trim()}
-            className={`w-full sm:w-auto px-6 py-3 sm:py-2.5 min-h-[48px] rounded-xl font-bold text-xs font-mono tracking-wider uppercase text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg ${
+            style={{
+              border: '1.5px solid #000000',
+            }}
+            className={`w-full sm:w-auto px-6 py-3.5 min-h-[48px] rounded-xl font-extrabold text-xs sm:text-sm font-mono tracking-wider uppercase text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
               isModifying || !promptInput.trim()
-                ? 'bg-slate-400/50 cursor-not-allowed text-slate-200'
-                : 'bg-blue-600 hover:bg-blue-700 active:scale-98'
+                ? 'bg-slate-500 cursor-not-allowed text-slate-200'
+                : 'bg-black hover:bg-slate-900 active:scale-98'
             }`}
           >
             {isModifying ? (
               <>
-                <Sparkles className="w-4 h-4 animate-spin" />
+                <Sparkles className="w-4 h-4 animate-spin text-amber-300" />
                 <span>Applying Changes…</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-4 h-4 text-amber-300" />
                 <span>Apply AI Modification</span>
-                <Send className="w-3 h-3" />
+                <Send className="w-3.5 h-3.5" />
               </>
             )}
           </button>
@@ -181,26 +184,26 @@ export const ModifyTrip: React.FC<ModifyTripProps> = ({
       {history.length > 0 && (
         <div
           style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.30)',
+            borderTop: '1.5px solid #000000',
           }}
           className="mt-5 sm:mt-6 pt-4 sm:pt-5"
         >
-          <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-2 flex items-center gap-1.5">
-            <History className="w-3.5 h-3.5 text-blue-600" />
+          <h4 className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-2 flex items-center gap-1.5">
+            <History className="w-4 h-4 text-black" />
             <span>Applied Change Log</span>
           </h4>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {history.map((h, idx) => (
               <div
                 key={idx}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.35)',
-                  border: '1px solid rgba(255, 255, 255, 0.45)',
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
                 }}
-                className="text-xs text-slate-800 p-2.5 rounded-xl flex items-center justify-between gap-2 shadow-2xs backdrop-blur-xs"
+                className="text-xs sm:text-sm text-black p-3 rounded-xl flex items-center justify-between gap-2 shadow-xs backdrop-blur-xs font-bold"
               >
-                <span className="font-semibold text-slate-900 truncate">&ldquo;{h.prompt}&rdquo;</span>
-                <span className="text-[10px] font-mono text-slate-600 shrink-0 font-medium">
+                <span className="truncate">&ldquo;{h.prompt}&rdquo;</span>
+                <span className="text-xs font-mono text-black shrink-0 font-extrabold">
                   {new Date(h.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>

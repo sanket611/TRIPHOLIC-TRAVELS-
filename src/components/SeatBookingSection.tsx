@@ -181,43 +181,55 @@ ${isBooking
     <section
       id="seat-booking-section"
       style={{
-        background: 'rgba(255, 255, 255, 0.25)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255, 255, 255, 0.35)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+        background: 'rgba(255, 255, 255, 0.18)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1.5px solid #000000',
+        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.18), 0 2px 10px rgba(0, 0, 0, 0.08)',
       }}
       className="rounded-[28px] overflow-hidden mb-8 transition-all duration-300 scroll-mt-20"
     >
       {/* Top Banner Stripe */}
       <div
         style={{
-          background: 'rgba(15, 23, 42, 0.65)',
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 27, 75, 0.85))',
           backdropFilter: 'blur(8px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
+          borderBottom: '1.5px solid #000000',
         }}
         className="px-4 sm:px-8 py-5 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/30 border border-blue-300/40 flex items-center justify-center text-amber-300 shrink-0 shadow-inner">
-            <Armchair className="w-5 h-5 text-amber-300" />
+          <div className="w-11 h-11 rounded-xl bg-violet-600/40 border border-black flex items-center justify-center text-amber-300 shrink-0 shadow-inner">
+            <Armchair className="w-6 h-6 text-amber-300" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 font-bold">
+              <span
+                style={{
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
+                }}
+                className="text-xs font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full text-black font-extrabold"
+              >
                 Limited Slots
               </span>
-              <span className="text-xs text-blue-200 hidden sm:inline">• Live Availability</span>
+              <span className="text-xs text-indigo-100 hidden sm:inline font-bold">• Live Availability</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-heading">
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-heading">
               Confirm Your Seat Now
             </h2>
           </div>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <span className="text-xs text-blue-200 font-mono flex items-center gap-1.5 bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-700/50">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span
+            style={{
+              background: 'rgba(255, 255, 255, 0.90)',
+              border: '1.5px solid #000000',
+            }}
+            className="text-xs sm:text-sm text-black font-mono font-extrabold flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl shadow-sm"
+          >
+            <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
             100% Refundable Token ₹250
           </span>
         </div>
@@ -229,18 +241,18 @@ ${isBooking
           <div className="max-w-4xl mx-auto">
             <div
               style={{
-                borderBottom: '1px solid rgba(255, 255, 255, 0.30)',
+                borderBottom: '1.5px solid #000000',
               }}
               className="mb-6 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
             >
               <div>
-                <p className="text-sm text-slate-800 font-semibold">
+                <p className="text-sm sm:text-base text-slate-950 font-bold">
                   Fill in your travel details below to reserve your priority travel slot and lock in today&apos;s rates for{' '}
-                  <span className="font-bold text-blue-900">{destination || 'your destination'}</span>.
+                  <span className="font-extrabold text-black">{destination || 'your destination'}</span>.
                 </p>
               </div>
-              <div className="text-xs font-mono text-slate-700 shrink-0">
-                Trip Style: <span className="font-semibold text-slate-900">{tripSummary.travelStyle}</span>
+              <div className="text-xs sm:text-sm font-mono text-black font-extrabold shrink-0">
+                Trip Style: <span className="text-violet-800 font-extrabold">{tripSummary.travelStyle}</span>
               </div>
             </div>
 
@@ -251,12 +263,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-destination"
-                    className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-1.5"
+                    className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-1.5"
                   >
-                    Destination <span className="text-rose-500">*</span>
+                    Destination <span className="text-rose-600">*</span>
                   </label>
                   <div className="relative">
-                    <MapPin className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <MapPin className="w-4 h-4 text-black absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-destination"
                       type="text"
@@ -267,18 +279,16 @@ ${isBooking
                       }}
                       placeholder="e.g. Goa, Paris, Manali"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.40)',
-                        border: '1px solid rgba(255, 255, 255, 0.50)',
+                        background: 'rgba(255, 255, 255, 0.90)',
+                        border: '1.5px solid #000000',
                       }}
-                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[44px] text-sm rounded-xl shadow-2xs transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 backdrop-blur-xs ${
-                        errors.destination
-                          ? 'border-rose-400 focus:ring-rose-200'
-                          : 'focus:border-blue-500 focus:ring-blue-100'
+                      className={`w-full pl-10 pr-3.5 py-3 min-h-[46px] text-sm sm:text-base rounded-xl shadow-sm transition-all text-black font-bold focus:outline-none focus:ring-2 focus:ring-black backdrop-blur-xs ${
+                        errors.destination ? 'border-rose-600 ring-2 ring-rose-500' : ''
                       }`}
                     />
                   </div>
                   {errors.destination && (
-                    <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-medium">
+                    <p className="mt-1 text-xs font-bold text-rose-700 flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5" />
                       {errors.destination}
                     </p>
@@ -289,12 +299,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-name"
-                    className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-1.5"
+                    className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-1.5"
                   >
-                    Your Name <span className="text-rose-500">*</span>
+                    Your Name <span className="text-rose-600">*</span>
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <User className="w-4 h-4 text-black absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-name"
                       type="text"
@@ -305,18 +315,16 @@ ${isBooking
                       }}
                       placeholder="Enter your full name"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.40)',
-                        border: '1px solid rgba(255, 255, 255, 0.50)',
+                        background: 'rgba(255, 255, 255, 0.90)',
+                        border: '1.5px solid #000000',
                       }}
-                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[44px] text-sm rounded-xl shadow-2xs transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 backdrop-blur-xs ${
-                        errors.name
-                          ? 'border-rose-400 focus:ring-rose-200'
-                          : 'focus:border-blue-500 focus:ring-blue-100'
+                      className={`w-full pl-10 pr-3.5 py-3 min-h-[46px] text-sm sm:text-base rounded-xl shadow-sm transition-all text-black font-bold focus:outline-none focus:ring-2 focus:ring-black backdrop-blur-xs ${
+                        errors.name ? 'border-rose-600 ring-2 ring-rose-500' : ''
                       }`}
                     />
                   </div>
                   {errors.name && (
-                    <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-medium">
+                    <p className="mt-1 text-xs font-bold text-rose-700 flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5" />
                       {errors.name}
                     </p>
@@ -327,12 +335,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-contact"
-                    className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-1.5"
+                    className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-1.5"
                   >
-                    Contact Number <span className="text-rose-500">*</span>
+                    Contact Number <span className="text-rose-600">*</span>
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Phone className="w-4 h-4 text-black absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-contact"
                       type="tel"
@@ -343,18 +351,16 @@ ${isBooking
                       }}
                       placeholder="e.g. +91 98765 43210"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.40)',
-                        border: '1px solid rgba(255, 255, 255, 0.50)',
+                        background: 'rgba(255, 255, 255, 0.90)',
+                        border: '1.5px solid #000000',
                       }}
-                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[44px] text-sm rounded-xl shadow-2xs transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 backdrop-blur-xs ${
-                        errors.contactNumber
-                          ? 'border-rose-400 focus:ring-rose-200'
-                          : 'focus:border-blue-500 focus:ring-blue-100'
+                      className={`w-full pl-10 pr-3.5 py-3 min-h-[46px] text-sm sm:text-base rounded-xl shadow-sm transition-all text-black font-bold focus:outline-none focus:ring-2 focus:ring-black backdrop-blur-xs ${
+                        errors.contactNumber ? 'border-rose-600 ring-2 ring-rose-500' : ''
                       }`}
                     />
                   </div>
                   {errors.contactNumber && (
-                    <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-medium">
+                    <p className="mt-1 text-xs font-bold text-rose-700 flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5" />
                       {errors.contactNumber}
                     </p>
@@ -365,12 +371,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-date"
-                    className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-1.5"
+                    className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-1.5"
                   >
-                    Date &amp; Day <span className="text-rose-500">*</span>
+                    Date &amp; Day <span className="text-rose-600">*</span>
                   </label>
                   <div className="relative">
-                    <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Calendar className="w-4 h-4 text-black absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-date"
                       type="date"
@@ -381,28 +387,26 @@ ${isBooking
                         if (errors.travelDate) setErrors({ ...errors, travelDate: '' });
                       }}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.40)',
-                        border: '1px solid rgba(255, 255, 255, 0.50)',
+                        background: 'rgba(255, 255, 255, 0.90)',
+                        border: '1.5px solid #000000',
                       }}
-                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[44px] text-sm rounded-xl shadow-2xs transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 backdrop-blur-xs ${
-                        errors.travelDate
-                          ? 'border-rose-400 focus:ring-rose-200'
-                          : 'focus:border-blue-500 focus:ring-blue-100'
+                      className={`w-full pl-10 pr-3.5 py-3 min-h-[46px] text-sm sm:text-base rounded-xl shadow-sm transition-all text-black font-bold focus:outline-none focus:ring-2 focus:ring-black backdrop-blur-xs ${
+                        errors.travelDate ? 'border-rose-600 ring-2 ring-rose-500' : ''
                       }`}
                     />
                   </div>
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.40)',
-                      border: '1px solid rgba(255, 255, 255, 0.50)',
+                      background: 'rgba(255, 255, 255, 0.90)',
+                      border: '1.5px solid #000000',
                     }}
-                    className="mt-1.5 flex items-center justify-between text-[11px] font-mono text-slate-800 px-2.5 py-1 rounded-xl shadow-2xs"
+                    className="mt-1.5 flex items-center justify-between text-xs font-mono text-black px-3 py-1.5 rounded-xl shadow-xs"
                   >
-                    <span className="font-bold text-blue-800">{selectedDayInfo.day}</span>
-                    <span className="font-semibold">{selectedDayInfo.formattedDate}</span>
+                    <span className="font-extrabold text-black">{selectedDayInfo.day}</span>
+                    <span className="font-bold text-slate-800">{selectedDayInfo.formattedDate}</span>
                   </div>
                   {errors.travelDate && (
-                    <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-medium">
+                    <p className="mt-1 text-xs font-bold text-rose-700 flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5" />
                       {errors.travelDate}
                     </p>
@@ -413,12 +417,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-budget"
-                    className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-1.5"
+                    className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-1.5"
                   >
                     Confirm Budget
                   </label>
                   <div className="relative">
-                    <Wallet className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Wallet className="w-4 h-4 text-black absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-budget"
                       type="text"
@@ -426,13 +430,13 @@ ${isBooking
                       onChange={(e) => setConfirmedBudget(e.target.value)}
                       placeholder="e.g. ₹ 20,000"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.40)',
-                        border: '1px solid rgba(255, 255, 255, 0.50)',
+                        background: 'rgba(255, 255, 255, 0.90)',
+                        border: '1.5px solid #000000',
                       }}
-                      className="w-full pl-10 pr-3.5 py-2.5 min-h-[44px] text-sm rounded-xl shadow-2xs transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 focus:border-blue-500 focus:ring-blue-100 backdrop-blur-xs"
+                      className="w-full pl-10 pr-3.5 py-3 min-h-[46px] text-sm sm:text-base rounded-xl shadow-sm transition-all text-black font-bold focus:outline-none focus:ring-2 focus:ring-black backdrop-blur-xs"
                     />
                   </div>
-                  <p className="mt-1 text-[11px] text-slate-700 font-mono">
+                  <p className="mt-1 text-xs text-black font-mono font-bold">
                     Est. Total for {tripSummary.duration} Days
                   </p>
                 </div>
@@ -441,9 +445,9 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-members"
-                    className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-1.5"
+                    className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-1.5"
                   >
-                    Members (Travelers) <span className="text-rose-500">*</span>
+                    Members (Travelers) <span className="text-rose-600">*</span>
                   </label>
                   <div className="flex items-center gap-2">
                     <button
@@ -451,15 +455,15 @@ ${isBooking
                       id="members-minus-btn"
                       onClick={() => setMembers((m) => Math.max(1, m - 1))}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.40)',
-                        border: '1px solid rgba(255, 255, 255, 0.50)',
+                        background: 'rgba(255, 255, 255, 0.90)',
+                        border: '1.5px solid #000000',
                       }}
-                      className="w-11 h-11 rounded-xl text-slate-800 font-bold hover:bg-white/60 transition-all flex items-center justify-center active:scale-95 cursor-pointer text-base shadow-2xs"
+                      className="w-12 h-12 rounded-xl text-black font-extrabold hover:bg-black hover:text-white transition-all flex items-center justify-center active:scale-95 cursor-pointer text-lg shadow-sm"
                     >
                       -
                     </button>
                     <div className="relative flex-1">
-                      <Users className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <Users className="w-4 h-4 text-black absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         id="booking-members"
                         type="number"
@@ -471,10 +475,10 @@ ${isBooking
                           setMembers(isNaN(val) ? 1 : Math.max(1, val));
                         }}
                         style={{
-                          background: 'rgba(255, 255, 255, 0.40)',
-                          border: '1px solid rgba(255, 255, 255, 0.50)',
+                          background: 'rgba(255, 255, 255, 0.90)',
+                          border: '1.5px solid #000000',
                         }}
-                        className="w-full pl-9 pr-3 py-2.5 min-h-[44px] text-center text-sm font-bold text-slate-900 rounded-xl shadow-2xs transition-all focus:outline-none focus:ring-2 focus:border-blue-500 focus:ring-blue-100 backdrop-blur-xs"
+                        className="w-full pl-9 pr-3 py-3 min-h-[46px] text-center text-base font-extrabold text-black rounded-xl shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-black backdrop-blur-xs"
                       />
                     </div>
                     <button
@@ -482,15 +486,15 @@ ${isBooking
                       id="members-plus-btn"
                       onClick={() => setMembers((m) => Math.min(50, m + 1))}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.40)',
-                        border: '1px solid rgba(255, 255, 255, 0.50)',
+                        background: 'rgba(255, 255, 255, 0.90)',
+                        border: '1.5px solid #000000',
                       }}
-                      className="w-11 h-11 rounded-xl text-slate-800 font-bold hover:bg-white/60 transition-all flex items-center justify-center active:scale-95 cursor-pointer text-base shadow-2xs"
+                      className="w-12 h-12 rounded-xl text-black font-extrabold hover:bg-black hover:text-white transition-all flex items-center justify-center active:scale-95 cursor-pointer text-lg shadow-sm"
                     >
                       +
                     </button>
                   </div>
-                  <p className="mt-1 text-[11px] text-slate-700 font-mono text-center">
+                  <p className="mt-1 text-xs text-black font-mono font-bold text-center">
                     {members === 1 ? '1 Seat Booking' : `${members} Seats Reserved Together`}
                   </p>
                 </div>
@@ -500,7 +504,7 @@ ${isBooking
               <div>
                 <label
                   htmlFor="booking-notes"
-                  className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-1.5"
+                  className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-1.5"
                 >
                   Special Notes or Requirements (Optional)
                 </label>
@@ -511,33 +515,33 @@ ${isBooking
                   onChange={(e) => setSpecialRequest(e.target.value)}
                   placeholder="e.g. Airport pickup needed, prefer morning departure, vegetarian food preference"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.40)',
-                    border: '1px solid rgba(255, 255, 255, 0.50)',
+                    background: 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #000000',
                   }}
-                  className="w-full px-3.5 py-2.5 min-h-[44px] text-sm text-slate-900 font-medium rounded-xl shadow-2xs transition-all focus:outline-none focus:ring-2 focus:border-blue-500 focus:ring-blue-100 backdrop-blur-xs"
+                  className="w-full px-4 py-3 min-h-[46px] text-sm sm:text-base text-black font-bold rounded-xl shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-black backdrop-blur-xs"
                 />
               </div>
 
               {/* Inclusions & Guarantees summary badge */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.35)',
-                  border: '1px solid rgba(255, 255, 255, 0.45)',
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
                 }}
-                className="p-3.5 rounded-2xl text-xs text-slate-900 flex flex-wrap items-center justify-between gap-3 backdrop-blur-md shadow-xs"
+                className="p-4 rounded-2xl text-xs sm:text-sm text-black flex flex-wrap items-center justify-between gap-3 backdrop-blur-md shadow-sm"
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-blue-700 shrink-0" />
+                  <Sparkles className="w-4 h-4 text-violet-800 shrink-0" />
                   <span>
-                    <strong>What your ₹250 seat token secures:</strong> Guaranteed departure slot, instant itinerary price lock, verified hotel coordination, and 24/7 travel concierge.
+                    <strong className="text-black font-extrabold">What your ₹250 seat token secures:</strong> Guaranteed departure slot, instant itinerary price lock, verified hotel coordination, and 24/7 travel concierge.
                   </span>
                 </div>
                 <div
                   style={{
-                    background: 'rgba(255, 255, 255, 0.55)',
-                    border: '1px solid rgba(59, 130, 246, 0.35)',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    border: '1.5px solid #000000',
                   }}
-                  className="font-mono text-[11px] text-blue-900 px-2.5 py-1 rounded-xl shrink-0 shadow-2xs font-bold"
+                  className="font-mono text-xs sm:text-sm text-black px-3 py-1 rounded-xl shrink-0 shadow-xs font-extrabold"
                 >
                   Fully Refundable within 24h
                 </div>
@@ -550,7 +554,10 @@ ${isBooking
                   type="submit"
                   id="pay-250-book-seat-btn"
                   disabled={isProcessingPayment}
-                  className="w-full sm:max-w-xl py-4 px-6 min-h-[56px] text-base sm:text-lg font-bold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer active:scale-[0.99] border border-blue-400/40 relative group"
+                  style={{
+                    border: '1.5px solid #000000',
+                  }}
+                  className="w-full sm:max-w-xl py-4 px-6 min-h-[56px] text-base sm:text-lg font-extrabold text-white bg-gradient-to-r from-violet-700 via-indigo-700 to-purple-700 hover:from-violet-800 hover:via-indigo-800 hover:to-purple-800 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer active:scale-[0.99] group"
                 >
                   {isProcessingPayment ? (
                     <div className="flex items-center gap-2">
@@ -572,12 +579,12 @@ ${isBooking
                   id="time-to-think-btn"
                   onClick={handleTimeThink}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.35)',
-                    border: '1px solid rgba(255, 255, 255, 0.45)',
+                    background: 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #000000',
                   }}
-                  className="px-5 py-2.5 min-h-[40px] text-xs sm:text-sm font-semibold text-slate-800 hover:bg-white/60 rounded-xl transition-all flex items-center gap-2 cursor-pointer active:scale-95 shadow-2xs backdrop-blur-xs"
+                  className="px-6 py-3 min-h-[44px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white rounded-xl transition-all flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm backdrop-blur-xs"
                 >
-                  <Clock className="w-3.5 h-3.5 text-slate-600" />
+                  <Clock className="w-4 h-4 text-black" />
                   <span>Let give me time to think</span>
                 </button>
               </div>
@@ -591,21 +598,21 @@ ${isBooking
         <div id="thank-you-view" className="p-6 sm:p-12 text-center backdrop-blur-md animate-fade-in">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Heart / Check badge */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-blue-600 text-white flex items-center justify-center border-2 border-blue-400 shadow-sm animate-bounce-short">
-              <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-gradient-to-tr from-violet-700 to-indigo-700 text-white flex items-center justify-center border-2 border-black shadow-md">
+              <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
             </div>
 
             {/* BIG THANK YOU WORDING */}
             <div className="space-y-3">
-              <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-900 font-heading">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-950 font-heading">
                 THANK YOU
               </h1>
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.45)',
-                  border: '1px solid rgba(59, 130, 246, 0.35)',
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
                 }}
-                className="inline-block px-3.5 py-1 rounded-full text-blue-950 font-mono text-xs font-bold shadow-2xs backdrop-blur-xs"
+                className="inline-block px-4 py-1.5 rounded-full text-black font-mono text-xs sm:text-sm font-extrabold shadow-sm backdrop-blur-xs"
               >
                 Inquiry Ref: {inquiryId}
               </div>
@@ -614,66 +621,72 @@ ${isBooking
             {/* Required user message */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.35)',
-                border: '1px solid rgba(255, 255, 255, 0.45)',
+                background: 'rgba(255, 255, 255, 0.90)',
+                border: '1.5px solid #000000',
               }}
-              className="p-5 sm:p-6 rounded-2xl backdrop-blur-md shadow-sm text-slate-800 space-y-3"
+              className="p-5 sm:p-6 rounded-2xl backdrop-blur-md shadow-sm text-slate-950 space-y-3"
             >
-              <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+              <p className="text-base sm:text-lg font-extrabold text-black leading-relaxed">
                 Thank you for visiting us! We will review your data and tell you if any seats are available for that date.
               </p>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              <p className="text-xs sm:text-sm text-slate-900 leading-relaxed font-bold">
                 Our trip coordinators will check live local slot availability, transportation schedules, and accommodation options for{' '}
-                <strong className="text-slate-900">{destination}</strong> and notify you promptly via your provided details.
+                <strong className="text-black font-extrabold">{destination}</strong> and notify you promptly via your provided details.
               </p>
             </div>
 
             {/* Captured Inquiry Summary Recap Card */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.35)',
-                border: '1px solid rgba(255, 255, 255, 0.45)',
+                background: 'rgba(255, 255, 255, 0.90)',
+                border: '1.5px solid #000000',
               }}
-              className="p-4 sm:p-5 rounded-2xl backdrop-blur-md text-left text-xs font-mono space-y-2 text-slate-700 shadow-2xs"
+              className="p-4 sm:p-5 rounded-2xl backdrop-blur-md text-left text-xs sm:text-sm font-mono space-y-2 text-black shadow-sm"
             >
               <div
                 style={{
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.30)',
+                  borderBottom: '1.5px solid #000000',
                 }}
-                className="flex justify-between items-center pb-2 text-slate-900 font-bold text-sm"
+                className="flex justify-between items-center pb-2 text-black font-extrabold text-sm sm:text-base"
               >
                 <span>Inquiry Snapshot</span>
-                <span className="text-xs font-normal text-emerald-950 bg-emerald-100/80 px-2 py-0.5 rounded-lg border border-emerald-300">
+                <span
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    border: '1.5px solid #000000',
+                  }}
+                  className="text-xs font-mono font-extrabold text-emerald-900 px-2.5 py-0.5 rounded-lg"
+                >
                   Status: Pending Review
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-medium">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-bold">
                 <div>
-                  <span className="text-slate-500">Destination:</span>{' '}
-                  <span className="font-bold text-slate-900">{destination || tripSummary.destination}</span>
+                  <span className="text-slate-800">Destination:</span>{' '}
+                  <span className="font-extrabold text-black">{destination || tripSummary.destination}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500">Date &amp; Day:</span>{' '}
-                  <span className="font-bold text-slate-900">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
+                  <span className="text-slate-800">Date &amp; Day:</span>{' '}
+                  <span className="font-extrabold text-black">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500">Travelers:</span>{' '}
-                  <span className="font-bold text-slate-900">{members} Person(s)</span>
+                  <span className="text-slate-800">Travelers:</span>{' '}
+                  <span className="font-extrabold text-black">{members} Person(s)</span>
                 </div>
                 <div>
-                  <span className="text-slate-500">Estimated Budget:</span>{' '}
-                  <span className="font-bold text-slate-900">{confirmedBudget}</span>
+                  <span className="text-slate-800">Estimated Budget:</span>{' '}
+                  <span className="font-extrabold text-black">{confirmedBudget}</span>
                 </div>
                 {name && (
                   <div>
-                    <span className="text-slate-500">Name:</span>{' '}
-                    <span className="font-bold text-slate-900">{name}</span>
+                    <span className="text-slate-800">Name:</span>{' '}
+                    <span className="font-extrabold text-black">{name}</span>
                   </div>
                 )}
                 {contactNumber && (
                   <div>
-                    <span className="text-slate-500">Contact:</span>{' '}
-                    <span className="font-bold text-slate-900">{contactNumber}</span>
+                    <span className="text-slate-800">Contact:</span>{' '}
+                    <span className="font-extrabold text-black">{contactNumber}</span>
                   </div>
                 )}
               </div>
@@ -686,12 +699,12 @@ ${isBooking
                 id="inquiry-download-btn"
                 onClick={() => handleDownloadReceipt('inquiry')}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.40)',
-                  border: '1px solid rgba(255, 255, 255, 0.50)',
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
                 }}
-                className="px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold text-slate-800 hover:bg-white/60 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs backdrop-blur-xs"
+                className="px-5 py-3 min-h-[44px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm backdrop-blur-xs"
               >
-                <Download className="w-4 h-4 text-slate-700" />
+                <Download className="w-4 h-4" />
                 <span>Download Inquiry Slip</span>
               </button>
 
@@ -699,7 +712,10 @@ ${isBooking
                 type="button"
                 id="inquiry-change-btn"
                 onClick={() => setViewState('form')}
-                className="px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                style={{
+                  border: '1.5px solid #000000',
+                }}
+                className="px-5 py-3 min-h-[44px] text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md"
               >
                 <RotateCcw className="w-4 h-4 text-white" />
                 <span>Ready to Book? Back to Form</span>
@@ -713,76 +729,82 @@ ${isBooking
       {viewState === 'paid_confirmed' && (
         <div id="booking-confirmed-view" className="p-6 sm:p-12 text-center backdrop-blur-md animate-fade-in">
           <div className="max-w-2xl mx-auto space-y-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-emerald-600 text-white flex items-center justify-center border-2 border-emerald-400 shadow-sm animate-bounce-short">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-emerald-600 text-white flex items-center justify-center border-2 border-black shadow-md">
               <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
 
             <div className="space-y-2">
-              <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-950 font-mono text-xs font-bold border border-emerald-300">
+              <span
+                style={{
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
+                }}
+                className="px-4 py-1.5 rounded-full text-emerald-950 font-mono text-xs sm:text-sm font-extrabold shadow-sm"
+              >
                 Seat Confirmed • ₹250 Advance Received
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-heading">
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950 font-heading">
                 Your Seat is Booked!
               </h2>
-              <p className="text-sm text-slate-700 max-w-md mx-auto font-medium">
-                Congratulations <strong className="text-slate-900">{name || 'Traveler'}</strong>, your seat allocation for{' '}
-                <strong className="text-blue-900">{destination}</strong> has been secured.
+              <p className="text-sm sm:text-base text-slate-900 max-w-md mx-auto font-bold">
+                Congratulations <strong className="text-black font-extrabold">{name || 'Traveler'}</strong>, your seat allocation for{' '}
+                <strong className="text-violet-900 font-extrabold">{destination}</strong> has been secured.
               </p>
             </div>
 
             {/* Booking Receipt Voucher Card */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.35)',
-                border: '1px solid rgba(16, 185, 129, 0.45)',
+                background: 'rgba(255, 255, 255, 0.90)',
+                border: '1.5px solid #000000',
               }}
               className="p-5 rounded-2xl backdrop-blur-md shadow-md text-left space-y-4"
             >
               <div
                 style={{
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.30)',
+                  borderBottom: '1.5px solid #000000',
                 }}
                 className="flex flex-wrap items-center justify-between gap-2 pb-3"
               >
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-600 block font-semibold">Booking Reference ID</span>
-                  <span className="text-lg font-mono font-bold text-slate-950">{bookingId}</span>
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 block font-bold">Booking Reference ID</span>
+                  <span className="text-lg sm:text-xl font-mono font-extrabold text-black">{bookingId}</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-600 block font-semibold">Token Amount</span>
-                  <span className="text-base font-mono font-bold text-emerald-800">₹ 250 (Paid)</span>
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 block font-bold">Token Amount</span>
+                  <span className="text-base sm:text-lg font-mono font-extrabold text-emerald-900">₹ 250 (Paid)</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono font-medium">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm font-mono font-bold text-black">
                 <div>
-                  <span className="text-slate-500 block">Destination:</span>
-                  <span className="font-bold text-slate-900 text-sm">{destination}</span>
+                  <span className="text-slate-800 block">Destination:</span>
+                  <span className="font-extrabold text-black text-sm sm:text-base">{destination}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Travel Date &amp; Day:</span>
-                  <span className="font-bold text-slate-900">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
+                  <span className="text-slate-800 block">Travel Date &amp; Day:</span>
+                  <span className="font-extrabold text-black">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Seats Reserved:</span>
-                  <span className="font-bold text-slate-900">{members} Passenger(s)</span>
+                  <span className="text-slate-800 block">Seats Reserved:</span>
+                  <span className="font-extrabold text-black">{members} Passenger(s)</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Primary Contact:</span>
-                  <span className="font-bold text-slate-900">{name} ({contactNumber})</span>
+                  <span className="text-slate-800 block">Primary Contact:</span>
+                  <span className="font-extrabold text-black">{name} ({contactNumber})</span>
                 </div>
               </div>
 
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.40)',
-                  border: '1px solid rgba(255, 255, 255, 0.50)',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '1.5px solid #000000',
                 }}
-                className="p-3 rounded-xl text-[11px] text-slate-800 flex items-start gap-2 font-medium"
+                className="p-3.5 rounded-xl text-xs sm:text-sm text-black flex items-start gap-2 font-bold shadow-xs"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 <span>
-                  Our representative will contact you via WhatsApp/Call at <strong>{contactNumber}</strong> within 4 hours to verify pickup coordinates and hotel check-in preferences.
+                  Our representative will contact you via WhatsApp/Call at <strong className="text-black">{contactNumber}</strong> within 4 hours to verify pickup coordinates and hotel check-in preferences.
                 </span>
               </div>
             </div>
@@ -793,7 +815,10 @@ ${isBooking
                 type="button"
                 id="receipt-download-btn"
                 onClick={() => handleDownloadReceipt('booking')}
-                className="px-5 py-3 min-h-[46px] text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md hover:shadow-lg"
+                style={{
+                  border: '1.5px solid #000000',
+                }}
+                className="px-6 py-3.5 min-h-[46px] text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md hover:shadow-lg"
               >
                 <Download className="w-4 h-4" />
                 <span>Download Booking Receipt</span>
@@ -804,12 +829,12 @@ ${isBooking
                 id="back-to-plan-btn"
                 onClick={() => setViewState('form')}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.40)',
-                  border: '1px solid rgba(255, 255, 255, 0.50)',
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
                 }}
-                className="px-4 py-3 min-h-[46px] text-xs sm:text-sm font-semibold text-slate-800 hover:bg-white/60 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs backdrop-blur-xs"
+                className="px-5 py-3.5 min-h-[46px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm backdrop-blur-xs"
               >
-                <RotateCcw className="w-4 h-4 text-slate-600" />
+                <RotateCcw className="w-4 h-4" />
                 <span>Edit / Book Another</span>
               </button>
             </div>
