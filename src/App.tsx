@@ -14,6 +14,7 @@ import { ModifyTrip } from './components/ModifyTrip';
 import { SavedTripsModal } from './components/SavedTripsModal';
 import { PromptDocsModal } from './components/PromptDocsModal';
 import { TestSuiteModal } from './components/TestSuiteModal';
+import { AvailableDestinationsModal } from './components/AvailableDestinationsModal';
 import { BackgroundWallpaper } from './components/BackgroundWallpaper';
 import { Footer } from './components/Footer';
 import { TravelPreferences, TripPlan } from './types';
@@ -41,6 +42,7 @@ export function App() {
   const [isSavedTripsOpen, setIsSavedTripsOpen] = useState(false);
   const [isPromptDocsOpen, setIsPromptDocsOpen] = useState(false);
   const [isTestSuiteOpen, setIsTestSuiteOpen] = useState(false);
+  const [isDestinationsModalOpen, setIsDestinationsModalOpen] = useState(false);
 
   // Saved Trips Collection in localStorage
   const [savedTrips, setSavedTrips] = useState<TripPlan[]>(() => {
@@ -270,6 +272,7 @@ export function App() {
             onSelectPreset={handleSelectPreset}
             currentWallpaper={currentWallpaper}
             onChangeWallpaper={handleWallpaperChange}
+            onOpenDestinationsModal={() => setIsDestinationsModalOpen(true)}
           />
         )}
 
@@ -280,6 +283,7 @@ export function App() {
             onReset={handleStartNewTrip}
             isLoading={isLoading}
             initialValues={formPrefill || undefined}
+            onOpenDestinationsModal={() => setIsDestinationsModalOpen(true)}
           />
         </div>
 
@@ -304,7 +308,10 @@ export function App() {
             />
 
             {/* 2. Day-by-Day Itinerary */}
-            <ItineraryView itinerary={currentPlan.itinerary} />
+            <ItineraryView
+              itinerary={currentPlan.itinerary}
+              destination={currentPlan.tripSummary.destination}
+            />
 
             {/* 3. Recommended Places */}
             <RecommendedPlaces
@@ -367,6 +374,21 @@ export function App() {
         isOpen={isTestSuiteOpen}
         onClose={() => setIsTestSuiteOpen(false)}
         onApplyTestScenarioToForm={handleSelectPreset}
+      />
+
+      <AvailableDestinationsModal
+        isOpen={isDestinationsModalOpen}
+        onClose={() => setIsDestinationsModalOpen(false)}
+        onSelectDestination={(dest) => {
+          setFormPrefill({
+            destination: dest.name,
+            duration: dest.suggestedDuration,
+            budget: dest.estimatedBudgetRange,
+            travelStyle: dest.style,
+          });
+          setIsDestinationsModalOpen(false);
+          formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }}
       />
     </div>
   );

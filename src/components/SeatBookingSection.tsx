@@ -1,4 +1,4 @@
-import React, { useState, useId } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Armchair,
   CheckCircle2,
@@ -15,10 +15,13 @@ import {
   Download,
   RotateCcw,
   Check,
-  MessageCircle,
-  HelpCircle,
-  FileText,
-  AlertCircle
+  AlertCircle,
+  X,
+  Printer,
+  QrCode,
+  Share2,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import { TripPlan } from '../types';
 
@@ -50,12 +53,21 @@ export const SeatBookingSection: React.FC<SeatBookingSectionProps> = ({ plan }) 
 
   // UI Flow State: 'form' | 'time_to_think' | 'paid_confirmed'
   const [viewState, setViewState] = useState<'form' | 'time_to_think' | 'paid_confirmed'>('form');
+  const [isDirectModalOpen, setIsDirectModalOpen] = useState<boolean>(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [copiedCode, setCopiedCode] = useState<boolean>(false);
 
   // Generated Reference IDs
   const [bookingId, setBookingId] = useState<string>('');
   const [inquiryId, setInquiryId] = useState<string>('');
+
+  // Sync destination if plan changes
+  useEffect(() => {
+    if (tripSummary.destination) {
+      setDestination(tripSummary.destination);
+    }
+  }, [tripSummary.destination]);
 
   // Format the date into readable Day & Date (e.g., Saturday, 12 Sep 2026)
   const formatDayAndDate = (dateStr: string) => {
@@ -75,6 +87,17 @@ export const SeatBookingSection: React.FC<SeatBookingSectionProps> = ({ plan }) 
   };
 
   const selectedDayInfo = formatDayAndDate(travelDate);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isDirectModalOpen) {
+        setIsDirectModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isDirectModalOpen]);
 
   // Validate form before submitting payment
   const validateForm = () => {
@@ -107,7 +130,7 @@ export const SeatBookingSection: React.FC<SeatBookingSectionProps> = ({ plan }) 
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handler for Paid ₹250 Option
+  // Handler for Paid ₹250 Option -> Opens Direct On-Screen Congratulations Modal
   const handlePayAndBookSeat = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -116,19 +139,31 @@ export const SeatBookingSection: React.FC<SeatBookingSectionProps> = ({ plan }) 
     setTimeout(() => {
       const randomCode = Math.floor(10000 + Math.random() * 90000);
       const destCode = (destination.trim().slice(0, 3) || 'TRP').toUpperCase();
-      setBookingId(`BK-${randomCode}-${destCode}`);
+      const code = `BK-${randomCode}-${destCode}`;
+      setBookingId(code);
       setIsProcessingPayment(false);
       setViewState('paid_confirmed');
-    }, 900);
+      setIsDirectModalOpen(true); // Opens direct on-screen popup!
+    }, 850);
   };
 
-  // Handler for "Let give me time to think" Option
+  // Handler for "Let give me time to think" Option -> Opens Direct On-Screen Thank You Modal
   const handleTimeThink = () => {
-    // Generate inquiry reference ID
     const randomCode = Math.floor(10000 + Math.random() * 90000);
     const destCode = (destination.trim().slice(0, 3) || 'INQ').toUpperCase();
-    setInquiryId(`INQ-${randomCode}-${destCode}`);
+    const code = `INQ-${randomCode}-${destCode}`;
+    setInquiryId(code);
     setViewState('time_to_think');
+    setIsDirectModalOpen(true); // Opens direct on-screen popup!
+  };
+
+  const handleCopyBookingCode = () => {
+    const code = viewState === 'paid_confirmed' ? bookingId : inquiryId;
+    if (code) {
+      navigator.clipboard.writeText(code);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    }
   };
 
   // Download booking or inquiry voucher as text file
@@ -136,7 +171,7 @@ export const SeatBookingSection: React.FC<SeatBookingSectionProps> = ({ plan }) 
     const isBooking = type === 'booking';
     const content = `
 ======================================================
-     EXPLOREAI - TRAVEL SEAT ${isBooking ? 'CONFIRMATION RECEIPT' : 'INQUIRY SLIP'}
+     TRIPHOLIC - TRAVEL SEAT ${isBooking ? 'CONFIRMATION TICKET & RECEIPT' : 'INQUIRY SLIP'}
 ======================================================
 Reference ID     : ${isBooking ? bookingId : inquiryId}
 Status           : ${isBooking ? 'PAID & CONFIRMED (₹250 ADVANCE TOKEN)' : 'UNDER REVIEW (AVAILABILITY CHECK)'}
@@ -153,16 +188,17 @@ Special Request  : ${specialRequest || 'None'}
 PASSENGER / CONTACT DETAILS:
 ------------------------------------------------------
 Primary Contact  : ${name || 'Valued Traveler'}
-Contact Number   : ${contactNumber || 'Provided'}
+Contact Number   : ${contactNumber || 'Provided in app'}
 
 PAYMENT SUMMARY:
 ------------------------------------------------------
 Seat Token Fee   : ${isBooking ? '₹250 (Paid Successfully)' : '₹0.00 (Inquiry Only)'}
 Balance Payment  : ${isBooking ? 'To be adjusted in final itinerary billing' : 'Payable upon confirmation'}
+Guarantee        : 100% Refundable within 24 hours
 
 ${isBooking 
-  ? 'Note: Your seats and priority guide allocation are reserved for the specified date.' 
-  : 'Thank you for visiting us! We will review your data and tell you if any seats are available for your selected date.'}
+  ? 'Note: Your seats and priority guide allocation are reserved for the specified date. Tripholic concierge will reach out to you shortly.' 
+  : 'Thank you for visiting us! We will review your data and tell you if any seats are available for that date.'}
 ======================================================
 `;
 
@@ -170,11 +206,15 @@ ${isBooking
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${isBooking ? 'Seat-Booking-Receipt' : 'Seat-Inquiry-Slip'}-${destination.replace(/\s+/g, '-')}.txt`;
+    link.download = `${isBooking ? 'Tripholic-Ticket-Receipt' : 'Tripholic-Inquiry-Slip'}-${destination.replace(/\s+/g, '-')}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
@@ -710,6 +750,20 @@ ${isBooking
 
               <button
                 type="button"
+                id="open-screen-thankyou-btn"
+                onClick={() => setIsDirectModalOpen(true)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.90)',
+                  border: '1.5px solid #000000',
+                }}
+                className="px-5 py-3 min-h-[44px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm backdrop-blur-xs"
+              >
+                <Sparkles className="w-4 h-4 text-violet-700" />
+                <span>View On Screen</span>
+              </button>
+
+              <button
+                type="button"
                 id="inquiry-change-btn"
                 onClick={() => setViewState('form')}
                 style={{
@@ -725,103 +779,153 @@ ${isBooking
         </div>
       )}
 
-      {/* VIEW 3: "Paid 250₹" Confirmation Screen */}
+      {/* VIEW 3: "Paid 250₹" Confirmation Screen - BIG CONGRATULATIONS */}
       {viewState === 'paid_confirmed' && (
         <div id="booking-confirmed-view" className="p-6 sm:p-12 text-center backdrop-blur-md animate-fade-in">
-          <div className="max-w-2xl mx-auto space-y-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-emerald-600 text-white flex items-center justify-center border-2 border-black shadow-md">
-              <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+          <div className="max-w-3xl mx-auto space-y-7">
+            {/* Massive Celebration Icon & Ribbons */}
+            <div className="relative inline-block">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 mx-auto rounded-3xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-emerald-400 text-white flex items-center justify-center border-2 border-black shadow-2xl animate-bounce-slow">
+                <CheckCircle2 className="w-10 h-10 sm:w-16 sm:h-16 text-white drop-shadow-md" />
+              </div>
+              <span className="absolute -bottom-2 -right-2 px-3 py-1 bg-amber-400 text-black font-mono font-black text-xs sm:text-sm rounded-full border border-black shadow-md">
+                ★ 100% VERIFIED
+              </span>
             </div>
 
-            <div className="space-y-2">
-              <span
-                style={{
-                  background: 'rgba(255, 255, 255, 0.90)',
-                  border: '1.5px solid #000000',
-                }}
-                className="px-4 py-1.5 rounded-full text-emerald-950 font-mono text-xs sm:text-sm font-extrabold shadow-sm"
-              >
-                Seat Confirmed • ₹250 Advance Received
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950 font-heading">
-                Your Seat is Booked!
-              </h2>
-              <p className="text-sm sm:text-base text-slate-900 max-w-md mx-auto font-bold">
-                Congratulations <strong className="text-black font-extrabold">{name || 'Traveler'}</strong>, your seat allocation for{' '}
-                <strong className="text-violet-900 font-extrabold">{destination}</strong> has been secured.
+            {/* Huge Congratulations Banner */}
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-emerald-100 text-emerald-950 border-2 border-black font-mono text-sm sm:text-base font-black shadow-md animate-pulse">
+                <Sparkles className="w-5 h-5 text-emerald-700" />
+                <span>OFFICIAL BOOKING CONFIRMED • ADVANCE ₹250 PAID</span>
+                <Sparkles className="w-5 h-5 text-emerald-700" />
+              </div>
+              
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-950 font-heading leading-tight">
+                🎉 CONGRATULATIONS! 🎉
+              </h1>
+              
+              <p className="text-lg sm:text-2xl font-black text-violet-950 max-w-2xl mx-auto leading-snug">
+                {name || 'Valued Traveler'}, your seat for <span className="underline decoration-violet-500 decoration-4">{destination}</span> is locked in!
+              </p>
+              <p className="text-sm sm:text-base text-slate-800 font-bold max-w-xl mx-auto">
+                Your travel itinerary and VIP seat reservation are now officially confirmed in the Tripholic system.
               </p>
             </div>
 
-            {/* Booking Receipt Voucher Card */}
+            {/* Luxury Boarding Pass / Ticket Voucher Card */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.90)',
-                border: '1.5px solid #000000',
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                border: '2px solid #000000',
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
               }}
-              className="p-5 rounded-2xl backdrop-blur-md shadow-md text-left space-y-4"
+              className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl text-left space-y-6 relative overflow-hidden"
             >
+              {/* Top Bar with Brand & Booking ID */}
               <div
                 style={{
-                  borderBottom: '1.5px solid #000000',
+                  borderBottom: '2px dashed #000000',
                 }}
-                className="flex flex-wrap items-center justify-between gap-2 pb-3"
+                className="flex flex-wrap items-center justify-between gap-3 pb-5"
               >
-                <div>
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 block font-bold">Booking Reference ID</span>
-                  <span className="text-lg sm:text-xl font-mono font-extrabold text-black">{bookingId}</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-black text-amber-300 flex items-center justify-center font-black text-base border border-black shadow-xs">
+                    TH
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-mono font-extrabold uppercase text-slate-600 block">Tripholic Travel Pass</span>
+                    <span className="text-lg sm:text-2xl font-mono font-black text-black tracking-wider">{bookingId}</span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 block font-bold">Token Amount</span>
-                  <span className="text-base sm:text-lg font-mono font-extrabold text-emerald-900">₹ 250 (Paid)</span>
+                
+                <div className="text-right bg-emerald-50 px-4 py-2 rounded-2xl border border-emerald-300">
+                  <span className="text-[11px] font-mono uppercase text-emerald-800 font-bold block">Token Status</span>
+                  <span className="text-base sm:text-xl font-mono font-black text-emerald-900">₹ 250 Paid (Secured)</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm font-mono font-bold text-black">
-                <div>
-                  <span className="text-slate-800 block">Destination:</span>
-                  <span className="font-extrabold text-black text-sm sm:text-base">{destination}</span>
+              {/* Grid with Trip Details */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-2xl bg-slate-50 border border-black/10">
+                <div className="space-y-1">
+                  <span className="text-[11px] font-mono uppercase font-bold text-slate-600">Destination</span>
+                  <p className="text-base sm:text-lg font-black text-black flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-violet-700 shrink-0" />
+                    <span className="truncate">{destination}</span>
+                  </p>
                 </div>
-                <div>
-                  <span className="text-slate-800 block">Travel Date &amp; Day:</span>
-                  <span className="font-extrabold text-black">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
+
+                <div className="space-y-1">
+                  <span className="text-[11px] font-mono uppercase font-bold text-slate-600">Travel Date &amp; Day</span>
+                  <p className="text-sm sm:text-base font-black text-black flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4 text-violet-700 shrink-0" />
+                    <span>{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
+                  </p>
                 </div>
-                <div>
-                  <span className="text-slate-800 block">Seats Reserved:</span>
-                  <span className="font-extrabold text-black">{members} Passenger(s)</span>
+
+                <div className="space-y-1">
+                  <span className="text-[11px] font-mono uppercase font-bold text-slate-600">Passengers</span>
+                  <p className="text-base sm:text-lg font-black text-black flex items-center gap-1.5">
+                    <Users className="w-4 h-4 text-violet-700 shrink-0" />
+                    <span>{members} Reserved Seat(s)</span>
+                  </p>
                 </div>
-                <div>
-                  <span className="text-slate-800 block">Primary Contact:</span>
-                  <span className="font-extrabold text-black">{name} ({contactNumber})</span>
+
+                <div className="space-y-1">
+                  <span className="text-[11px] font-mono uppercase font-bold text-slate-600">Primary Contact</span>
+                  <p className="text-sm sm:text-base font-black text-black truncate">
+                    {name} ({contactNumber})
+                  </p>
                 </div>
               </div>
 
+              {/* WhatsApp & Concierge Guarantee Notice */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  border: '1.5px solid #000000',
+                  background: 'rgba(236, 253, 245, 0.95)',
+                  border: '1.5px solid #059669',
                 }}
-                className="p-3.5 rounded-xl text-xs sm:text-sm text-black flex items-start gap-2 font-bold shadow-xs"
+                className="p-4 rounded-2xl text-xs sm:text-sm text-emerald-950 flex items-start gap-3 font-bold shadow-xs"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
-                <span>
-                  Our representative will contact you via WhatsApp/Call at <strong className="text-black">{contactNumber}</strong> within 4 hours to verify pickup coordinates and hotel check-in preferences.
-                </span>
+                <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-extrabold text-emerald-950 text-sm">
+                    Trip Concierge WhatsApp Notification Active
+                  </p>
+                  <p className="text-xs text-emerald-900 font-semibold leading-relaxed">
+                    Our lead travel coordinator will contact <span className="underline font-bold text-black">{contactNumber}</span> within 4 hours to confirm pickup coordination, hotel vouchers, and dietary requirements.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            {/* High Priority Actions */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <button
                 type="button"
                 id="receipt-download-btn"
                 onClick={() => handleDownloadReceipt('booking')}
                 style={{
-                  border: '1.5px solid #000000',
+                  border: '2px solid #000000',
                 }}
-                className="px-6 py-3.5 min-h-[46px] text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md hover:shadow-lg"
+                className="px-8 py-4 min-h-[52px] text-sm sm:text-base font-black text-white bg-gradient-to-r from-violet-700 via-indigo-700 to-blue-700 hover:from-violet-800 hover:to-indigo-800 rounded-2xl transition-all flex items-center gap-2.5 cursor-pointer shadow-xl hover:scale-105"
               >
-                <Download className="w-4 h-4" />
-                <span>Download Booking Receipt</span>
+                <Download className="w-5 h-5 text-amber-300" />
+                <span>Download Official Ticket &amp; Receipt</span>
+              </button>
+
+              <button
+                type="button"
+                id="open-screen-ticket-btn"
+                onClick={() => setIsDirectModalOpen(true)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '2px solid #000000',
+                }}
+                className="px-6 py-4 min-h-[52px] text-sm sm:text-base font-black text-black hover:bg-black hover:text-white rounded-2xl transition-all flex items-center gap-2 cursor-pointer shadow-md"
+              >
+                <Sparkles className="w-4 h-4 text-violet-700" />
+                <span>View Ticket On Screen</span>
               </button>
 
               <button
@@ -829,14 +933,323 @@ ${isBooking
                 id="back-to-plan-btn"
                 onClick={() => setViewState('form')}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.90)',
-                  border: '1.5px solid #000000',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '2px solid #000000',
                 }}
-                className="px-5 py-3.5 min-h-[46px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm backdrop-blur-xs"
+                className="px-6 py-4 min-h-[52px] text-sm sm:text-base font-black text-black hover:bg-black hover:text-white rounded-2xl transition-all flex items-center gap-2 cursor-pointer shadow-md"
               >
                 <RotateCcw className="w-4 h-4" />
-                <span>Edit / Book Another</span>
+                <span>Book Another Seat / Edit</span>
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DIRECT ON-SCREEN MODAL / POPUP: Instant View without Scrolling */}
+      {isDirectModalOpen && (
+        <div
+          id="direct-ticket-modal-backdrop"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsDirectModalOpen(false);
+            }
+          }}
+        >
+          <div
+            id="direct-ticket-modal-content"
+            style={{
+              background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
+              border: '3px solid #000000',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.5), 0 4px 20px rgba(0,0,0,0.3)',
+            }}
+            className="relative w-full max-w-3xl rounded-[32px] overflow-hidden my-auto max-h-[92vh] flex flex-col shadow-2xl animate-scale-up text-slate-950"
+            role="dialog"
+            aria-modal="true"
+            aria-label={viewState === 'paid_confirmed' ? 'Congratulations Booking Ticket' : 'Thank You Inquiry'}
+          >
+            {/* Modal Header Bar */}
+            <div className="px-6 py-4 bg-gradient-to-r from-slate-950 via-indigo-950 to-purple-950 text-white flex items-center justify-between border-b-2 border-black shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center text-amber-300 font-black text-sm border border-white/20">
+                  TH
+                </div>
+                <div>
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-indigo-300 font-bold block">
+                    Tripholic Travel Pass
+                  </span>
+                  <span className="text-sm sm:text-base font-extrabold text-white">
+                    {viewState === 'paid_confirmed' ? 'Official Booking Confirmation' : 'Inquiry Slip'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  id="direct-modal-close-btn"
+                  onClick={() => setIsDirectModalOpen(false)}
+                  className="w-9 h-9 rounded-full bg-white/15 hover:bg-white text-white hover:text-black border border-white/30 flex items-center justify-center transition-all cursor-pointer font-bold"
+                  title="Close Screen"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="p-5 sm:p-8 overflow-y-auto space-y-6">
+              {viewState === 'paid_confirmed' ? (
+                /* CONGRATULATIONS ON-SCREEN CONTENT */
+                <div className="space-y-6 text-center">
+                  {/* Top Celebration Header */}
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-950 border-2 border-black font-mono text-xs sm:text-sm font-black shadow-sm">
+                      <Sparkles className="w-4 h-4 text-emerald-700" />
+                      <span>OFFICIAL CONFIRMATION • ₹250 ADVANCE PAID</span>
+                      <Sparkles className="w-4 h-4 text-emerald-700" />
+                    </div>
+
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-950 font-heading">
+                      🎉 CONGRATULATIONS! 🎉
+                    </h2>
+
+                    <p className="text-base sm:text-xl font-black text-violet-950">
+                      {name || 'Valued Traveler'}, your seat for <span className="underline decoration-violet-500 decoration-3">{destination}</span> is reserved!
+                    </p>
+                  </div>
+
+                  {/* High-Fidelity Boarding Pass Ticket */}
+                  <div
+                    style={{
+                      background: '#ffffff',
+                      border: '2.5px solid #000000',
+                      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+                    }}
+                    className="rounded-3xl p-5 sm:p-7 text-left space-y-5 relative overflow-hidden"
+                  >
+                    {/* Ticket Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b-2 border-dashed border-slate-300">
+                      <div>
+                        <span className="text-[10px] font-mono uppercase font-bold text-slate-500 block">Booking Reference</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl sm:text-2xl font-mono font-black text-black tracking-wider">{bookingId}</span>
+                          <button
+                            type="button"
+                            onClick={handleCopyBookingCode}
+                            className="text-xs px-2 py-1 bg-slate-100 hover:bg-black hover:text-white rounded-lg border border-black font-mono font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                            title="Copy code"
+                          >
+                            {copiedCode ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            <span>{copiedCode ? 'Copied' : 'Copy'}</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-300 text-right">
+                        <span className="text-[10px] font-mono uppercase text-emerald-800 font-bold block">Token Status</span>
+                        <span className="text-sm sm:text-base font-mono font-black text-emerald-900">₹ 250 Paid (Locked)</span>
+                      </div>
+                    </div>
+
+                    {/* Trip Details Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 p-4 rounded-2xl bg-slate-50 border border-black/10">
+                      <div>
+                        <span className="text-[10px] font-mono uppercase font-bold text-slate-500 block">Destination</span>
+                        <p className="text-base font-black text-black flex items-center gap-1">
+                          <MapPin className="w-4 h-4 text-violet-700 shrink-0" />
+                          <span className="truncate">{destination}</span>
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-[10px] font-mono uppercase font-bold text-slate-500 block">Travel Date</span>
+                        <p className="text-sm font-black text-black flex items-center gap-1">
+                          <Calendar className="w-4 h-4 text-violet-700 shrink-0" />
+                          <span>{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-[10px] font-mono uppercase font-bold text-slate-500 block">Passengers</span>
+                        <p className="text-base font-black text-black flex items-center gap-1">
+                          <Users className="w-4 h-4 text-violet-700 shrink-0" />
+                          <span>{members} Reserved Seat(s)</span>
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-[10px] font-mono uppercase font-bold text-slate-500 block">Primary Contact</span>
+                        <p className="text-sm font-black text-black truncate">
+                          {name} ({contactNumber})
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Special Preferences & Budget Info */}
+                    {(specialRequest || confirmedBudget) && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                        <div className="p-2.5 rounded-xl bg-slate-100/80 border border-slate-200">
+                          <span className="text-slate-500 font-bold block">Estimated Budget:</span>
+                          <span className="text-black font-extrabold text-sm">{confirmedBudget}</span>
+                        </div>
+                        {specialRequest && (
+                          <div className="p-2.5 rounded-xl bg-slate-100/80 border border-slate-200">
+                            <span className="text-slate-500 font-bold block">Special Request:</span>
+                            <span className="text-black font-bold text-xs truncate block">{specialRequest}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Barcode & Security Stamp */}
+                    <div className="pt-3 border-t-2 border-dashed border-slate-300 flex flex-wrap items-center justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="font-mono text-[9px] text-slate-500 tracking-widest">VALIDATED BOARDING PASS TICKET</div>
+                        <div className="flex items-center gap-1 font-mono text-sm tracking-widest text-slate-800 select-none">
+                          ||| | |||| | || ||||| ||| || |||| ||| ||||
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs font-mono font-extrabold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <span>100% Guaranteed Slot</span>
+                      </div>
+                    </div>
+
+                    {/* WhatsApp Notice */}
+                    <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs font-medium space-y-1">
+                      <div className="flex items-center gap-1.5 font-extrabold text-emerald-900">
+                        <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
+                        <span>Trip Concierge WhatsApp Notification Active</span>
+                      </div>
+                      <p className="text-slate-700 leading-relaxed font-semibold">
+                        Our lead travel coordinator will contact <span className="underline font-bold text-black">{contactNumber}</span> within 4 hours to coordinate pickup, hotel vouchers, and special requests.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* THANK YOU ON-SCREEN CONTENT */
+                <div className="space-y-6 text-center">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-violet-700 to-indigo-700 text-white flex items-center justify-center border-2 border-black shadow-md">
+                    <Sparkles className="w-8 h-8 text-amber-300" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-950 font-heading">
+                      THANK YOU
+                    </h2>
+                    <div className="inline-block px-4 py-1 rounded-full bg-slate-100 border border-black text-black font-mono text-xs font-extrabold">
+                      Inquiry Ref: {inquiryId}
+                    </div>
+                  </div>
+
+                  <div className="p-5 rounded-2xl bg-slate-50 border-2 border-black text-slate-950 space-y-2 text-left">
+                    <p className="text-base sm:text-lg font-extrabold text-black leading-relaxed">
+                      Thank you for visiting us! We will review your data and tell you if any seats are available for that date.
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-700 font-semibold leading-relaxed">
+                      Our trip coordinators will check live local slot availability, transportation schedules, and accommodation options for{' '}
+                      <strong className="text-black font-extrabold">{destination}</strong> and notify you promptly via your provided details.
+                    </p>
+                  </div>
+
+                  {/* Inquiry details summary */}
+                  <div className="p-4 rounded-2xl bg-white border border-black/15 text-left text-xs font-mono space-y-2 text-black shadow-xs">
+                    <div className="flex justify-between items-center pb-2 border-b border-black/10 font-extrabold">
+                      <span>Inquiry Summary</span>
+                      <span className="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        Status: Pending Review
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-semibold">
+                      <div>
+                        <span className="text-slate-500">Destination:</span>{' '}
+                        <span className="font-extrabold text-black">{destination || tripSummary.destination}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Date:</span>{' '}
+                        <span className="font-extrabold text-black">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Travelers:</span>{' '}
+                        <span className="font-extrabold text-black">{members} Person(s)</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Budget:</span>{' '}
+                        <span className="font-extrabold text-black">{confirmedBudget}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Bottom Footer Actions */}
+            <div className="p-4 sm:p-5 bg-slate-50 border-t-2 border-black flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  id="direct-modal-download-btn"
+                  onClick={() => handleDownloadReceipt(viewState === 'paid_confirmed' ? 'booking' : 'inquiry')}
+                  style={{
+                    border: '1.5px solid #000000',
+                  }}
+                  className="px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                >
+                  <Download className="w-4 h-4 text-amber-300" />
+                  <span>Download {viewState === 'paid_confirmed' ? 'Ticket & Receipt' : 'Inquiry Slip'}</span>
+                </button>
+
+                {viewState === 'paid_confirmed' && (
+                  <button
+                    type="button"
+                    id="direct-modal-print-btn"
+                    onClick={handlePrint}
+                    style={{
+                      border: '1.5px solid #000000',
+                    }}
+                    className="px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-extrabold text-black bg-white hover:bg-slate-100 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    title="Print ticket voucher"
+                  >
+                    <Printer className="w-4 h-4" />
+                    <span className="hidden sm:inline">Print</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                {viewState === 'time_to_think' ? (
+                  <button
+                    type="button"
+                    id="modal-ready-to-book-btn"
+                    onClick={() => {
+                      setIsDirectModalOpen(false);
+                      setViewState('form');
+                    }}
+                    style={{
+                      border: '1.5px solid #000000',
+                    }}
+                    className="px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                  >
+                    <Armchair className="w-4 h-4" />
+                    <span>Ready to Book ₹250</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    id="modal-close-explore-btn"
+                    onClick={() => setIsDirectModalOpen(false)}
+                    style={{
+                      border: '1.5px solid #000000',
+                    }}
+                    className="px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-extrabold text-black bg-white hover:bg-black hover:text-white rounded-xl transition-all cursor-pointer shadow-xs"
+                  >
+                    Close &amp; View Plan
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -844,3 +1257,4 @@ ${isBooking
     </section>
   );
 };
+
