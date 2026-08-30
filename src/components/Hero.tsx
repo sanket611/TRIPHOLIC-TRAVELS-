@@ -4,9 +4,7 @@ import {
   MapPin,
   ShieldCheck,
   UtensilsCrossed,
-  RefreshCw,
   TrendingUp,
-  Image as ImageIcon,
   Compass,
   ArrowRight,
   Plane,
@@ -14,24 +12,18 @@ import {
   Heart,
 } from 'lucide-react';
 import { TravelPreferences, TravelStyle } from '../types';
-import { Wallpaper, NATURE_TRIP_WALLPAPERS } from '../wallpapers';
 
 interface HeroProps {
   onSelectPreset: (prefs: Partial<TravelPreferences>) => void;
   onScrollToForm?: () => void;
   onOpenDestinationsModal?: () => void;
-  currentWallpaper?: Wallpaper;
-  onChangeWallpaper?: (wallpaper?: Wallpaper) => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onSelectPreset,
   onScrollToForm,
   onOpenDestinationsModal,
-  currentWallpaper,
-  onChangeWallpaper,
 }) => {
-  const [showWallpaperPicker, setShowWallpaperPicker] = useState(false);
   const [destinationFilter, setDestinationFilter] = useState<'india' | 'all'>('india');
 
   const curatedDestinations = [
@@ -237,119 +229,48 @@ export const Hero: React.FC<HeroProps> = ({
 
   return (
     <section
-      style={{
-        background: 'rgba(255, 255, 255, 0.25)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: '1.5px solid #000000',
-        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.08)',
-      }}
-      className="relative overflow-hidden py-8 sm:py-12 mb-8 rounded-[32px] transition-all"
+      className="relative overflow-hidden py-8 sm:py-10 mb-8 rounded-3xl transition-all bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.04)]"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-8 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
-          {/* Top Welcome Badge */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-5">
+          {/* Top Welcome Badge with Distinct Background Color */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-4">
             <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.95)',
-                border: '1.5px solid #000000',
-              }}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-black text-xs sm:text-sm font-mono font-extrabold shadow-sm backdrop-blur-md"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-indigo-900 bg-indigo-50 border border-indigo-200/80 text-xs sm:text-sm font-semibold shadow-2xs"
             >
-              <Sparkles className="w-4 h-4 text-violet-700 shrink-0" />
-              <span>WELCOME TO TRIPHOLIC • YOUR SMART TRAVEL &amp; BOOKING PLANNER</span>
+              <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+              <span>Smart Travel &amp; Seat Booking Platform</span>
             </div>
-
-            {currentWallpaper && onChangeWallpaper && (
-              <div className="relative">
-                <button
-                  onClick={() => setShowWallpaperPicker(!showWallpaperPicker)}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.92)',
-                    border: '1.5px solid #000000',
-                  }}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-black text-xs sm:text-sm font-bold hover:bg-black hover:text-white transition-all cursor-pointer shadow-sm backdrop-blur-md"
-                  title="Change scenic 4K nature background"
-                >
-                  <ImageIcon className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                  <span className="font-bold">{currentWallpaper.location}</span>
-                  <RefreshCw className="w-3 h-3 ml-0.5 text-violet-600 shrink-0" />
-                </button>
-
-                {/* Wallpaper Quick Switcher Dropdown */}
-                {showWallpaperPicker && (
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.96)',
-                      border: '1.5px solid #000000',
-                    }}
-                    className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-80 sm:w-96 p-3 rounded-2xl shadow-2xl z-50 backdrop-blur-xl animate-fade-in"
-                  >
-                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-black/10">
-                      <span className="text-xs font-mono font-extrabold uppercase text-black">
-                        Choose Scenic Wallpaper
-                      </span>
-                      <button
-                        onClick={() => onChangeWallpaper()}
-                        className="text-[11px] font-bold text-violet-700 hover:underline cursor-pointer flex items-center gap-1"
-                      >
-                        <RefreshCw className="w-3 h-3" /> Randomize
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
-                      {NATURE_TRIP_WALLPAPERS.map((wp) => (
-                        <button
-                          key={wp.id}
-                          onClick={() => {
-                            onChangeWallpaper(wp);
-                            setShowWallpaperPicker(false);
-                          }}
-                          style={{
-                            border: currentWallpaper.id === wp.id ? '2px solid #000000' : '1px solid #e2e8f0',
-                          }}
-                          className="flex items-center gap-2 p-1.5 rounded-xl text-left hover:bg-slate-100 transition-all cursor-pointer group"
-                        >
-                          <img
-                            src={wp.url}
-                            alt={wp.location}
-                            className="w-9 h-9 rounded-lg object-cover shrink-0 group-hover:scale-105 transition-transform"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-xs font-extrabold text-black truncate leading-tight">{wp.location}</p>
-                            <p className="text-[10px] text-slate-600 truncate">{wp.country}</p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
-          {/* High-Impact Welcoming Hero Headline */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight leading-[1.15] sm:leading-[1.1] mb-4 font-heading drop-shadow-sm">
-            Welcome to <span className="text-black underline decoration-amber-400 decoration-4">Tripholic</span> <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-800 via-indigo-700 to-blue-700">
-              Plan Your Dream Trip &amp; Book Seats Instantly.
-            </span>
-          </h1>
+          {/* High-Impact Welcoming Hero Headline with Custom Background Highlight & Color */}
+          <div className="mb-4 space-y-2">
+            <div className="inline-block">
+              <span
+                className="inline-block px-5 py-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-700 text-white text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight font-heading shadow-md shadow-indigo-500/20"
+              >
+                Welcome to <span className="text-amber-300 underline decoration-white/60 decoration-2">Tripholic</span>
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight font-heading">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+                Plan Your Dream Trip &amp; Book Seats Instantly.
+              </span>
+            </h1>
+          </div>
 
           {/* Clean Subtitle */}
-          <p className="text-sm sm:text-lg text-slate-950 font-bold leading-relaxed mb-6 max-w-3xl mx-auto">
-            Explore top Indian destinations and international getaways. Generate custom day-by-day itineraries with photos, budget breakdown, and reserve your seats with ease.
+          <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed mb-6 max-w-3xl mx-auto">
+            Explore curated Indian destinations and international getaways. Generate custom day-by-day itineraries with photos, budget breakdown, and reserve your seats with ease.
           </p>
 
           {/* Primary Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5 mb-8">
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-7">
             {onOpenDestinationsModal && (
               <button
                 onClick={onOpenDestinationsModal}
-                style={{
-                  border: '2px solid #000000',
-                }}
-                className="px-6 py-3 min-h-[46px] rounded-2xl bg-black text-white hover:bg-violet-800 text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer shadow-md hover:scale-105"
+                className="px-5 py-2.5 min-h-[42px] rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:scale-[1.02]"
               >
                 <Grid className="w-4 h-4 text-amber-300" />
                 <span>Browse All 25+ Available Places</span>
@@ -359,47 +280,37 @@ export const Hero: React.FC<HeroProps> = ({
             {onScrollToForm && (
               <button
                 onClick={onScrollToForm}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  border: '2px solid #000000',
-                }}
-                className="px-6 py-3 min-h-[46px] rounded-2xl text-black hover:bg-black hover:text-white text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                className="px-5 py-2.5 min-h-[42px] rounded-xl text-slate-800 bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs hover:border-slate-300"
               >
-                <Compass className="w-4 h-4 text-violet-700" />
+                <Compass className="w-4 h-4 text-indigo-600" />
                 <span>Start Custom Trip Planner</span>
               </button>
             )}
           </div>
 
-          {/* Trending Popular Destinations Header with Region Tabs */}
+          {/* Trending Popular Destinations Header with Region Tabs & Crisp Thumbnails */}
           <div className="text-left">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 px-1">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5 px-1">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-violet-700" />
-                <span className="text-xs sm:text-sm font-mono font-black uppercase tracking-wider text-black">
+                <TrendingUp className="w-4 h-4 text-indigo-600" />
+                <span className="text-xs sm:text-sm font-semibold text-slate-900">
                   Popular Destinations (1-Click Auto Fill)
                 </span>
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200/80">
                 <button
                   onClick={() => setDestinationFilter('india')}
-                  style={{
-                    border: '1px solid #000000',
-                  }}
-                  className={`px-3 py-1 text-xs font-mono font-extrabold rounded-lg cursor-pointer transition-all ${
-                    destinationFilter === 'india' ? 'bg-black text-white' : 'bg-white/90 text-black hover:bg-slate-200'
+                  className={`px-3 py-1 text-xs font-semibold rounded-lg cursor-pointer transition-all ${
+                    destinationFilter === 'india' ? 'bg-white text-indigo-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   🇮🇳 India Places ({curatedDestinations.filter((d) => d.region === 'India').length})
                 </button>
                 <button
                   onClick={() => setDestinationFilter('all')}
-                  style={{
-                    border: '1px solid #000000',
-                  }}
-                  className={`px-3 py-1 text-xs font-mono font-extrabold rounded-lg cursor-pointer transition-all ${
-                    destinationFilter === 'all' ? 'bg-black text-white' : 'bg-white/90 text-black hover:bg-slate-200'
+                  className={`px-3 py-1 text-xs font-semibold rounded-lg cursor-pointer transition-all ${
+                    destinationFilter === 'all' ? 'bg-white text-indigo-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   🌍 All Destinations ({curatedDestinations.length})
@@ -415,32 +326,31 @@ export const Hero: React.FC<HeroProps> = ({
                     onSelectPreset(dest);
                     if (onScrollToForm) onScrollToForm();
                   }}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.92)',
-                    border: '1.5px solid #000000',
-                  }}
-                  className="group relative overflow-hidden rounded-2xl p-2.5 text-left hover:scale-[1.03] active:scale-98 transition-all cursor-pointer shadow-sm backdrop-blur-md flex flex-col justify-between h-40"
+                  className="group relative overflow-hidden rounded-2xl p-2.5 text-left hover:scale-[1.02] active:scale-98 transition-all cursor-pointer bg-white border border-slate-200/90 hover:border-indigo-300 shadow-xs hover:shadow-md flex flex-col justify-between h-44"
                 >
+                  {/* Crisp, clearly visible nature / destination picture */}
                   <img
                     src={dest.image}
                     alt={dest.destination}
                     referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-40 group-hover:opacity-50"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-95"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent pointer-events-none" />
+
                   <div className="relative z-10 flex items-center justify-between">
-                    <span className="px-2 py-0.5 text-[10px] font-mono font-extrabold bg-black text-amber-300 rounded-md shadow-xs">
+                    <span className="px-2 py-0.5 text-[10px] font-semibold bg-white/90 backdrop-blur-md text-slate-800 rounded-md shadow-2xs border border-white/40">
                       {dest.tag}
                     </span>
-                    <span className="text-[10px] font-mono font-black text-black bg-white/95 px-1.5 py-0.5 rounded border border-black shadow-2xs">
+                    <span className="text-[10px] font-mono font-bold text-white bg-slate-900/80 px-1.5 py-0.5 rounded border border-white/20 backdrop-blur-xs">
                       {dest.duration}D
                     </span>
                   </div>
-                  <div className="relative z-10 bg-white/95 p-2.5 rounded-xl border border-black shadow-xs">
-                    <p className="text-xs sm:text-sm font-black text-black truncate flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-violet-700 shrink-0" />
+                  <div className="relative z-10 bg-white/95 backdrop-blur-md p-2 rounded-xl border border-slate-200/80 shadow-2xs">
+                    <p className="text-xs sm:text-sm font-bold text-slate-900 truncate flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                       <span className="truncate">{dest.destination}</span>
                     </p>
-                    <p className="text-[11px] text-slate-800 font-extrabold truncate">
+                    <p className="text-[11px] text-slate-600 font-medium truncate">
                       {dest.currency} {dest.budget.toLocaleString()} • {dest.country}
                     </p>
                   </div>

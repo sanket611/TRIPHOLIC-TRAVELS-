@@ -123,54 +123,33 @@ Plan generated with Tripholic AI Travel Planner.`;
   return (
     <div
       id="trip-summary-card"
-      style={{
-        background: 'rgba(255, 255, 255, 0.22)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: '1.5px solid #000000',
-        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.08)',
-      }}
-      className="rounded-[32px] overflow-hidden mb-8 transition-all duration-300"
+      className="rounded-3xl overflow-hidden mb-8 transition-all duration-300 bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.04)]"
     >
-      {/* Translucent Glass Top Banner with Destination & Actions */}
+      {/* Light Clean Top Banner with Destination & Actions */}
       <div
-        style={{
-          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.90) 0%, rgba(30, 27, 75, 0.85) 50%, rgba(49, 46, 129, 0.82) 100%)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: '1.5px solid #000000',
-        }}
-        className="p-5 sm:p-8 text-white relative"
+        className="p-5 sm:p-7 bg-gradient-to-r from-indigo-50/70 via-slate-50 to-purple-50/70 border-b border-slate-200/80 relative"
       >
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 sm:gap-6">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
           <div>
-            <div className="flex flex-wrap items-center gap-2 mb-2.5">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
               <span
-                style={{
-                  background: 'rgba(255, 255, 255, 0.90)',
-                  border: '1.5px solid #000000',
-                }}
-                className="px-3.5 py-1 text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black rounded-full flex items-center gap-1.5 shadow-sm backdrop-blur-md"
+                className="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-700 bg-indigo-100/80 border border-indigo-200/60 rounded-full flex items-center gap-1.5 shadow-2xs"
               >
-                <Sparkles className="w-4 h-4 fill-current text-violet-700" />
+                <Sparkles className="w-3.5 h-3.5 fill-current text-indigo-600" />
                 <span>AI ITINERARY GENERATED</span>
               </span>
               <span
-                style={{
-                  background: 'rgba(255, 255, 255, 0.90)',
-                  border: '1.5px solid #000000',
-                }}
-                className="px-3.5 py-1 text-xs sm:text-sm font-mono font-extrabold text-black rounded-full flex items-center gap-1.5 backdrop-blur-md shadow-sm"
+                className="px-3 py-1 text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 rounded-full flex items-center gap-1.5 shadow-2xs"
               >
-                <Sun className="w-4 h-4 text-amber-600" />
+                <Sun className="w-3.5 h-3.5 text-amber-600" />
                 <span>{tripSummary.bestSeason}</span>
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-2 font-heading drop-shadow-md">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 mb-1 font-heading">
               {tripSummary.destination}
             </h1>
-            <p className="text-sm sm:text-base text-indigo-100 max-w-2xl font-medium drop-shadow-sm">
+            <p className="text-sm sm:text-base text-slate-600 max-w-2xl font-medium">
               {tripSummary.tripVibe}
             </p>
           </div>
@@ -185,10 +164,7 @@ Plan generated with Tripholic AI Travel Planner.`;
                   el.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              style={{
-                border: '1.5px solid #000000',
-              }}
-              className="px-4 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 active:scale-95 text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
               title="Confirm your seat reservation now"
             >
               <Armchair className="w-4 h-4 text-amber-300" />
@@ -198,12 +174,10 @@ Plan generated with Tripholic AI Travel Planner.`;
             <button
               id="save-trip-btn"
               onClick={handleSave}
-              style={{
-                background: isSaved || justSaved ? '#f59e0b' : 'rgba(255, 255, 255, 0.90)',
-                border: '1.5px solid #000000',
-              }}
-              className={`px-4 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95 text-black ${
-                isSaved || justSaved ? 'hover:bg-amber-400' : 'hover:bg-black hover:text-white'
+              className={`px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95 border ${
+                isSaved || justSaved
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
               }`}
               title="Save to local browser storage"
             >
@@ -214,7 +188,7 @@ Plan generated with Tripholic AI Travel Planner.`;
                 </>
               ) : (
                 <>
-                  <Bookmark className="w-4 h-4" />
+                  <Bookmark className="w-4 h-4 text-slate-500" />
                   <span>Save Trip</span>
                 </>
               )}
@@ -223,21 +197,17 @@ Plan generated with Tripholic AI Travel Planner.`;
             <button
               id="share-trip-btn"
               onClick={handleShare}
-              style={{
-                background: 'rgba(255, 255, 255, 0.90)',
-                border: '1.5px solid #000000',
-              }}
-              className="px-4 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white active:bg-slate-900 flex items-center justify-center gap-1.5 transition-all cursor-pointer backdrop-blur-md shadow-sm"
+              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
               title="Share or copy itinerary link"
             >
               {sharedToast || copied ? (
                 <>
                   <Check className="w-4 h-4 text-emerald-600" />
-                  <span className="text-emerald-700 font-extrabold">Copied!</span>
+                  <span className="text-emerald-700 font-bold">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Share2 className="w-4 h-4 text-indigo-700" />
+                  <Share2 className="w-4 h-4 text-indigo-600" />
                   <span>Share Plan</span>
                 </>
               )}
@@ -246,102 +216,75 @@ Plan generated with Tripholic AI Travel Planner.`;
             <button
               id="print-plan-btn"
               onClick={() => window.print()}
-              style={{
-                background: 'rgba(255, 255, 255, 0.90)',
-                border: '1.5px solid #000000',
-              }}
-              className="px-4 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white active:bg-slate-900 flex items-center justify-center gap-1.5 transition-all cursor-pointer print:hidden backdrop-blur-md shadow-sm"
+              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center gap-1.5 transition-all cursor-pointer print:hidden shadow-2xs"
               title="Print or Save as PDF"
             >
-              <Printer className="w-4 h-4" />
+              <Printer className="w-4 h-4 text-slate-500" />
               <span>Print / PDF</span>
             </button>
 
             <button
               id="start-new-trip-btn"
               onClick={onStartNewTrip}
-              style={{
-                background: 'rgba(255, 255, 255, 0.90)',
-                border: '1.5px solid #000000',
-              }}
-              className="px-4 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white active:bg-slate-900 flex items-center justify-center gap-1 transition-all cursor-pointer backdrop-blur-md shadow-sm"
+              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center gap-1 transition-all cursor-pointer shadow-2xs"
               title="Create a new trip plan"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4 text-slate-500" />
               <span>New Trip</span>
             </button>
           </div>
         </div>
 
-        {/* Translucent Key Metrics Strip */}
+        {/* Key Metrics Strip */}
         <div
-          style={{
-            borderTop: '1.5px solid rgba(255, 255, 255, 0.25)',
-          }}
-          className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6"
+          className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-5 border-t border-slate-200/70"
         >
           <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.92)',
-              border: '1.5px solid #000000',
-            }}
-            className="rounded-2xl p-3.5 backdrop-blur-md shadow-sm"
+            className="rounded-2xl p-3.5 bg-white border border-slate-200 shadow-2xs"
           >
-            <span className="text-xs font-mono uppercase tracking-wider text-black font-extrabold block">Duration</span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <Calendar className="w-4 h-4 text-violet-700 shrink-0" />
-              <span className="text-sm sm:text-base font-extrabold text-black">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">Duration</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Calendar className="w-4 h-4 text-indigo-600 shrink-0" />
+              <span className="text-sm sm:text-base font-bold text-slate-900">
                 {tripSummary.duration} {tripSummary.duration === 1 ? 'Day' : 'Days'}
               </span>
             </div>
           </div>
 
           <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.92)',
-              border: '1.5px solid #000000',
-            }}
-            className="rounded-2xl p-3.5 backdrop-blur-md shadow-sm"
+            className="rounded-2xl p-3.5 bg-white border border-slate-200 shadow-2xs"
           >
-            <span className="text-xs font-mono uppercase tracking-wider text-black font-extrabold block">Travelers</span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <Users className="w-4 h-4 text-violet-700 shrink-0" />
-              <span className="text-sm sm:text-base font-extrabold text-black truncate">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">Travelers</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Users className="w-4 h-4 text-indigo-600 shrink-0" />
+              <span className="text-sm sm:text-base font-bold text-slate-900 truncate">
                 {tripSummary.travelers} {tripSummary.travelers === 1 ? 'Person' : 'People'}
               </span>
             </div>
           </div>
 
           <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.92)',
-              border: '1.5px solid #000000',
-            }}
-            className="rounded-2xl p-3.5 backdrop-blur-md shadow-sm"
+            className="rounded-2xl p-3.5 bg-white border border-slate-200 shadow-2xs"
           >
-            <span className="text-xs font-mono uppercase tracking-wider text-black font-extrabold block">Budget Cap</span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <DollarSign className="w-4 h-4 text-emerald-700 shrink-0" />
-              <span className="text-sm sm:text-base font-extrabold text-black truncate">{tripSummary.budgetFormatted}</span>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">Budget Cap</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <DollarSign className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span className="text-sm sm:text-base font-bold text-slate-900 truncate">{tripSummary.budgetFormatted}</span>
             </div>
             {perPersonPerDay > 0 && (
-              <span className="text-[11px] font-mono font-bold text-slate-600 block mt-0.5">
+              <span className="text-[11px] font-medium text-slate-500 block mt-0.5">
                 ~{budget.currency}{perPersonPerDay.toLocaleString()}/person/day
               </span>
             )}
           </div>
 
           <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.92)',
-              border: '1.5px solid #000000',
-            }}
-            className="rounded-2xl p-3.5 backdrop-blur-md shadow-sm"
+            className="rounded-2xl p-3.5 bg-white border border-slate-200 shadow-2xs"
           >
-            <span className="text-xs font-mono uppercase tracking-wider text-black font-extrabold block">Style & Diet</span>
-            <div className="flex items-center gap-1.5 mt-0.5" title={`Style: ${tripSummary.travelStyle} | Food: ${tripSummary.foodPreference}`}>
-              <Compass className="w-4 h-4 text-violet-700 shrink-0" />
-              <span className="text-xs sm:text-sm font-extrabold text-black truncate">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">Style & Diet</span>
+            <div className="flex items-center gap-1.5 mt-1" title={`Style: ${tripSummary.travelStyle} | Food: ${tripSummary.foodPreference}`}>
+              <Compass className="w-4 h-4 text-indigo-600 shrink-0" />
+              <span className="text-xs sm:text-sm font-bold text-slate-900 truncate">
                 {tripSummary.travelStyle} • {tripSummary.foodPreference}
               </span>
             </div>
@@ -350,17 +293,13 @@ Plan generated with Tripholic AI Travel Planner.`;
       </div>
 
       {/* Summary Narrative & Highlights */}
-      <div className="p-5 sm:p-8">
-        <div className="mb-6">
-          <h3 className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-2">
+      <div className="p-5 sm:p-7">
+        <div className="mb-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
             Trip Narrative & AI Synthesis
           </h3>
           <p
-            style={{
-              background: 'rgba(255, 255, 255, 0.88)',
-              border: '1.5px solid #000000',
-            }}
-            className="text-slate-950 text-sm sm:text-base leading-relaxed font-semibold p-4 sm:p-5 rounded-2xl backdrop-blur-md shadow-sm"
+            className="text-slate-700 text-sm sm:text-base leading-relaxed font-normal p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 shadow-2xs"
           >
             {tripSummary.summary}
           </p>
@@ -369,20 +308,16 @@ Plan generated with Tripholic AI Travel Planner.`;
         {/* Highlights Pills */}
         {tripSummary.highlights && tripSummary.highlights.length > 0 && (
           <div>
-            <h4 className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-2.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5">
               Key Itinerary Highlights
             </h4>
             <div className="flex flex-wrap gap-2">
               {tripSummary.highlights.map((highlight, idx) => (
                 <div
                   key={idx}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.92)',
-                    border: '1.5px solid #000000',
-                  }}
-                  className="px-3.5 py-2 rounded-xl text-black text-xs sm:text-sm font-extrabold flex items-center gap-2 shadow-sm backdrop-blur-md"
+                  className="px-3.5 py-1.5 rounded-xl text-slate-800 text-xs sm:text-sm font-medium flex items-center gap-2 bg-slate-50 border border-slate-200 shadow-2xs"
                 >
-                  <span className="text-violet-700 font-bold">▪</span>
+                  <span className="text-indigo-600 font-bold">▪</span>
                   <span>{highlight}</span>
                 </div>
               ))}

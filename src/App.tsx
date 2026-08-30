@@ -15,19 +15,14 @@ import { SavedTripsModal } from './components/SavedTripsModal';
 import { PromptDocsModal } from './components/PromptDocsModal';
 import { TestSuiteModal } from './components/TestSuiteModal';
 import { AvailableDestinationsModal } from './components/AvailableDestinationsModal';
-import { BackgroundWallpaper } from './components/BackgroundWallpaper';
 import { Footer } from './components/Footer';
 import { TravelPreferences, TripPlan } from './types';
-import { getRandomWallpaper, Wallpaper } from './wallpapers';
 import { generatePlan, modifyPlan } from './plannerEngine';
 import { AlertCircle } from 'lucide-react';
 
 const LOCAL_STORAGE_SAVED_KEY = 'tripgenie_saved_trips_v1';
 
 export function App() {
-  // Scenic Nature & Trip Wallpaper State (picks a random nature spot on every page open/refresh)
-  const [currentWallpaper, setCurrentWallpaper] = useState<Wallpaper>(() => getRandomWallpaper());
-
   // Application State
   const [currentPlan, setCurrentPlan] = useState<TripPlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -215,27 +210,12 @@ export function App() {
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // Change wallpaper to specific or randomized destination
-  const handleWallpaperChange = (wallpaper?: Wallpaper) => {
-    if (wallpaper) {
-      setCurrentWallpaper(wallpaper);
-    } else {
-      setCurrentWallpaper((prev) => getRandomWallpaper(prev.id));
-    }
-  };
-
   const isCurrentPlanSaved = currentPlan
     ? savedTrips.some((t) => t.id === currentPlan.id)
     : false;
 
   return (
-    <div className="min-h-screen text-slate-900 flex flex-col font-sans selection:bg-indigo-500 selection:text-white relative">
-      {/* Dynamic Scenic Nature & Trip Ambient Wallpaper */}
-      <BackgroundWallpaper
-        currentWallpaper={currentWallpaper}
-        onChangeWallpaper={handleWallpaperChange}
-      />
-
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-indigo-500 selection:text-white relative">
       {/* Header */}
       <Header
         savedTripsCount={savedTrips.length}
@@ -270,8 +250,6 @@ export function App() {
         {!currentPlan && !isLoading && (
           <Hero
             onSelectPreset={handleSelectPreset}
-            currentWallpaper={currentWallpaper}
-            onChangeWallpaper={handleWallpaperChange}
             onOpenDestinationsModal={() => setIsDestinationsModalOpen(true)}
           />
         )}

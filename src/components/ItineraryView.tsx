@@ -7,11 +7,9 @@ import {
   MapPin,
   Clock,
   Navigation,
-  DollarSign,
   ChevronDown,
   ChevronUp,
   BedDouble,
-  Compass,
   ExternalLink,
   Copy,
   Check,
@@ -20,9 +18,17 @@ import {
   Image as ImageIcon,
   Eye,
   X,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  Camera,
 } from 'lucide-react';
 import { DayItinerary } from '../types';
-import { getDayScenicPhoto } from '../data/destinationImages';
+import {
+  getDayPhotoGallery,
+  getDaySlotPhoto,
+  ScenicPhotoInfo,
+} from '../data/destinationImages';
 
 interface ItineraryViewProps {
   itinerary: DayItinerary[];
@@ -32,13 +38,20 @@ interface ItineraryViewProps {
 export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destination = '' }) => {
   const [activeDayFilter, setActiveDayFilter] = useState<number | 'all'>('all');
   const [copiedDay, setCopiedDay] = useState<number | null>(null);
-  const [viewingPhoto, setViewingPhoto] = useState<{
+  const [selectedPhotoSlot, setSelectedPhotoSlot] = useState<{ [day: number]: 'hero' | 'morning' | 'afternoon' | 'evening' }>({});
+
+  // Full-screen / Modal photo viewer state with carousel capabilities
+  const [modalPhoto, setModalPhoto] = useState<{
     url: string;
     title: string;
     caption: string;
     day: number;
     theme: string;
+    slotName: string;
+    galleryIndex: number;
+    galleryList: ScenicPhotoInfo[];
   } | null>(null);
+
   const [expandedDays, setExpandedDays] = useState<{ [day: number]: boolean }>(() => {
     const map: { [day: number]: boolean } = {};
     itinerary.forEach((d) => {
@@ -100,82 +113,116 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
   const allExpanded = Object.keys(expandedDays).length === itinerary.length && Object.values(expandedDays).every(Boolean);
 
+  const openPhotoModal = (
+    photo: ScenicPhotoInfo,
+    day: number,
+    theme: string,
+    slotName: string,
+    galleryList: ScenicPhotoInfo[]
+  ) => {
+    const idx = galleryList.findIndex((p) => p.url === photo.url);
+    setModalPhoto({
+      url: photo.url,
+      title: photo.title,
+      caption: photo.caption,
+      day,
+      theme,
+      slotName,
+      galleryIndex: idx >= 0 ? idx : 0,
+      galleryList,
+    });
+  };
+
+  const handleNextPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!modalPhoto || !modalPhoto.galleryList.length) return;
+    const nextIdx = (modalPhoto.galleryIndex + 1) % modalPhoto.galleryList.length;
+    const nextPhoto = modalPhoto.galleryList[nextIdx];
+    const slotNames = ['Day Highlight', 'Morning Spot', 'Afternoon Spot', 'Evening Spot'];
+    setModalPhoto({
+      ...modalPhoto,
+      url: nextPhoto.url,
+      title: nextPhoto.title,
+      caption: nextPhoto.caption,
+      galleryIndex: nextIdx,
+      slotName: slotNames[nextIdx % slotNames.length] || 'Scenic View',
+    });
+  };
+
+  const handlePrevPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!modalPhoto || !modalPhoto.galleryList.length) return;
+    const prevIdx = (modalPhoto.galleryIndex - 1 + modalPhoto.galleryList.length) % modalPhoto.galleryList.length;
+    const prevPhoto = modalPhoto.galleryList[prevIdx];
+    const slotNames = ['Day Highlight', 'Morning Spot', 'Afternoon Spot', 'Evening Spot'];
+    setModalPhoto({
+      ...modalPhoto,
+      url: prevPhoto.url,
+      title: prevPhoto.title,
+      caption: prevPhoto.caption,
+      galleryIndex: prevIdx,
+      slotName: slotNames[prevIdx % slotNames.length] || 'Scenic View',
+    });
+  };
+
   return (
     <section
       id="itinerary-section"
-      style={{
-        background: 'rgba(255, 255, 255, 0.22)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: '1.5px solid #000000',
-        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.08)',
-      }}
-      className="rounded-[32px] p-4 sm:p-8 mb-8 transition-all"
+      className="rounded-3xl p-4 sm:p-7 mb-8 transition-all bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.04)]"
     >
       {/* Section Title & Global Controls */}
       <div
-        style={{
-          borderBottom: '1.5px solid #000000',
-        }}
-        className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 sm:pb-6"
+        className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-slate-100"
       >
         <div>
           <div className="flex items-center gap-2.5 mb-1.5">
-            <span className="p-2 rounded-xl bg-black text-amber-300 shadow-sm border border-black">
+            <span className="p-2 rounded-xl bg-indigo-50 text-indigo-600 shadow-2xs border border-indigo-100">
               <Calendar className="w-5 h-5" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-950 tracking-tight font-heading">
-              Day-by-Day Travel Blueprint
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-heading flex items-center gap-2">
+              <span>Day-by-Day Travel Blueprint</span>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 hidden sm:inline-flex items-center gap-1">
+                <Camera className="w-3 h-3 text-indigo-600" />
+                <span>Distinct Photos Per Day</span>
+              </span>
             </h2>
           </div>
-          <p className="text-sm sm:text-base text-slate-950 font-bold">
-            Geographically clustered morning, afternoon, and evening slots with direct map navigation.
+          <p className="text-sm sm:text-base text-slate-600 font-normal">
+            Curated morning, afternoon, and evening slots with rich photos for every day and direct Google Maps navigation.
           </p>
         </div>
 
         {/* Global Expand & Filter Controls */}
-        <div className="flex flex-wrap items-center gap-2 font-mono">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={allExpanded ? handleCollapseAll : handleExpandAll}
-            style={{
-              background: 'rgba(255, 255, 255, 0.90)',
-              border: '1.5px solid #000000',
-            }}
-            className="px-3 py-1.5 min-h-[38px] rounded-xl text-xs font-extrabold text-black hover:bg-black hover:text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+            className="px-3.5 py-1.5 min-h-[36px] rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
             title={allExpanded ? 'Collapse all days' : 'Expand all days'}
           >
             {allExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-            <span>{allExpanded ? 'COLLAPSE ALL' : 'EXPAND ALL'}</span>
+            <span>{allExpanded ? 'Collapse All' : 'Expand All'}</span>
           </button>
 
           {/* Day Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none bg-slate-100/80 p-1 rounded-xl border border-slate-200/80">
             <button
               onClick={() => setActiveDayFilter('all')}
-              style={{
-                background: activeDayFilter === 'all' ? '#000000' : 'rgba(255, 255, 255, 0.90)',
-                border: '1.5px solid #000000',
-              }}
-              className={`px-3.5 py-1.5 min-h-[38px] rounded-xl text-xs font-extrabold transition-all shrink-0 cursor-pointer flex items-center shadow-sm ${
+              className={`px-3 py-1 min-h-[30px] rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer flex items-center ${
                 activeDayFilter === 'all'
-                  ? 'bg-black text-white shadow-md'
-                  : 'text-black hover:bg-black hover:text-white'
+                  ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              All Days ({itinerary.length})
+              All ({itinerary.length})
             </button>
             {itinerary.map((d) => (
               <button
                 key={d.day}
                 onClick={() => setActiveDayFilter(d.day)}
-                style={{
-                  background: activeDayFilter === d.day ? '#000000' : 'rgba(255, 255, 255, 0.90)',
-                  border: '1.5px solid #000000',
-                }}
-                className={`px-3 py-1.5 min-h-[38px] rounded-xl text-xs font-extrabold transition-all shrink-0 cursor-pointer flex items-center shadow-sm ${
+                className={`px-2.5 py-1 min-h-[30px] rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer flex items-center ${
                   activeDayFilter === d.day
-                    ? 'bg-black text-white shadow-md'
-                    : 'text-black hover:bg-black hover:text-white'
+                    ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 D{d.day}
@@ -189,54 +236,43 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
       <div className="space-y-4 sm:space-y-5 mt-6">
         {displayedDays.map((dayPlan) => {
           const isExpanded = expandedDays[dayPlan.day] ?? true;
+          const dayGallery = getDayPhotoGallery(destination, dayPlan.day, dayPlan.theme);
+          const currentSlotSelection = selectedPhotoSlot[dayPlan.day] || 'hero';
+          const displayedHeroPhoto = dayGallery[currentSlotSelection];
 
           return (
             <div
               key={dayPlan.day}
-              style={{
-                background: 'rgba(255, 255, 255, 0.88)',
-                border: '1.5px solid #000000',
-              }}
-              className="rounded-2xl backdrop-blur-md overflow-hidden shadow-sm hover:shadow-md transition-all"
+              className="rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all"
             >
               {/* Day Header Bar */}
               <div
                 onClick={() => toggleDayExpand(dayPlan.day)}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  borderBottom: isExpanded ? '1.5px solid #000000' : 'none',
-                }}
-                className="p-4 sm:p-5 min-h-[56px] flex items-center justify-between cursor-pointer select-none hover:bg-slate-50 transition-colors"
+                className={`p-4 sm:p-5 min-h-[56px] flex items-center justify-between cursor-pointer select-none transition-colors ${
+                  isExpanded ? 'border-b border-slate-100 bg-slate-50/40 hover:bg-slate-50/70' : 'hover:bg-slate-50'
+                }`}
               >
                 <div className="flex items-center gap-3 flex-1 pr-2 min-w-0">
-                  <span className="w-10 h-10 rounded-xl bg-black text-amber-300 font-mono font-extrabold text-sm flex items-center justify-center shrink-0 shadow-xs border border-black">
+                  <span className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 font-mono font-bold text-sm flex items-center justify-center shrink-0 border border-indigo-100">
                     D{dayPlan.day}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm sm:text-lg font-extrabold text-black truncate">
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate">
                         {dayPlan.title || `Day ${dayPlan.day}`}
                       </h3>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mt-1">
                       <span
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.95)',
-                          border: '1px solid #000000',
-                        }}
-                        className="text-xs font-mono font-extrabold text-black px-2.5 py-0.5 rounded-lg shadow-2xs"
+                        className="text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200/60 px-2.5 py-0.5 rounded-full"
                       >
                         {dayPlan.theme}
                       </span>
                       {dayPlan.stayArea && (
                         <span
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.95)',
-                            border: '1px solid #000000',
-                          }}
-                          className="text-xs font-extrabold text-black px-2.5 py-0.5 rounded-lg flex items-center gap-1 shadow-2xs"
+                          className="text-xs font-medium text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full flex items-center gap-1"
                         >
-                          <BedDouble className="w-3.5 h-3.5 text-violet-700 shrink-0" />
+                          <BedDouble className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                           <span className="truncate">Base: {dayPlan.stayArea}</span>
                         </span>
                       )}
@@ -246,428 +282,557 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
                 {/* Day Header Actions */}
                 <div className="flex items-center gap-2 shrink-0">
-                  {/* Scenic Photo View Button */}
+                  {/* Quick Photo Preview Button */}
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      const scenicPhoto = getDayScenicPhoto(destination, dayPlan.day, dayPlan.theme);
-                      setViewingPhoto({
-                        url: scenicPhoto.url,
-                        title: scenicPhoto.title,
-                        caption: scenicPhoto.caption,
-                        day: dayPlan.day,
-                        theme: dayPlan.theme,
-                      });
+                      openPhotoModal(
+                        displayedHeroPhoto,
+                        dayPlan.day,
+                        dayPlan.theme,
+                        `Day ${dayPlan.day} Highlights`,
+                        dayGallery.all
+                      );
                     }}
-                    style={{
-                      background: '#000000',
-                      border: '1.5px solid #000000',
-                    }}
-                    className="p-2 sm:px-3 text-xs font-mono font-extrabold rounded-xl text-amber-300 hover:bg-violet-900 transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
-                    title="View destination scenic photo"
+                    className="p-2 sm:px-3 text-xs font-semibold rounded-xl text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                    title="View Day Pictures Gallery"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    <span className="text-[11px] font-black hidden sm:inline">VIEW PICTURE</span>
+                    <span className="text-[11px] font-bold hidden sm:inline">Photos ({dayGallery.all.length})</span>
                   </button>
 
                   <button
                     onClick={(e) => handleCopyDay(dayPlan, e)}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      border: '1px solid #000000',
-                    }}
-                    className="p-2 text-xs font-mono font-extrabold rounded-xl text-black hover:bg-black hover:text-white transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
+                    className="p-2 text-xs font-semibold rounded-xl text-slate-700 hover:text-slate-950 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
                     title="Copy Day Schedule to Clipboard"
                   >
                     {copiedDay === dayPlan.day ? (
                       <>
                         <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        <span className="text-[11px] font-bold text-emerald-600 hidden sm:inline">COPIED</span>
+                        <span className="text-[11px] font-bold text-emerald-600 hidden sm:inline">Copied</span>
                       </>
                     ) : (
                       <>
                         <Copy className="w-3.5 h-3.5" />
-                        <span className="text-[11px] font-bold hidden sm:inline">COPY</span>
+                        <span className="text-[11px] font-bold hidden sm:inline">Copy</span>
                       </>
                     )}
                   </button>
 
-                  <div className="flex items-center gap-1 text-black">
-                    {isExpanded ? <ChevronUp className="w-5 h-5 font-extrabold" /> : <ChevronDown className="w-5 h-5 font-extrabold" />}
+                  <div className="flex items-center gap-1 text-slate-500">
+                    {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                   </div>
                 </div>
               </div>
 
-              {/* Day Body with Scenic Picture Column & 3 Time Slots */}
-              {isExpanded && (() => {
-                const scenicPhoto = getDayScenicPhoto(destination, dayPlan.day, dayPlan.theme);
-                return (
-                  <div className="p-4 sm:p-6 space-y-4">
-                    {/* Grid with Picture Column (left) and 3 Time Slots (right) */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-                      {/* Compact Picture Column */}
-                      <div
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.96)',
-                          border: '1.5px solid #000000',
-                        }}
-                        className="lg:col-span-3 rounded-2xl p-3 flex flex-col justify-between shadow-sm group hover:border-black transition-all"
-                      >
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-mono font-extrabold px-2 py-0.5 rounded bg-black text-amber-300 flex items-center gap-1">
-                              <ImageIcon className="w-3 h-3" />
-                              <span>DAY {dayPlan.day} PHOTO</span>
-                            </span>
-                            <span className="text-[10px] font-bold text-slate-600">Click to view</span>
-                          </div>
-
-                          {/* Clickable Scenic Thumbnail */}
-                          <div
-                            onClick={() =>
-                              setViewingPhoto({
-                                url: scenicPhoto.url,
-                                title: scenicPhoto.title,
-                                caption: scenicPhoto.caption,
-                                day: dayPlan.day,
-                                theme: dayPlan.theme,
-                              })
-                            }
-                            className="relative h-36 sm:h-44 rounded-xl overflow-hidden cursor-pointer border border-black group/img shadow-2xs"
-                          >
-                            <img
-                              src={scenicPhoto.url}
-                              alt={scenicPhoto.title}
-                              referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-500"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex flex-col justify-end p-2.5 text-white">
-                              <div className="flex items-center justify-between">
-                                <p className="text-xs font-black truncate drop-shadow-sm">{scenicPhoto.title}</p>
-                                <span className="p-1 rounded-md bg-white/30 backdrop-blur-xs text-white">
-                                  <Eye className="w-3.5 h-3.5" />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <p className="text-[11px] text-slate-800 font-bold leading-tight line-clamp-2">
-                            {scenicPhoto.caption}
-                          </p>
+              {/* Day Body with Multi-Photo Gallery Column (left) & 3 Time Slot Cards (right) */}
+              {isExpanded && (
+                <div className="p-4 sm:p-5 space-y-4 bg-slate-50/30">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+                    {/* Left Column: Interactive Multi-Photo Showcase */}
+                    <div
+                      className="lg:col-span-4 rounded-2xl p-3.5 flex flex-col justify-between bg-white border border-slate-200/90 shadow-2xs group hover:border-indigo-300 transition-all"
+                    >
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60 flex items-center gap-1 shadow-2xs">
+                            <Camera className="w-3 h-3 text-indigo-600" />
+                            <span>Day {dayPlan.day} Gallery</span>
+                          </span>
+                          <span className="text-[10px] font-medium text-slate-500">
+                            {dayGallery.all.length} Distinct Photos
+                          </span>
                         </div>
 
-                        <button
-                          type="button"
+                        {/* Clickable Featured Day Photo with Instant Fullscreen */}
+                        <div
                           onClick={() =>
-                            setViewingPhoto({
-                              url: scenicPhoto.url,
-                              title: scenicPhoto.title,
-                              caption: scenicPhoto.caption,
-                              day: dayPlan.day,
-                              theme: dayPlan.theme,
-                            })
+                            openPhotoModal(
+                              displayedHeroPhoto,
+                              dayPlan.day,
+                              dayPlan.theme,
+                              `${currentSlotSelection.toUpperCase()} PHOTO`,
+                              dayGallery.all
+                            )
                           }
-                          style={{
-                            border: '1px solid #000000',
-                          }}
-                          className="mt-2.5 w-full py-1.5 px-2 bg-black text-amber-300 hover:bg-violet-900 text-xs font-mono font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                          className="relative h-44 sm:h-52 rounded-xl overflow-hidden cursor-pointer border border-slate-200 group/img shadow-2xs"
                         >
-                          <Maximize2 className="w-3.5 h-3.5" />
-                          <span>View Full Picture</span>
-                        </button>
+                          <img
+                            src={displayedHeroPhoto.url}
+                            alt={displayedHeroPhoto.title}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex flex-col justify-between p-2.5 text-white">
+                            <div className="flex justify-end">
+                              <span className="p-1 rounded-md bg-slate-900/60 backdrop-blur-xs text-white border border-white/20 text-xs">
+                                <Maximize2 className="w-3.5 h-3.5" />
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-semibold uppercase tracking-wider text-amber-300 bg-slate-900/70 px-1.5 py-0.5 rounded backdrop-blur-xs">
+                                {currentSlotSelection === 'hero' ? 'Highlight' : currentSlotSelection}
+                              </span>
+                              <p className="text-xs font-bold truncate drop-shadow-sm mt-0.5">
+                                {displayedHeroPhoto.title}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Interactive Thumbnail Selector Tabs for Day-to-Day Exploration */}
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                            Explore Day {dayPlan.day} Vantage Points:
+                          </p>
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {(['hero', 'morning', 'afternoon', 'evening'] as const).map((slotKey) => {
+                              const photo = dayGallery[slotKey];
+                              const isSelected = currentSlotSelection === slotKey;
+                              const slotLabels: Record<string, string> = {
+                                hero: 'Spot',
+                                morning: 'Morn',
+                                afternoon: 'Noon',
+                                evening: 'Eve',
+                              };
+                              return (
+                                <button
+                                  key={slotKey}
+                                  type="button"
+                                  onClick={() =>
+                                    setSelectedPhotoSlot((prev) => ({
+                                      ...prev,
+                                      [dayPlan.day]: slotKey,
+                                    }))
+                                  }
+                                  className={`relative h-12 rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-105 ${
+                                    isSelected ? 'border-2 border-indigo-600 ring-2 ring-indigo-200 shadow-2xs' : 'border border-slate-200 opacity-75 hover:opacity-100'
+                                  }`}
+                                  title={`View ${slotKey} photo`}
+                                >
+                                  <img
+                                    src={photo.url}
+                                    alt={photo.title}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <span className="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[8px] font-semibold text-white text-center py-0.5 truncate">
+                                    {slotLabels[slotKey]}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <p className="text-[11px] text-slate-600 font-normal leading-tight line-clamp-2">
+                          {displayedHeroPhoto.caption}
+                        </p>
                       </div>
 
-                      {/* 3 Time Slots */}
-                      <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-3.5">
-                        {/* Morning Slot */}
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.95)',
-                            border: '1.5px solid #000000',
-                          }}
-                          className="rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group"
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-2.5">
-                              <span
-                                style={{
-                                  border: '1px solid #000000',
-                                }}
-                                className="inline-flex items-center gap-1.5 text-xs font-mono font-extrabold text-black bg-amber-300 px-2.5 py-1 rounded-lg"
-                              >
-                                <Sun className="w-3.5 h-3.5 text-amber-900" />
-                                <span>MORNING</span>
-                              </span>
-                              <span className="text-xs font-mono font-extrabold text-black flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" />
-                                {dayPlan.morning.time}
-                              </span>
-                            </div>
-
-                            <h4 className="text-sm sm:text-base font-extrabold text-black mb-1.5">
-                              {dayPlan.morning.activity}
-                            </h4>
-
-                            <div className="flex items-center justify-between gap-1 text-xs sm:text-sm font-extrabold text-violet-800 mb-2.5 bg-violet-50 p-1.5 rounded-lg border border-violet-200">
-                              <div className="flex items-center gap-1 truncate">
-                                <MapPin className="w-3.5 h-3.5 shrink-0 text-violet-700" />
-                                <span className="truncate">{dayPlan.morning.place}</span>
-                              </div>
-                              <button
-                                onClick={(e) => openGoogleMaps(dayPlan.morning.place, e)}
-                                className="text-[10px] font-bold text-violet-700 hover:text-black flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
-                                title="Open in Google Maps"
-                              >
-                                Maps <ExternalLink className="w-2.5 h-2.5" />
-                              </button>
-                            </div>
-
-                            <p className="text-xs sm:text-sm text-slate-900 leading-relaxed font-semibold">
-                              {dayPlan.morning.description}
-                            </p>
-                          </div>
-
-                          {dayPlan.morning.estCost && (
-                            <div
-                              style={{
-                                borderTop: '1px solid #e2e8f0',
-                              }}
-                              className="mt-3.5 pt-2.5 flex items-center justify-between text-xs sm:text-sm font-mono font-extrabold"
-                            >
-                              <span className="text-slate-600">Est. Cost:</span>
-                              <span className="font-extrabold text-black bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
-                                {dayPlan.morning.estCost}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Afternoon Slot */}
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.95)',
-                            border: '1.5px solid #000000',
-                          }}
-                          className="rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group"
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-2.5">
-                              <span
-                                style={{
-                                  border: '1px solid #000000',
-                                }}
-                                className="inline-flex items-center gap-1.5 text-xs font-mono font-extrabold text-black bg-sky-300 px-2.5 py-1 rounded-lg"
-                              >
-                                <Sunset className="w-3.5 h-3.5 text-sky-900" />
-                                <span>AFTERNOON</span>
-                              </span>
-                              <span className="text-xs font-mono font-extrabold text-black flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" />
-                                {dayPlan.afternoon.time}
-                              </span>
-                            </div>
-
-                            <h4 className="text-sm sm:text-base font-extrabold text-black mb-1.5">
-                              {dayPlan.afternoon.activity}
-                            </h4>
-
-                            <div className="flex items-center justify-between gap-1 text-xs sm:text-sm font-extrabold text-violet-800 mb-2.5 bg-violet-50 p-1.5 rounded-lg border border-violet-200">
-                              <div className="flex items-center gap-1 truncate">
-                                <MapPin className="w-3.5 h-3.5 shrink-0 text-violet-700" />
-                                <span className="truncate">{dayPlan.afternoon.place}</span>
-                              </div>
-                              <button
-                                onClick={(e) => openGoogleMaps(dayPlan.afternoon.place, e)}
-                                className="text-[10px] font-bold text-violet-700 hover:text-black flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
-                                title="Open in Google Maps"
-                              >
-                                Maps <ExternalLink className="w-2.5 h-2.5" />
-                              </button>
-                            </div>
-
-                            <p className="text-xs sm:text-sm text-slate-900 leading-relaxed font-semibold">
-                              {dayPlan.afternoon.description}
-                            </p>
-                          </div>
-
-                          {dayPlan.afternoon.estCost && (
-                            <div
-                              style={{
-                                borderTop: '1px solid #e2e8f0',
-                              }}
-                              className="mt-3.5 pt-2.5 flex items-center justify-between text-xs sm:text-sm font-mono font-extrabold"
-                            >
-                              <span className="text-slate-600">Est. Cost:</span>
-                              <span className="font-extrabold text-black bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
-                                {dayPlan.afternoon.estCost}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Evening Slot */}
-                        <div
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.95)',
-                            border: '1.5px solid #000000',
-                          }}
-                          className="rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group"
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-2.5">
-                              <span
-                                style={{
-                                  border: '1px solid #000000',
-                                }}
-                                className="inline-flex items-center gap-1.5 text-xs font-mono font-extrabold text-white bg-indigo-900 px-2.5 py-1 rounded-lg"
-                              >
-                                <Moon className="w-3.5 h-3.5 text-indigo-200" />
-                                <span>EVENING</span>
-                              </span>
-                              <span className="text-xs font-mono font-extrabold text-black flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" />
-                                {dayPlan.evening.time}
-                              </span>
-                            </div>
-
-                            <h4 className="text-sm sm:text-base font-extrabold text-black mb-1.5">
-                              {dayPlan.evening.activity}
-                            </h4>
-
-                            <div className="flex items-center justify-between gap-1 text-xs sm:text-sm font-extrabold text-violet-800 mb-2.5 bg-violet-50 p-1.5 rounded-lg border border-violet-200">
-                              <div className="flex items-center gap-1 truncate">
-                                <MapPin className="w-3.5 h-3.5 shrink-0 text-violet-700" />
-                                <span className="truncate">{dayPlan.evening.place}</span>
-                              </div>
-                              <button
-                                onClick={(e) => openGoogleMaps(dayPlan.evening.place, e)}
-                                className="text-[10px] font-bold text-violet-700 hover:text-black flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
-                                title="Open in Google Maps"
-                              >
-                                Maps <ExternalLink className="w-2.5 h-2.5" />
-                              </button>
-                            </div>
-
-                            <p className="text-xs sm:text-sm text-slate-900 leading-relaxed font-semibold">
-                              {dayPlan.evening.description}
-                            </p>
-                          </div>
-
-                          {dayPlan.evening.estCost && (
-                            <div
-                              style={{
-                                borderTop: '1px solid #e2e8f0',
-                              }}
-                              className="mt-3.5 pt-2.5 flex items-center justify-between text-xs sm:text-sm font-mono font-extrabold"
-                            >
-                              <span className="text-slate-600">Est. Cost:</span>
-                              <span className="font-extrabold text-black bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
-                                {dayPlan.evening.estCost}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openPhotoModal(
+                            displayedHeroPhoto,
+                            dayPlan.day,
+                            dayPlan.theme,
+                            `Day ${dayPlan.day} — ${displayedHeroPhoto.title}`,
+                            dayGallery.all
+                          )
+                        }
+                        className="mt-3 w-full py-2 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-xl border border-indigo-200/80 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Enlarge Day {dayPlan.day} Photos</span>
+                      </button>
                     </div>
 
-                    {/* Travel & Transit Notes Banner */}
-                    {dayPlan.travelNotes && (
-                      <div
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.92)',
-                          border: '1.5px solid #000000',
-                        }}
-                        className="p-3.5 sm:p-4 rounded-2xl flex items-start gap-3 text-xs sm:text-sm text-slate-950 backdrop-blur-md shadow-xs"
-                      >
-                        <Navigation className="w-4 h-4 text-violet-700 shrink-0 mt-0.5" />
-                        <div>
-                          <span className="font-mono font-extrabold uppercase tracking-wider text-xs text-black">Transit &amp; Logistics Note: </span>
-                          <span className="font-bold">{dayPlan.travelNotes}</span>
-                        </div>
-                      </div>
-                    )}
+                    {/* Right Column: 3 Time Slots (Morning, Afternoon, Evening) with Distinct Photos */}
+                    <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                      {/* Morning Slot */}
+                      {(() => {
+                        const morningPhoto = getDaySlotPhoto(destination, dayPlan.day, 'morning', dayPlan.morning.place);
+                        return (
+                          <div
+                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all group overflow-hidden"
+                          >
+                            <div>
+                              {/* Slot Photo Thumbnail Banner */}
+                              <div
+                                onClick={() =>
+                                  openPhotoModal(
+                                    morningPhoto,
+                                    dayPlan.day,
+                                    dayPlan.theme,
+                                    `Morning: ${dayPlan.morning.place}`,
+                                    dayGallery.all
+                                  )
+                                }
+                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer border-b border-slate-100 group/morn shadow-2xs"
+                              >
+                                <img
+                                  src={morningPhoto.url}
+                                  alt={morningPhoto.title}
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-cover group-hover/morn:scale-105 transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end justify-between p-2 text-white">
+                                  <span className="text-[10px] font-bold truncate max-w-[80%] drop-shadow-xs">
+                                    {dayPlan.morning.place}
+                                  </span>
+                                  <span className="p-0.5 rounded bg-slate-900/60 text-white">
+                                    <Eye className="w-3 h-3" />
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-between mb-2">
+                                <span
+                                  className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-900 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md"
+                                >
+                                  <Sun className="w-3 h-3 text-amber-600" />
+                                  <span>MORNING</span>
+                                </span>
+                                <span className="text-[11px] font-medium text-slate-500 flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-slate-400" />
+                                  {dayPlan.morning.time}
+                                </span>
+                              </div>
+
+                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1.5 leading-snug">
+                                {dayPlan.morning.activity}
+                              </h4>
+
+                              <div className="flex items-center justify-between gap-1 text-xs font-semibold text-indigo-700 mb-2 bg-indigo-50/60 p-1.5 rounded-lg border border-indigo-100">
+                                <div className="flex items-center gap-1 truncate">
+                                  <MapPin className="w-3 h-3 shrink-0 text-indigo-600" />
+                                  <span className="truncate">{dayPlan.morning.place}</span>
+                                </div>
+                                <button
+                                  onClick={(e) => openGoogleMaps(dayPlan.morning.place, e)}
+                                  className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
+                                  title="Open in Google Maps"
+                                >
+                                  Map <ExternalLink className="w-2.5 h-2.5" />
+                                </button>
+                              </div>
+
+                              <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                                {dayPlan.morning.description}
+                              </p>
+                            </div>
+
+                            {dayPlan.morning.estCost && (
+                              <div
+                                className="mt-3 pt-2 flex items-center justify-between text-xs border-t border-slate-100"
+                              >
+                                <span className="text-slate-500 text-[11px]">Est. Cost:</span>
+                                <span className="font-semibold text-slate-800 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                                  {dayPlan.morning.estCost}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+
+                      {/* Afternoon Slot */}
+                      {(() => {
+                        const noonPhoto = getDaySlotPhoto(destination, dayPlan.day, 'afternoon', dayPlan.afternoon.place);
+                        return (
+                          <div
+                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all group overflow-hidden"
+                          >
+                            <div>
+                              {/* Slot Photo Thumbnail Banner */}
+                              <div
+                                onClick={() =>
+                                  openPhotoModal(
+                                    noonPhoto,
+                                    dayPlan.day,
+                                    dayPlan.theme,
+                                    `Afternoon: ${dayPlan.afternoon.place}`,
+                                    dayGallery.all
+                                  )
+                                }
+                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer border-b border-slate-100 group/noon shadow-2xs"
+                              >
+                                <img
+                                  src={noonPhoto.url}
+                                  alt={noonPhoto.title}
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-cover group-hover/noon:scale-105 transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end justify-between p-2 text-white">
+                                  <span className="text-[10px] font-bold truncate max-w-[80%] drop-shadow-xs">
+                                    {dayPlan.afternoon.place}
+                                  </span>
+                                  <span className="p-0.5 rounded bg-slate-900/60 text-white">
+                                    <Eye className="w-3 h-3" />
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-between mb-2">
+                                <span
+                                  className="inline-flex items-center gap-1 text-[10px] font-semibold text-sky-900 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md"
+                                >
+                                  <Sunset className="w-3 h-3 text-sky-600" />
+                                  <span>AFTERNOON</span>
+                                </span>
+                                <span className="text-[11px] font-medium text-slate-500 flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-slate-400" />
+                                  {dayPlan.afternoon.time}
+                                </span>
+                              </div>
+
+                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1.5 leading-snug">
+                                {dayPlan.afternoon.activity}
+                              </h4>
+
+                              <div className="flex items-center justify-between gap-1 text-xs font-semibold text-indigo-700 mb-2 bg-indigo-50/60 p-1.5 rounded-lg border border-indigo-100">
+                                <div className="flex items-center gap-1 truncate">
+                                  <MapPin className="w-3 h-3 shrink-0 text-indigo-600" />
+                                  <span className="truncate">{dayPlan.afternoon.place}</span>
+                                </div>
+                                <button
+                                  onClick={(e) => openGoogleMaps(dayPlan.afternoon.place, e)}
+                                  className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
+                                  title="Open in Google Maps"
+                                >
+                                  Map <ExternalLink className="w-2.5 h-2.5" />
+                                </button>
+                              </div>
+
+                              <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                                {dayPlan.afternoon.description}
+                              </p>
+                            </div>
+
+                            {dayPlan.afternoon.estCost && (
+                              <div
+                                className="mt-3 pt-2 flex items-center justify-between text-xs border-t border-slate-100"
+                              >
+                                <span className="text-slate-500 text-[11px]">Est. Cost:</span>
+                                <span className="font-semibold text-slate-800 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                                  {dayPlan.afternoon.estCost}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+
+                      {/* Evening Slot */}
+                      {(() => {
+                        const evePhoto = getDaySlotPhoto(destination, dayPlan.day, 'evening', dayPlan.evening.place);
+                        return (
+                          <div
+                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all group overflow-hidden"
+                          >
+                            <div>
+                              {/* Slot Photo Thumbnail Banner */}
+                              <div
+                                onClick={() =>
+                                  openPhotoModal(
+                                    evePhoto,
+                                    dayPlan.day,
+                                    dayPlan.theme,
+                                    `Evening: ${dayPlan.evening.place}`,
+                                    dayGallery.all
+                                  )
+                                }
+                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer border-b border-slate-100 group/eve shadow-2xs"
+                              >
+                                <img
+                                  src={evePhoto.url}
+                                  alt={evePhoto.title}
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-cover group-hover/eve:scale-105 transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end justify-between p-2 text-white">
+                                  <span className="text-[10px] font-bold truncate max-w-[80%] drop-shadow-xs">
+                                    {dayPlan.evening.place}
+                                  </span>
+                                  <span className="p-0.5 rounded bg-slate-900/60 text-white">
+                                    <Eye className="w-3 h-3" />
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-between mb-2">
+                                <span
+                                  className="inline-flex items-center gap-1 text-[10px] font-semibold text-purple-900 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-md"
+                                >
+                                  <Moon className="w-3 h-3 text-purple-600" />
+                                  <span>EVENING</span>
+                                </span>
+                                <span className="text-[11px] font-medium text-slate-500 flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-slate-400" />
+                                  {dayPlan.evening.time}
+                                </span>
+                              </div>
+
+                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1.5 leading-snug">
+                                {dayPlan.evening.activity}
+                              </h4>
+
+                              <div className="flex items-center justify-between gap-1 text-xs font-semibold text-indigo-700 mb-2 bg-indigo-50/60 p-1.5 rounded-lg border border-indigo-100">
+                                <div className="flex items-center gap-1 truncate">
+                                  <MapPin className="w-3 h-3 shrink-0 text-indigo-600" />
+                                  <span className="truncate">{dayPlan.evening.place}</span>
+                                </div>
+                                <button
+                                  onClick={(e) => openGoogleMaps(dayPlan.evening.place, e)}
+                                  className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
+                                  title="Open in Google Maps"
+                                >
+                                  Map <ExternalLink className="w-2.5 h-2.5" />
+                                </button>
+                              </div>
+
+                              <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                                {dayPlan.evening.description}
+                              </p>
+                            </div>
+
+                            {dayPlan.evening.estCost && (
+                              <div
+                                className="mt-3 pt-2 flex items-center justify-between text-xs border-t border-slate-100"
+                              >
+                                <span className="text-slate-500 text-[11px]">Est. Cost:</span>
+                                <span className="font-semibold text-slate-800 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                                  {dayPlan.evening.estCost}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </div>
                   </div>
-                );
-              })()}
+
+                  {/* Travel & Transit Notes Banner */}
+                  {dayPlan.travelNotes && (
+                    <div
+                      className="p-3 sm:p-3.5 rounded-xl flex items-start gap-2.5 text-xs sm:text-sm bg-white border border-slate-200/80 shadow-2xs"
+                    >
+                      <Navigation className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-semibold text-slate-900 text-xs">Transit &amp; Route Logistics: </span>
+                        <span className="text-slate-600">{dayPlan.travelNotes}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* High-Resolution Picture Viewer Modal */}
-      {viewingPhoto && (
+      {/* High-Resolution Picture Viewer Modal with Prev / Next Navigation */}
+      {modalPhoto && (
         <div
-          style={{
-            background: 'rgba(0, 0, 0, 0.85)',
-            backdropFilter: 'blur(12px)',
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in"
-          onClick={() => setViewingPhoto(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/70 backdrop-blur-md animate-fade-in"
+          onClick={() => setModalPhoto(null)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            style={{
-              background: '#ffffff',
-              border: '2px solid #000000',
-              boxShadow: '0 24px 60px rgba(0, 0, 0, 0.4)',
-            }}
-            className="w-full max-w-3xl rounded-3xl overflow-hidden relative max-h-[90vh] flex flex-col"
+            className="w-full max-w-4xl rounded-3xl overflow-hidden relative max-h-[92vh] flex flex-col bg-white border border-slate-200 shadow-2xl"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-black/15 bg-white">
+            <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-100 bg-white">
               <div className="flex items-center gap-2.5">
-                <span className="px-2.5 py-1 rounded-lg bg-black text-amber-300 font-mono font-extrabold text-xs">
-                  DAY {viewingPhoto.day}
+                <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-mono font-bold text-xs">
+                  DAY {modalPhoto.day}
                 </span>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-black leading-tight">
-                    {viewingPhoto.title}
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+                    {modalPhoto.title}
                   </h3>
-                  <p className="text-xs font-mono font-bold text-slate-600">
-                    Theme: {viewingPhoto.theme}
-                  </p>
+                  <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+                    <span className="text-indigo-600 font-semibold">{modalPhoto.slotName}</span>
+                    <span>•</span>
+                    <span>Photo {modalPhoto.galleryIndex + 1} of {modalPhoto.galleryList.length}</span>
+                  </div>
                 </div>
               </div>
               <button
-                onClick={() => setViewingPhoto(null)}
-                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-black hover:text-white flex items-center justify-center transition-all cursor-pointer border border-black"
+                onClick={() => setModalPhoto(null)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all cursor-pointer border border-slate-200"
                 title="Close"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Modal Image Display */}
-            <div className="relative bg-slate-950 flex items-center justify-center overflow-hidden max-h-[55vh]">
+            {/* Modal Image Display with Carousel Arrows */}
+            <div className="relative bg-slate-950 flex items-center justify-center overflow-hidden min-h-[300px] max-h-[58vh]">
               <img
-                src={viewingPhoto.url}
-                alt={viewingPhoto.title}
+                src={modalPhoto.url}
+                alt={modalPhoto.title}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-contain max-h-[55vh]"
+                className="w-full h-full object-contain max-h-[58vh]"
               />
+
+              {modalPhoto.galleryList.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePrevPhoto}
+                    className="absolute left-3 p-2 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+                    title="Previous Photo"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+
+                  <button
+                    onClick={handleNextPhoto}
+                    className="absolute right-3 p-2 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+                    title="Next Photo"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Modal Caption & Details */}
-            <div className="p-4 sm:p-6 bg-white space-y-3">
-              <div className="flex items-start justify-between gap-4">
+            <div className="p-4 sm:p-5 bg-white space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-bold text-slate-900 leading-relaxed">
-                    {viewingPhoto.caption}
+                  <p className="text-xs sm:text-sm font-normal text-slate-700 leading-relaxed">
+                    {modalPhoto.caption}
                   </p>
-                  <p className="text-xs text-slate-600 font-medium mt-1">
-                    Visual photography preview curated for {destination || 'your destination'}.
+                  <p className="text-xs text-slate-500 font-medium mt-0.5 flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3 text-amber-500" />
+                    <span>Curated high-resolution photography for {destination || 'your destination'}.</span>
                   </p>
                 </div>
-                <button
-                  onClick={() => setViewingPhoto(null)}
-                  style={{
-                    border: '1.5px solid #000000',
-                  }}
-                  className="px-4 py-2 bg-black text-white hover:bg-slate-800 text-xs font-mono font-extrabold rounded-xl transition-all cursor-pointer shrink-0"
-                >
-                  Close Viewer
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  {modalPhoto.galleryList.map((thumb, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        const slotNames = ['Day Highlight', 'Morning Spot', 'Afternoon Spot', 'Evening Spot'];
+                        setModalPhoto({
+                          ...modalPhoto,
+                          url: thumb.url,
+                          title: thumb.title,
+                          caption: thumb.caption,
+                          galleryIndex: idx,
+                          slotName: slotNames[idx % slotNames.length] || 'Scenic View',
+                        });
+                      }}
+                      className={`w-10 h-10 rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-105 ${
+                        idx === modalPhoto.galleryIndex ? 'ring-2 ring-indigo-600 border border-indigo-600' : 'border border-slate-200 opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={thumb.url} alt={thumb.title} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -676,4 +841,3 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
     </section>
   );
 };
-
