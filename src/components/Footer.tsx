@@ -7,6 +7,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenDocs, onOpenTests }) => {
+  const [showContactInfo, setShowContactInfo] = React.useState<boolean>(false);
   const whatsappLink = 'https://wa.me/919876543210?text=Hi%20Tripholic%20Team%2C%20I%20have%20a%20query%20about%20my%20trip%20planning.';
   const emailAddress = 'tripholic.help@gmail.com';
   const gmailWebLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailAddress)}&su=${encodeURIComponent('Travel Planning Inquiry - Tripholic')}`;
@@ -46,59 +47,95 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDocs, onOpenTests }) => {
             </div>
           </div>
 
-          {/* Contact Us - WhatsApp & Gmail */}
+          {/* Contact Us - Hidden by default; click to show */}
           <div className="md:col-span-4 space-y-2.5">
             <h4 className="text-xs font-mono font-black uppercase tracking-wider text-black">
-              Contact Us &amp; Support
+              Support &amp; Desk
             </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <a
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ border: '1px solid #000000' }}
-                  className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-black font-medium flex items-center justify-between transition-colors shadow-2xs group"
+            
+            {!showContactInfo ? (
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  id="footer-contact-us-btn"
+                  onClick={() => setShowContactInfo(true)}
+                  style={{ border: '1.5px solid #000000' }}
+                  className="w-full p-2.5 rounded-xl bg-slate-900 hover:bg-amber-400 hover:text-black text-white font-extrabold text-xs transition-all flex items-center justify-between cursor-pointer shadow-2xs group"
                 >
                   <div className="flex items-center gap-2">
-                    <span
-                      style={{ border: '1px solid #000000' }}
-                      className="w-6 h-6 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5 fill-white text-emerald-500" />
-                    </span>
-                    <div>
-                      <span className="font-bold text-slate-900 block leading-tight">WhatsApp Support</span>
-                      <span className="text-[11px] font-mono text-slate-600">+91 98765 43210</span>
-                    </div>
+                    <MessageCircle className="w-4 h-4 text-amber-300 group-hover:text-black" />
+                    <span>Contact Us</span>
                   </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-black shrink-0 mr-1" />
-                </a>
-              </li>
-              <li>
-                <a
-                  href={gmailWebLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ border: '1px solid #000000' }}
-                  className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-black font-medium flex items-center justify-between transition-colors shadow-2xs group"
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span
+                  <span className="text-[10px] font-mono bg-white/20 group-hover:bg-black group-hover:text-white px-2 py-0.5 rounded">
+                    Click to view
+                  </span>
+                </button>
+                <p className="text-[11px] text-slate-500">
+                  Click Contact Us to view WhatsApp and Gmail support details.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2 animate-fade-in">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono font-bold text-slate-700">Official Channels</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowContactInfo(false)}
+                    className="text-[10px] font-mono text-slate-500 hover:text-black underline cursor-pointer"
+                  >
+                    Hide
+                  </button>
+                </div>
+                <ul className="space-y-2 text-xs">
+                  <li>
+                    <a
+                      href={whatsappLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       style={{ border: '1px solid #000000' }}
-                      className="w-6 h-6 rounded-lg bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-2xs"
+                      className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-black font-medium flex items-center justify-between transition-colors shadow-2xs group"
                     >
-                      <Mail className="w-3.5 h-3.5 text-white" />
-                    </span>
-                    <div className="min-w-0">
-                      <span className="font-bold text-slate-900 block leading-tight">Gmail Support</span>
-                      <span className="text-[11px] font-mono text-slate-600 truncate block">tripholic.help@gmail.com</span>
-                    </div>
-                  </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-black shrink-0 mr-1" />
-                </a>
-              </li>
-            </ul>
+                      <div className="flex items-center gap-2">
+                        <span
+                          style={{ border: '1px solid #000000' }}
+                          className="w-6 h-6 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5 fill-white text-emerald-500" />
+                        </span>
+                        <div>
+                          <span className="font-bold text-slate-900 block leading-tight">WhatsApp Support</span>
+                          <span className="text-[11px] font-mono text-slate-600">+91 98765 43210</span>
+                        </div>
+                      </div>
+                      <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-black shrink-0 mr-1" />
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={gmailWebLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ border: '1px solid #000000' }}
+                      className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-black font-medium flex items-center justify-between transition-colors shadow-2xs group"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          style={{ border: '1px solid #000000' }}
+                          className="w-6 h-6 rounded-lg bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-2xs"
+                        >
+                          <Mail className="w-3.5 h-3.5 text-white" />
+                        </span>
+                        <div className="min-w-0">
+                          <span className="font-bold text-slate-900 block leading-tight">Gmail Support</span>
+                          <span className="text-[11px] font-mono text-slate-600 truncate block">tripholic.help@gmail.com</span>
+                        </div>
+                      </div>
+                      <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-black shrink-0 mr-1" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Academic Links & Docs */}

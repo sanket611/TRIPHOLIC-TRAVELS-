@@ -7,7 +7,12 @@ export type TravelStyle =
   | 'Family Friendly'
   | 'Solo Explorer'
   | 'Foodie & Culinary'
-  | 'Nature & Wildlife';
+  | 'Nature & Wildlife'
+  | 'Backpacker & Budget'
+  | 'Road Trip & Scenic'
+  | 'Spiritual & Wellness'
+  | 'Photography & Sightseeing'
+  | 'Party & Nightlife';
 
 export type FoodPreference =
   | 'Vegetarian'
@@ -16,7 +21,10 @@ export type FoodPreference =
   | 'Jain'
   | 'Eggetarian'
   | 'Halal'
-  | 'Seafood Special';
+  | 'Seafood Special'
+  | 'Street Food Lover'
+  | 'Organic & Healthy'
+  | 'Fine Dining Gourmet';
 
 export interface TravelPreferences {
   destination: string;

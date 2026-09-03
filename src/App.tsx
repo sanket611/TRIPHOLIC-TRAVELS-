@@ -318,6 +318,10 @@ export function App() {
     }
 
     if (id === 'contact') {
+      const contactBtn = document.getElementById('btn-reveal-contact-us');
+      if (contactBtn) {
+        contactBtn.click();
+      }
       const contactEl = document.getElementById('contact-us-section') || document.getElementById('contact-section');
       contactEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
@@ -359,7 +363,7 @@ export function App() {
       <main className="flex-1 max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-6 w-full relative z-10">
         <div className="flex flex-row items-start gap-2.5 sm:gap-4 md:gap-6">
           {/* Left Column: Direct Permanent Trip Menu Navigation Sidebar - ALWAYS visible on left side! */}
-          <div className="w-14 xs:w-16 sm:w-60 md:w-64 lg:w-72 shrink-0 sticky top-3 sm:top-4 z-20">
+          <div className="w-16 xs:w-20 sm:w-72 md:w-80 lg:w-84 shrink-0 sticky top-3 sm:top-4 z-20">
             <LeftNavigationSidebar
               hasPlan={Boolean(currentPlan)}
               plan={currentPlan}
