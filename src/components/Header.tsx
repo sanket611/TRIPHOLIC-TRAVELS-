@@ -106,6 +106,18 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Test Suite</span>
           </button>
 
+          <button
+            id="nav-contact-btn"
+            onClick={() => {
+              const el = document.getElementById('contact-us-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 min-h-[36px] text-xs font-semibold text-slate-700 hover:text-indigo-600 bg-white/80 hover:bg-slate-100 border border-slate-200/90 rounded-xl transition-all cursor-pointer shadow-2xs"
+            title="Contact Us on WhatsApp / Gmail"
+          >
+            <span>Contact Us</span>
+          </button>
+
           {hasActiveTrip && onStartNewTrip && (
             <button
               id="nav-new-trip-btn"
@@ -213,6 +225,26 @@ export const Header: React.FC<HeaderProps> = ({
               <div>
                 <p className="leading-tight font-bold text-slate-900">Automated Test Suite</p>
                 <p className="text-xs text-slate-500 font-normal">Run 6 verified test scenarios</p>
+              </div>
+            </button>
+
+            <button
+              id="mobile-drawer-contact-btn"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setTimeout(() => {
+                  const el = document.getElementById('contact-us-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }}
+              className="w-full flex items-center gap-3 p-3 min-h-[44px] rounded-xl text-left text-sm font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-colors cursor-pointer shadow-xs"
+            >
+              <div className="w-8 h-8 rounded-lg bg-amber-100 text-black flex items-center justify-center border border-black">
+                <Compass className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="leading-tight font-bold text-slate-900">Contact Us &amp; Support</p>
+                <p className="text-xs text-slate-500 font-normal">WhatsApp &amp; Gmail direct lines</p>
               </div>
             </button>
           </div>

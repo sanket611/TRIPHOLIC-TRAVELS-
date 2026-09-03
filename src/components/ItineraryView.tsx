@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Calendar,
   Sun,
@@ -33,12 +33,33 @@ import {
 interface ItineraryViewProps {
   itinerary: DayItinerary[];
   destination?: string;
+  selectedDay?: number | 'all';
+  onSelectDay?: (day: number | 'all') => void;
 }
 
-export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destination = '' }) => {
-  const [activeDayFilter, setActiveDayFilter] = useState<number | 'all'>('all');
+export const ItineraryView: React.FC<ItineraryViewProps> = ({
+  itinerary,
+  destination = '',
+  selectedDay = 'all',
+  onSelectDay,
+}) => {
+  const [activeDayFilter, setActiveDayFilter] = useState<number | 'all'>(selectedDay);
   const [copiedDay, setCopiedDay] = useState<number | null>(null);
   const [selectedPhotoSlot, setSelectedPhotoSlot] = useState<{ [day: number]: 'hero' | 'morning' | 'afternoon' | 'evening' }>({});
+
+  // Sync with prop when changed from left sidebar or outside
+  useEffect(() => {
+    if (selectedDay !== undefined) {
+      setActiveDayFilter(selectedDay);
+    }
+  }, [selectedDay]);
+
+  const handleFilterDay = (day: number | 'all') => {
+    setActiveDayFilter(day);
+    if (onSelectDay) {
+      onSelectDay(day);
+    }
+  };
 
   // Full-screen / Modal photo viewer state with carousel capabilities
   const [modalPhoto, setModalPhoto] = useState<{
@@ -168,26 +189,37 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
   return (
     <section
       id="itinerary-section"
-      className="rounded-3xl p-4 sm:p-7 mb-8 transition-all bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.04)]"
+      style={{
+        border: '2px solid #000000',
+        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+      }}
+      className="rounded-3xl p-4 sm:p-7 mb-8 transition-all bg-white"
     >
       {/* Section Title & Global Controls */}
       <div
-        className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-slate-100"
+        style={{ borderBottom: '1.5px solid #000000' }}
+        className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 sm:pb-6"
       >
         <div>
           <div className="flex items-center gap-2.5 mb-1.5">
-            <span className="p-2 rounded-xl bg-indigo-50 text-indigo-600 shadow-2xs border border-indigo-100">
+            <span
+              style={{ border: '1.5px solid #000000' }}
+              className="p-2 rounded-xl bg-indigo-50 text-indigo-800 shadow-2xs"
+            >
               <Calendar className="w-5 h-5" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-heading flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight font-heading flex items-center gap-2">
               <span>Day-by-Day Travel Blueprint</span>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 hidden sm:inline-flex items-center gap-1">
-                <Camera className="w-3 h-3 text-indigo-600" />
+              <span
+                style={{ border: '1.5px solid #000000' }}
+                className="text-xs font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-950 hidden sm:inline-flex items-center gap-1"
+              >
+                <Camera className="w-3 h-3 text-indigo-800" />
                 <span>Distinct Photos Per Day</span>
               </span>
             </h2>
           </div>
-          <p className="text-sm sm:text-base text-slate-600 font-normal">
+          <p className="text-sm sm:text-base text-slate-700 font-medium">
             Curated morning, afternoon, and evening slots with rich photos for every day and direct Google Maps navigation.
           </p>
         </div>
@@ -196,7 +228,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={allExpanded ? handleCollapseAll : handleExpandAll}
-            className="px-3.5 py-1.5 min-h-[36px] rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            style={{ border: '1.5px solid #000000' }}
+            className="px-3.5 py-1.5 min-h-[36px] rounded-xl text-xs font-extrabold text-black bg-white hover:bg-slate-100 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
             title={allExpanded ? 'Collapse all days' : 'Expand all days'}
           >
             {allExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -204,13 +237,17 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
           </button>
 
           {/* Day Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none bg-slate-100/80 p-1 rounded-xl border border-slate-200/80">
+          <div
+            style={{ border: '1.5px solid #000000' }}
+            className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none bg-slate-100 p-1 rounded-xl"
+          >
             <button
-              onClick={() => setActiveDayFilter('all')}
-              className={`px-3 py-1 min-h-[30px] rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer flex items-center ${
+              onClick={() => handleFilterDay('all')}
+              style={{ border: activeDayFilter === 'all' ? '1.5px solid #000000' : 'none' }}
+              className={`px-3 py-1 min-h-[30px] rounded-lg text-xs transition-all shrink-0 cursor-pointer flex items-center ${
                 activeDayFilter === 'all'
-                  ? 'bg-white text-indigo-700 shadow-2xs font-bold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-black text-white font-extrabold shadow-2xs'
+                  : 'text-slate-700 hover:text-black font-bold'
               }`}
             >
               All ({itinerary.length})
@@ -218,11 +255,12 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
             {itinerary.map((d) => (
               <button
                 key={d.day}
-                onClick={() => setActiveDayFilter(d.day)}
-                className={`px-2.5 py-1 min-h-[30px] rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer flex items-center ${
+                onClick={() => handleFilterDay(d.day)}
+                style={{ border: activeDayFilter === d.day ? '1.5px solid #000000' : 'none' }}
+                className={`px-2.5 py-1 min-h-[30px] rounded-lg text-xs transition-all shrink-0 cursor-pointer flex items-center ${
                   activeDayFilter === d.day
-                    ? 'bg-white text-indigo-700 shadow-2xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-black text-white font-extrabold shadow-2xs'
+                    : 'text-slate-700 hover:text-black font-bold'
                 }`}
               >
                 D{d.day}
@@ -243,36 +281,48 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
           return (
             <div
               key={dayPlan.day}
-              className="rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all"
+              style={{
+                border: '2px solid #000000',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
+              }}
+              className="rounded-2xl overflow-hidden bg-white transition-all"
             >
               {/* Day Header Bar */}
               <div
                 onClick={() => toggleDayExpand(dayPlan.day)}
+                style={{
+                  borderBottom: isExpanded ? '1.5px solid #000000' : 'none',
+                }}
                 className={`p-4 sm:p-5 min-h-[56px] flex items-center justify-between cursor-pointer select-none transition-colors ${
-                  isExpanded ? 'border-b border-slate-100 bg-slate-50/40 hover:bg-slate-50/70' : 'hover:bg-slate-50'
+                  isExpanded ? 'bg-slate-50 hover:bg-slate-100' : 'hover:bg-slate-50'
                 }`}
               >
                 <div className="flex items-center gap-3 flex-1 pr-2 min-w-0">
-                  <span className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 font-mono font-bold text-sm flex items-center justify-center shrink-0 border border-indigo-100">
+                  <span
+                    style={{ border: '1.5px solid #000000' }}
+                    className="w-10 h-10 rounded-xl bg-amber-300 text-black font-mono font-black text-sm flex items-center justify-center shrink-0 shadow-2xs"
+                  >
                     D{dayPlan.day}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate">
+                      <h3 className="text-sm sm:text-base font-black text-slate-950 truncate">
                         {dayPlan.title || `Day ${dayPlan.day}`}
                       </h3>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mt-1">
                       <span
-                        className="text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200/60 px-2.5 py-0.5 rounded-full"
+                        style={{ border: '1.5px solid #000000' }}
+                        className="text-xs font-mono font-extrabold text-black bg-indigo-100 px-2.5 py-0.5 rounded-full"
                       >
                         {dayPlan.theme}
                       </span>
                       {dayPlan.stayArea && (
                         <span
-                          className="text-xs font-medium text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full flex items-center gap-1"
+                          style={{ border: '1.5px solid #000000' }}
+                          className="text-xs font-mono font-bold text-slate-800 bg-white px-2.5 py-0.5 rounded-full flex items-center gap-1"
                         >
-                          <BedDouble className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                          <BedDouble className="w-3.5 h-3.5 text-indigo-700 shrink-0" />
                           <span className="truncate">Base: {dayPlan.stayArea}</span>
                         </span>
                       )}
@@ -295,7 +345,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                         dayGallery.all
                       );
                     }}
-                    className="p-2 sm:px-3 text-xs font-semibold rounded-xl text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                    style={{ border: '1.5px solid #000000' }}
+                    className="p-2 sm:px-3 text-xs font-extrabold rounded-xl text-black bg-white hover:bg-slate-100 transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
                     title="View Day Pictures Gallery"
                   >
                     <Eye className="w-3.5 h-3.5" />
@@ -304,13 +355,14 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
                   <button
                     onClick={(e) => handleCopyDay(dayPlan, e)}
-                    className="p-2 text-xs font-semibold rounded-xl text-slate-700 hover:text-slate-950 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
+                    style={{ border: '1.5px solid #000000' }}
+                    className="p-2 text-xs font-extrabold rounded-xl text-black bg-white hover:bg-slate-100 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
                     title="Copy Day Schedule to Clipboard"
                   >
                     {copiedDay === dayPlan.day ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        <span className="text-[11px] font-bold text-emerald-600 hidden sm:inline">Copied</span>
+                        <Check className="w-3.5 h-3.5 text-emerald-700" />
+                        <span className="text-[11px] font-bold text-emerald-800 hidden sm:inline">Copied</span>
                       </>
                     ) : (
                       <>
@@ -320,7 +372,7 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                     )}
                   </button>
 
-                  <div className="flex items-center gap-1 text-slate-500">
+                  <div className="flex items-center gap-1 text-black">
                     {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                   </div>
                 </div>
@@ -328,20 +380,24 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
               {/* Day Body with Multi-Photo Gallery Column (left) & 3 Time Slot Cards (right) */}
               {isExpanded && (
-                <div className="p-4 sm:p-5 space-y-4 bg-slate-50/30">
+                <div className="p-4 sm:p-5 space-y-4 bg-slate-50/50">
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
                     {/* Left Column: Interactive Multi-Photo Showcase */}
                     <div
-                      className="lg:col-span-4 rounded-2xl p-3.5 flex flex-col justify-between bg-white border border-slate-200/90 shadow-2xs group hover:border-indigo-300 transition-all"
+                      style={{ border: '1.5px solid #000000' }}
+                      className="lg:col-span-4 rounded-2xl p-3.5 flex flex-col justify-between bg-white shadow-2xs"
                     >
                       <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60 flex items-center gap-1 shadow-2xs">
-                            <Camera className="w-3 h-3 text-indigo-600" />
+                          <span
+                            style={{ border: '1.5px solid #000000' }}
+                            className="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 text-black flex items-center gap-1 shadow-2xs"
+                          >
+                            <Camera className="w-3 h-3 text-indigo-700" />
                             <span>Day {dayPlan.day} Gallery</span>
                           </span>
-                          <span className="text-[10px] font-medium text-slate-500">
-                            {dayGallery.all.length} Distinct Photos
+                          <span className="text-[10px] font-mono font-bold text-slate-600">
+                            {dayGallery.all.length} Photos
                           </span>
                         </div>
 
@@ -356,7 +412,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                               dayGallery.all
                             )
                           }
-                          className="relative h-44 sm:h-52 rounded-xl overflow-hidden cursor-pointer border border-slate-200 group/img shadow-2xs"
+                          style={{ border: '1.5px solid #000000' }}
+                          className="relative h-44 sm:h-52 rounded-xl overflow-hidden cursor-pointer group/img shadow-2xs"
                         >
                           <img
                             src={displayedHeroPhoto.url}
@@ -366,15 +423,21 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex flex-col justify-between p-2.5 text-white">
                             <div className="flex justify-end">
-                              <span className="p-1 rounded-md bg-slate-900/60 backdrop-blur-xs text-white border border-white/20 text-xs">
+                              <span
+                                style={{ border: '1px solid rgba(255,255,255,0.4)' }}
+                                className="p-1 rounded-md bg-slate-900/80 backdrop-blur-xs text-white text-xs"
+                              >
                                 <Maximize2 className="w-3.5 h-3.5" />
                               </span>
                             </div>
                             <div>
-                              <span className="text-[9px] font-semibold uppercase tracking-wider text-amber-300 bg-slate-900/70 px-1.5 py-0.5 rounded backdrop-blur-xs">
+                              <span
+                                style={{ border: '1px solid rgba(255,255,255,0.4)' }}
+                                className="text-[9px] font-mono font-extrabold uppercase tracking-wider text-amber-300 bg-slate-900/90 px-1.5 py-0.5 rounded"
+                              >
                                 {currentSlotSelection === 'hero' ? 'Highlight' : currentSlotSelection}
                               </span>
-                              <p className="text-xs font-bold truncate drop-shadow-sm mt-0.5">
+                              <p className="text-xs font-black truncate drop-shadow-sm mt-0.5 text-white">
                                 {displayedHeroPhoto.title}
                               </p>
                             </div>
@@ -383,7 +446,7 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
                         {/* Interactive Thumbnail Selector Tabs for Day-to-Day Exploration */}
                         <div className="space-y-1">
-                          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                          <p className="text-[10px] font-mono font-extrabold text-slate-700 uppercase tracking-wider">
                             Explore Day {dayPlan.day} Vantage Points:
                           </p>
                           <div className="grid grid-cols-4 gap-1.5">
@@ -406,8 +469,11 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                                       [dayPlan.day]: slotKey,
                                     }))
                                   }
+                                  style={{
+                                    border: isSelected ? '2px solid #000000' : '1px solid #64748b',
+                                  }}
                                   className={`relative h-12 rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-105 ${
-                                    isSelected ? 'border-2 border-indigo-600 ring-2 ring-indigo-200 shadow-2xs' : 'border border-slate-200 opacity-75 hover:opacity-100'
+                                    isSelected ? 'ring-2 ring-amber-400 shadow-xs' : 'opacity-80 hover:opacity-100'
                                   }`}
                                   title={`View ${slotKey} photo`}
                                 >
@@ -416,7 +482,7 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                                     alt={photo.title}
                                     className="w-full h-full object-cover"
                                   />
-                                  <span className="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[8px] font-semibold text-white text-center py-0.5 truncate">
+                                  <span className="absolute bottom-0 inset-x-0 bg-black/90 text-[8px] font-bold text-white text-center py-0.5 truncate font-mono">
                                     {slotLabels[slotKey]}
                                   </span>
                                 </button>
@@ -425,7 +491,7 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                           </div>
                         </div>
 
-                        <p className="text-[11px] text-slate-600 font-normal leading-tight line-clamp-2">
+                        <p className="text-[11px] text-slate-700 font-medium leading-tight line-clamp-2">
                           {displayedHeroPhoto.caption}
                         </p>
                       </div>
@@ -441,7 +507,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                             dayGallery.all
                           )
                         }
-                        className="mt-3 w-full py-2 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-xl border border-indigo-200/80 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                        style={{ border: '1.5px solid #000000' }}
+                        className="mt-3 w-full py-2 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-950 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>Enlarge Day {dayPlan.day} Photos</span>
@@ -455,7 +522,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                         const morningPhoto = getDaySlotPhoto(destination, dayPlan.day, 'morning', dayPlan.morning.place);
                         return (
                           <div
-                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all group overflow-hidden"
+                            style={{ border: '1.5px solid #000000' }}
+                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white shadow-2xs hover:shadow-md transition-all group overflow-hidden"
                           >
                             <div>
                               {/* Slot Photo Thumbnail Banner */}
@@ -469,7 +537,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                                     dayGallery.all
                                   )
                                 }
-                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer border-b border-slate-100 group/morn shadow-2xs"
+                                style={{ borderBottom: '1.5px solid #000000' }}
+                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer group/morn shadow-2xs"
                               >
                                 <img
                                   src={morningPhoto.url}
@@ -478,10 +547,10 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                                   className="w-full h-full object-cover group-hover/morn:scale-105 transition-transform duration-500"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end justify-between p-2 text-white">
-                                  <span className="text-[10px] font-bold truncate max-w-[80%] drop-shadow-xs">
+                                  <span className="text-[10px] font-black truncate max-w-[80%] drop-shadow-xs">
                                     {dayPlan.morning.place}
                                   </span>
-                                  <span className="p-0.5 rounded bg-slate-900/60 text-white">
+                                  <span className="p-0.5 rounded bg-slate-900/80 text-white">
                                     <Eye className="w-3 h-3" />
                                   </span>
                                 </div>
@@ -489,46 +558,54 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
                               <div className="flex items-center justify-between mb-2">
                                 <span
-                                  className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-900 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md"
+                                  style={{ border: '1px solid #000000' }}
+                                  className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold text-black bg-amber-200 px-2 py-0.5 rounded-md"
                                 >
-                                  <Sun className="w-3 h-3 text-amber-600" />
+                                  <Sun className="w-3 h-3 text-amber-700" />
                                   <span>MORNING</span>
                                 </span>
-                                <span className="text-[11px] font-medium text-slate-500 flex items-center gap-1">
-                                  <Clock className="w-3 h-3 text-slate-400" />
+                                <span className="text-[11px] font-mono font-bold text-slate-700 flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-slate-600" />
                                   {dayPlan.morning.time}
                                 </span>
                               </div>
 
-                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1.5 leading-snug">
+                              <h4 className="text-xs sm:text-sm font-black text-slate-950 mb-1.5 leading-snug">
                                 {dayPlan.morning.activity}
                               </h4>
 
-                              <div className="flex items-center justify-between gap-1 text-xs font-semibold text-indigo-700 mb-2 bg-indigo-50/60 p-1.5 rounded-lg border border-indigo-100">
+                              <div
+                                style={{ border: '1px solid #000000' }}
+                                className="flex items-center justify-between gap-1 text-xs font-bold text-black mb-2 bg-indigo-50 p-1.5 rounded-lg"
+                              >
                                 <div className="flex items-center gap-1 truncate">
-                                  <MapPin className="w-3 h-3 shrink-0 text-indigo-600" />
+                                  <MapPin className="w-3 h-3 shrink-0 text-indigo-700" />
                                   <span className="truncate">{dayPlan.morning.place}</span>
                                 </div>
                                 <button
                                   onClick={(e) => openGoogleMaps(dayPlan.morning.place, e)}
-                                  className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
+                                  className="text-[10px] font-extrabold text-indigo-800 hover:text-black flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
                                   title="Open in Google Maps"
                                 >
                                   Map <ExternalLink className="w-2.5 h-2.5" />
                                 </button>
                               </div>
 
-                              <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                              <p className="text-xs text-slate-700 leading-relaxed font-medium">
                                 {dayPlan.morning.description}
                               </p>
                             </div>
 
                             {dayPlan.morning.estCost && (
                               <div
-                                className="mt-3 pt-2 flex items-center justify-between text-xs border-t border-slate-100"
+                                style={{ borderTop: '1px solid #000000' }}
+                                className="mt-3 pt-2 flex items-center justify-between text-xs"
                               >
-                                <span className="text-slate-500 text-[11px]">Est. Cost:</span>
-                                <span className="font-semibold text-slate-800 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                                <span className="text-slate-600 text-[11px] font-bold">Est. Cost:</span>
+                                <span
+                                  style={{ border: '1px solid #000000' }}
+                                  className="font-mono font-extrabold text-black bg-slate-100 px-2 py-0.5 rounded text-[11px]"
+                                >
                                   {dayPlan.morning.estCost}
                                 </span>
                               </div>
@@ -542,7 +619,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                         const noonPhoto = getDaySlotPhoto(destination, dayPlan.day, 'afternoon', dayPlan.afternoon.place);
                         return (
                           <div
-                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all group overflow-hidden"
+                            style={{ border: '1.5px solid #000000' }}
+                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white shadow-2xs hover:shadow-md transition-all group overflow-hidden"
                           >
                             <div>
                               {/* Slot Photo Thumbnail Banner */}
@@ -556,7 +634,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                                     dayGallery.all
                                   )
                                 }
-                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer border-b border-slate-100 group/noon shadow-2xs"
+                                style={{ borderBottom: '1.5px solid #000000' }}
+                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer group/noon shadow-2xs"
                               >
                                 <img
                                   src={noonPhoto.url}
@@ -565,10 +644,10 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                                   className="w-full h-full object-cover group-hover/noon:scale-105 transition-transform duration-500"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end justify-between p-2 text-white">
-                                  <span className="text-[10px] font-bold truncate max-w-[80%] drop-shadow-xs">
+                                  <span className="text-[10px] font-black truncate max-w-[80%] drop-shadow-xs">
                                     {dayPlan.afternoon.place}
                                   </span>
-                                  <span className="p-0.5 rounded bg-slate-900/60 text-white">
+                                  <span className="p-0.5 rounded bg-slate-900/80 text-white">
                                     <Eye className="w-3 h-3" />
                                   </span>
                                 </div>
@@ -576,46 +655,54 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
                               <div className="flex items-center justify-between mb-2">
                                 <span
-                                  className="inline-flex items-center gap-1 text-[10px] font-semibold text-sky-900 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md"
+                                  style={{ border: '1px solid #000000' }}
+                                  className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold text-black bg-sky-200 px-2 py-0.5 rounded-md"
                                 >
-                                  <Sunset className="w-3 h-3 text-sky-600" />
+                                  <Sunset className="w-3 h-3 text-sky-700" />
                                   <span>AFTERNOON</span>
                                 </span>
-                                <span className="text-[11px] font-medium text-slate-500 flex items-center gap-1">
-                                  <Clock className="w-3 h-3 text-slate-400" />
+                                <span className="text-[11px] font-mono font-bold text-slate-700 flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-slate-600" />
                                   {dayPlan.afternoon.time}
                                 </span>
                               </div>
 
-                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1.5 leading-snug">
+                              <h4 className="text-xs sm:text-sm font-black text-slate-950 mb-1.5 leading-snug">
                                 {dayPlan.afternoon.activity}
                               </h4>
 
-                              <div className="flex items-center justify-between gap-1 text-xs font-semibold text-indigo-700 mb-2 bg-indigo-50/60 p-1.5 rounded-lg border border-indigo-100">
+                              <div
+                                style={{ border: '1px solid #000000' }}
+                                className="flex items-center justify-between gap-1 text-xs font-bold text-black mb-2 bg-sky-50 p-1.5 rounded-lg"
+                              >
                                 <div className="flex items-center gap-1 truncate">
-                                  <MapPin className="w-3 h-3 shrink-0 text-indigo-600" />
+                                  <MapPin className="w-3 h-3 shrink-0 text-sky-700" />
                                   <span className="truncate">{dayPlan.afternoon.place}</span>
                                 </div>
                                 <button
                                   onClick={(e) => openGoogleMaps(dayPlan.afternoon.place, e)}
-                                  className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
+                                  className="text-[10px] font-extrabold text-sky-800 hover:text-black flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
                                   title="Open in Google Maps"
                                 >
                                   Map <ExternalLink className="w-2.5 h-2.5" />
                                 </button>
                               </div>
 
-                              <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                              <p className="text-xs text-slate-700 leading-relaxed font-medium">
                                 {dayPlan.afternoon.description}
                               </p>
                             </div>
 
                             {dayPlan.afternoon.estCost && (
                               <div
-                                className="mt-3 pt-2 flex items-center justify-between text-xs border-t border-slate-100"
+                                style={{ borderTop: '1px solid #000000' }}
+                                className="mt-3 pt-2 flex items-center justify-between text-xs"
                               >
-                                <span className="text-slate-500 text-[11px]">Est. Cost:</span>
-                                <span className="font-semibold text-slate-800 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                                <span className="text-slate-600 text-[11px] font-bold">Est. Cost:</span>
+                                <span
+                                  style={{ border: '1px solid #000000' }}
+                                  className="font-mono font-extrabold text-black bg-slate-100 px-2 py-0.5 rounded text-[11px]"
+                                >
                                   {dayPlan.afternoon.estCost}
                                 </span>
                               </div>
@@ -629,7 +716,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                         const evePhoto = getDaySlotPhoto(destination, dayPlan.day, 'evening', dayPlan.evening.place);
                         return (
                           <div
-                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all group overflow-hidden"
+                            style={{ border: '1.5px solid #000000' }}
+                            className="rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between bg-white shadow-2xs hover:shadow-md transition-all group overflow-hidden"
                           >
                             <div>
                               {/* Slot Photo Thumbnail Banner */}
@@ -643,7 +731,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                                     dayGallery.all
                                   )
                                 }
-                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer border-b border-slate-100 group/eve shadow-2xs"
+                                style={{ borderBottom: '1.5px solid #000000' }}
+                                className="relative h-24 sm:h-28 -mx-3.5 -mt-3.5 mb-3 overflow-hidden cursor-pointer group/eve shadow-2xs"
                               >
                                 <img
                                   src={evePhoto.url}
@@ -652,10 +741,10 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                                   className="w-full h-full object-cover group-hover/eve:scale-105 transition-transform duration-500"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end justify-between p-2 text-white">
-                                  <span className="text-[10px] font-bold truncate max-w-[80%] drop-shadow-xs">
+                                  <span className="text-[10px] font-black truncate max-w-[80%] drop-shadow-xs">
                                     {dayPlan.evening.place}
                                   </span>
-                                  <span className="p-0.5 rounded bg-slate-900/60 text-white">
+                                  <span className="p-0.5 rounded bg-slate-900/80 text-white">
                                     <Eye className="w-3 h-3" />
                                   </span>
                                 </div>
@@ -663,46 +752,54 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
                               <div className="flex items-center justify-between mb-2">
                                 <span
-                                  className="inline-flex items-center gap-1 text-[10px] font-semibold text-purple-900 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-md"
+                                  style={{ border: '1px solid #000000' }}
+                                  className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold text-black bg-purple-200 px-2 py-0.5 rounded-md"
                                 >
-                                  <Moon className="w-3 h-3 text-purple-600" />
+                                  <Moon className="w-3 h-3 text-purple-700" />
                                   <span>EVENING</span>
                                 </span>
-                                <span className="text-[11px] font-medium text-slate-500 flex items-center gap-1">
-                                  <Clock className="w-3 h-3 text-slate-400" />
+                                <span className="text-[11px] font-mono font-bold text-slate-700 flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-slate-600" />
                                   {dayPlan.evening.time}
                                 </span>
                               </div>
 
-                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 mb-1.5 leading-snug">
+                              <h4 className="text-xs sm:text-sm font-black text-slate-950 mb-1.5 leading-snug">
                                 {dayPlan.evening.activity}
                               </h4>
 
-                              <div className="flex items-center justify-between gap-1 text-xs font-semibold text-indigo-700 mb-2 bg-indigo-50/60 p-1.5 rounded-lg border border-indigo-100">
+                              <div
+                                style={{ border: '1px solid #000000' }}
+                                className="flex items-center justify-between gap-1 text-xs font-bold text-black mb-2 bg-purple-50 p-1.5 rounded-lg"
+                              >
                                 <div className="flex items-center gap-1 truncate">
-                                  <MapPin className="w-3 h-3 shrink-0 text-indigo-600" />
+                                  <MapPin className="w-3 h-3 shrink-0 text-purple-700" />
                                   <span className="truncate">{dayPlan.evening.place}</span>
                                 </div>
                                 <button
                                   onClick={(e) => openGoogleMaps(dayPlan.evening.place, e)}
-                                  className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
+                                  className="text-[10px] font-extrabold text-purple-800 hover:text-black flex items-center gap-0.5 shrink-0 hover:underline cursor-pointer"
                                   title="Open in Google Maps"
                                 >
                                   Map <ExternalLink className="w-2.5 h-2.5" />
                                 </button>
                               </div>
 
-                              <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                              <p className="text-xs text-slate-700 leading-relaxed font-medium">
                                 {dayPlan.evening.description}
                               </p>
                             </div>
 
                             {dayPlan.evening.estCost && (
                               <div
-                                className="mt-3 pt-2 flex items-center justify-between text-xs border-t border-slate-100"
+                                style={{ borderTop: '1px solid #000000' }}
+                                className="mt-3 pt-2 flex items-center justify-between text-xs"
                               >
-                                <span className="text-slate-500 text-[11px]">Est. Cost:</span>
-                                <span className="font-semibold text-slate-800 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                                <span className="text-slate-600 text-[11px] font-bold">Est. Cost:</span>
+                                <span
+                                  style={{ border: '1px solid #000000' }}
+                                  className="font-mono font-extrabold text-black bg-slate-100 px-2 py-0.5 rounded text-[11px]"
+                                >
                                   {dayPlan.evening.estCost}
                                 </span>
                               </div>
@@ -716,12 +813,13 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                   {/* Travel & Transit Notes Banner */}
                   {dayPlan.travelNotes && (
                     <div
-                      className="p-3 sm:p-3.5 rounded-xl flex items-start gap-2.5 text-xs sm:text-sm bg-white border border-slate-200/80 shadow-2xs"
+                      style={{ border: '1.5px solid #000000' }}
+                      className="p-3 sm:p-3.5 rounded-xl flex items-start gap-2.5 text-xs sm:text-sm bg-white shadow-2xs"
                     >
-                      <Navigation className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                      <Navigation className="w-4 h-4 text-indigo-700 shrink-0 mt-0.5" />
                       <div>
-                        <span className="font-semibold text-slate-900 text-xs">Transit &amp; Route Logistics: </span>
-                        <span className="text-slate-600">{dayPlan.travelNotes}</span>
+                        <span className="font-mono font-extrabold text-black text-xs">Transit &amp; Route Logistics: </span>
+                        <span className="text-slate-800 font-medium">{dayPlan.travelNotes}</span>
                       </div>
                     </div>
                   )}
@@ -740,20 +838,27 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-4xl rounded-3xl overflow-hidden relative max-h-[92vh] flex flex-col bg-white border border-slate-200 shadow-2xl"
+            style={{ border: '2px solid #000000' }}
+            className="w-full max-w-4xl rounded-3xl overflow-hidden relative max-h-[92vh] flex flex-col bg-white shadow-2xl"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-100 bg-white">
+            <div
+              style={{ borderBottom: '1.5px solid #000000' }}
+              className="flex items-center justify-between p-3.5 sm:p-4 bg-white"
+            >
               <div className="flex items-center gap-2.5">
-                <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-mono font-bold text-xs">
+                <span
+                  style={{ border: '1.5px solid #000000' }}
+                  className="px-2.5 py-1 rounded-lg bg-amber-300 text-black font-mono font-extrabold text-xs"
+                >
                   DAY {modalPhoto.day}
                 </span>
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+                  <h3 className="text-sm sm:text-base font-black text-slate-950 leading-tight">
                     {modalPhoto.title}
                   </h3>
-                  <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-                    <span className="text-indigo-600 font-semibold">{modalPhoto.slotName}</span>
+                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-700">
+                    <span className="text-indigo-800">{modalPhoto.slotName}</span>
                     <span>•</span>
                     <span>Photo {modalPhoto.galleryIndex + 1} of {modalPhoto.galleryList.length}</span>
                   </div>
@@ -761,7 +866,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
               </div>
               <button
                 onClick={() => setModalPhoto(null)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all cursor-pointer border border-slate-200"
+                style={{ border: '1.5px solid #000000' }}
+                className="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-black flex items-center justify-center transition-all cursor-pointer"
                 title="Close"
               >
                 <X className="w-4 h-4" />
@@ -769,7 +875,10 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
             </div>
 
             {/* Modal Image Display with Carousel Arrows */}
-            <div className="relative bg-slate-950 flex items-center justify-center overflow-hidden min-h-[300px] max-h-[58vh]">
+            <div
+              style={{ borderBottom: '1.5px solid #000000' }}
+              className="relative bg-slate-950 flex items-center justify-center overflow-hidden min-h-[300px] max-h-[58vh]"
+            >
               <img
                 src={modalPhoto.url}
                 alt={modalPhoto.title}
@@ -781,7 +890,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                 <>
                   <button
                     onClick={handlePrevPhoto}
-                    className="absolute left-3 p-2 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+                    style={{ border: '1.5px solid #ffffff' }}
+                    className="absolute left-3 p-2 rounded-full bg-black/70 hover:bg-black text-white transition-all cursor-pointer shadow-lg hover:scale-105"
                     title="Previous Photo"
                   >
                     <ChevronLeft className="w-5 h-5" />
@@ -789,7 +899,8 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
 
                   <button
                     onClick={handleNextPhoto}
-                    className="absolute right-3 p-2 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+                    style={{ border: '1.5px solid #ffffff' }}
+                    className="absolute right-3 p-2 rounded-full bg-black/70 hover:bg-black text-white transition-all cursor-pointer shadow-lg hover:scale-105"
                     title="Next Photo"
                   >
                     <ChevronRight className="w-5 h-5" />
@@ -802,11 +913,11 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
             <div className="p-4 sm:p-5 bg-white space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs sm:text-sm font-normal text-slate-700 leading-relaxed">
+                  <p className="text-xs sm:text-sm font-medium text-slate-900 leading-relaxed">
                     {modalPhoto.caption}
                   </p>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5 flex items-center gap-1.5">
-                    <Sparkles className="w-3 h-3 text-amber-500" />
+                  <p className="text-xs text-slate-700 font-mono font-bold mt-0.5 flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3 text-amber-600" />
                     <span>Curated high-resolution photography for {destination || 'your destination'}.</span>
                   </p>
                 </div>
@@ -825,8 +936,11 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary, destina
                           slotName: slotNames[idx % slotNames.length] || 'Scenic View',
                         });
                       }}
+                      style={{
+                        border: idx === modalPhoto.galleryIndex ? '2px solid #000000' : '1px solid #94a3b8',
+                      }}
                       className={`w-10 h-10 rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-105 ${
-                        idx === modalPhoto.galleryIndex ? 'ring-2 ring-indigo-600 border border-indigo-600' : 'border border-slate-200 opacity-60 hover:opacity-100'
+                        idx === modalPhoto.galleryIndex ? 'ring-2 ring-amber-400' : 'opacity-60 hover:opacity-100'
                       }`}
                     >
                       <img src={thumb.url} alt={thumb.title} className="w-full h-full object-cover" />

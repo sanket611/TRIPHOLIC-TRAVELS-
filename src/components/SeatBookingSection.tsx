@@ -220,26 +220,35 @@ ${isBooking
   return (
     <section
       id="seat-booking-section"
-      className="rounded-3xl overflow-hidden mb-8 transition-all duration-300 scroll-mt-20 bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.04)]"
+      style={{
+        border: '2px solid #000000',
+        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+      }}
+      className="rounded-3xl overflow-hidden mb-8 transition-all duration-300 scroll-mt-20 bg-white"
     >
       {/* Top Banner Stripe */}
       <div
-        className="px-4 sm:px-7 py-4 bg-gradient-to-r from-indigo-50 via-slate-50 to-purple-50 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+        style={{ borderBottom: '1.5px solid #000000' }}
+        className="px-4 sm:px-7 py-4 bg-amber-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+          <div
+            style={{ border: '1.5px solid #000000' }}
+            className="w-10 h-10 rounded-xl bg-black text-amber-300 flex items-center justify-center shrink-0 shadow-2xs"
+          >
             <Armchair className="w-5 h-5 text-amber-300" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span
-                className="text-[11px] font-semibold tracking-wide px-2.5 py-0.5 rounded-full text-indigo-700 bg-indigo-100/80 border border-indigo-200/60"
+                style={{ border: '1px solid #000000' }}
+                className="text-[11px] font-mono font-extrabold uppercase tracking-wide px-2.5 py-0.5 rounded-full text-black bg-amber-200"
               >
                 Limited Slots Available
               </span>
-              <span className="text-xs text-slate-500 hidden sm:inline font-medium">• Live Availability</span>
+              <span className="text-xs text-slate-700 hidden sm:inline font-bold">• Live Availability</span>
             </div>
-            <h2 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 font-heading">
+            <h2 className="text-lg sm:text-xl font-black tracking-tight text-slate-950 font-heading">
               Confirm Your Seat Now
             </h2>
           </div>
@@ -247,9 +256,10 @@ ${isBooking
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <span
-            className="text-xs sm:text-sm text-emerald-800 bg-emerald-50 border border-emerald-200 font-medium flex items-center gap-1.5 px-3 py-1.5 rounded-xl shadow-2xs"
+            style={{ border: '1px solid #000000' }}
+            className="text-xs sm:text-sm text-black bg-emerald-200 font-mono font-extrabold flex items-center gap-1.5 px-3 py-1.5 rounded-xl shadow-2xs"
           >
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-emerald-900 shrink-0" />
             100% Refundable Token ₹250
           </span>
         </div>
@@ -280,12 +290,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-destination"
-                    className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                    className="block text-xs font-mono font-extrabold uppercase tracking-wider text-slate-900 mb-1.5"
                   >
                     Destination <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
-                    <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <MapPin className="w-4 h-4 text-slate-700 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-destination"
                       type="text"
@@ -295,8 +305,9 @@ ${isBooking
                         if (errors.destination) setErrors({ ...errors, destination: '' });
                       }}
                       placeholder="e.g. Goa, Paris, Manali"
-                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50/70 border border-slate-200 transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white ${
-                        errors.destination ? 'border-rose-500 ring-2 ring-rose-200' : ''
+                      style={{ border: '1.5px solid #000000' }}
+                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50 hover:bg-white transition-all text-slate-950 font-semibold focus:outline-none focus:ring-2 focus:ring-black focus:bg-white shadow-2xs ${
+                        errors.destination ? 'ring-2 ring-rose-500 bg-rose-50/50' : ''
                       }`}
                     />
                   </div>
@@ -312,12 +323,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-name"
-                    className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                    className="block text-xs font-mono font-extrabold uppercase tracking-wider text-slate-900 mb-1.5"
                   >
                     Your Name <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <User className="w-4 h-4 text-slate-700 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-name"
                       type="text"
@@ -327,8 +338,9 @@ ${isBooking
                         if (errors.name) setErrors({ ...errors, name: '' });
                       }}
                       placeholder="Enter your full name"
-                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50/70 border border-slate-200 transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white ${
-                        errors.name ? 'border-rose-500 ring-2 ring-rose-200' : ''
+                      style={{ border: '1.5px solid #000000' }}
+                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50 hover:bg-white transition-all text-slate-950 font-semibold focus:outline-none focus:ring-2 focus:ring-black focus:bg-white shadow-2xs ${
+                        errors.name ? 'ring-2 ring-rose-500 bg-rose-50/50' : ''
                       }`}
                     />
                   </div>
@@ -344,12 +356,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-contact"
-                    className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                    className="block text-xs font-mono font-extrabold uppercase tracking-wider text-slate-900 mb-1.5"
                   >
-                    Contact Number <span className="text-rose-500">*</span>
+                    Contact Number / Phone <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Phone className="w-4 h-4 text-slate-700 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-contact"
                       type="tel"
@@ -359,8 +371,9 @@ ${isBooking
                         if (errors.contactNumber) setErrors({ ...errors, contactNumber: '' });
                       }}
                       placeholder="e.g. +91 98765 43210"
-                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50/70 border border-slate-200 transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white ${
-                        errors.contactNumber ? 'border-rose-500 ring-2 ring-rose-200' : ''
+                      style={{ border: '1.5px solid #000000' }}
+                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50 hover:bg-white transition-all text-slate-950 font-semibold focus:outline-none focus:ring-2 focus:ring-black focus:bg-white shadow-2xs ${
+                        errors.contactNumber ? 'ring-2 ring-rose-500 bg-rose-50/50' : ''
                       }`}
                     />
                   </div>
@@ -376,12 +389,12 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-date"
-                    className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                    className="block text-xs font-mono font-extrabold uppercase tracking-wider text-slate-900 mb-1.5"
                   >
-                    Date &amp; Day <span className="text-rose-500">*</span>
+                    Travel Date &amp; Day <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
-                    <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Calendar className="w-4 h-4 text-slate-700 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-date"
                       type="date"
@@ -391,16 +404,18 @@ ${isBooking
                         setTravelDate(e.target.value);
                         if (errors.travelDate) setErrors({ ...errors, travelDate: '' });
                       }}
-                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50/70 border border-slate-200 transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white ${
-                        errors.travelDate ? 'border-rose-500 ring-2 ring-rose-200' : ''
+                      style={{ border: '1.5px solid #000000' }}
+                      className={`w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50 hover:bg-white transition-all text-slate-950 font-semibold focus:outline-none focus:ring-2 focus:ring-black focus:bg-white shadow-2xs ${
+                        errors.travelDate ? 'ring-2 ring-rose-500 bg-rose-50/50' : ''
                       }`}
                     />
                   </div>
                   <div
-                    className="mt-1 flex items-center justify-between text-xs text-slate-600 px-3 py-1 bg-slate-50 rounded-lg border border-slate-200"
+                    style={{ border: '1.2px solid #000000' }}
+                    className="mt-1.5 flex items-center justify-between text-xs text-slate-900 px-3 py-1.5 bg-slate-100/90 rounded-lg shadow-2xs"
                   >
-                    <span className="font-bold text-slate-900">{selectedDayInfo.day}</span>
-                    <span className="text-slate-500">{selectedDayInfo.formattedDate}</span>
+                    <span className="font-mono font-black text-slate-950">{selectedDayInfo.day}</span>
+                    <span className="font-mono font-bold text-slate-700">{selectedDayInfo.formattedDate}</span>
                   </div>
                   {errors.travelDate && (
                     <p className="mt-1 text-xs font-medium text-rose-600 flex items-center gap-1">
@@ -414,22 +429,23 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-budget"
-                    className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                    className="block text-xs font-mono font-extrabold uppercase tracking-wider text-slate-900 mb-1.5"
                   >
                     Confirm Budget
                   </label>
                   <div className="relative">
-                    <Wallet className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Wallet className="w-4 h-4 text-slate-700 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="booking-budget"
                       type="text"
                       value={confirmedBudget}
                       onChange={(e) => setConfirmedBudget(e.target.value)}
                       placeholder="e.g. ₹ 20,000"
-                      className="w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50/70 border border-slate-200 transition-all text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      style={{ border: '1.5px solid #000000' }}
+                      className="w-full pl-10 pr-3.5 py-2.5 min-h-[42px] text-sm rounded-xl bg-slate-50 hover:bg-white transition-all text-slate-950 font-semibold focus:outline-none focus:ring-2 focus:ring-black focus:bg-white shadow-2xs"
                     />
                   </div>
-                  <p className="mt-1 text-xs text-slate-500 font-medium">
+                  <p className="mt-1 text-xs font-mono font-bold text-slate-600">
                     Est. Total for {tripSummary.duration} Days
                   </p>
                 </div>
@@ -438,7 +454,7 @@ ${isBooking
                 <div>
                   <label
                     htmlFor="booking-members"
-                    className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                    className="block text-xs font-mono font-extrabold uppercase tracking-wider text-slate-900 mb-1.5"
                   >
                     Members (Travelers) <span className="text-rose-500">*</span>
                   </label>
@@ -447,12 +463,13 @@ ${isBooking
                       type="button"
                       id="members-minus-btn"
                       onClick={() => setMembers((m) => Math.max(1, m - 1))}
-                      className="w-10 h-10 rounded-xl text-slate-700 font-bold bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all flex items-center justify-center active:scale-95 cursor-pointer text-lg shadow-2xs"
+                      style={{ border: '1.5px solid #000000' }}
+                      className="w-10 h-10 rounded-xl text-black font-black bg-slate-100 hover:bg-slate-200 transition-all flex items-center justify-center active:scale-95 cursor-pointer text-lg shadow-2xs"
                     >
                       -
                     </button>
                     <div className="relative flex-1">
-                      <Users className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <Users className="w-4 h-4 text-slate-700 absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         id="booking-members"
                         type="number"
@@ -463,19 +480,21 @@ ${isBooking
                           const val = parseInt(e.target.value, 10);
                           setMembers(isNaN(val) ? 1 : Math.max(1, val));
                         }}
-                        className="w-full pl-9 pr-3 py-2 text-center text-sm font-bold text-slate-900 rounded-xl bg-slate-50/70 border border-slate-200 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                        style={{ border: '1.5px solid #000000' }}
+                        className="w-full pl-9 pr-3 py-2 text-center text-sm font-mono font-black text-slate-950 rounded-xl bg-slate-50 hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:bg-white shadow-2xs"
                       />
                     </div>
                     <button
                       type="button"
                       id="members-plus-btn"
                       onClick={() => setMembers((m) => Math.min(50, m + 1))}
-                      className="w-10 h-10 rounded-xl text-slate-700 font-bold bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all flex items-center justify-center active:scale-95 cursor-pointer text-lg shadow-2xs"
+                      style={{ border: '1.5px solid #000000' }}
+                      className="w-10 h-10 rounded-xl text-black font-black bg-slate-100 hover:bg-slate-200 transition-all flex items-center justify-center active:scale-95 cursor-pointer text-lg shadow-2xs"
                     >
                       +
                     </button>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500 font-medium text-center">
+                  <p className="mt-1 text-xs font-mono font-bold text-slate-600 text-center">
                     {members === 1 ? '1 Seat Booking' : `${members} Seats Reserved Together`}
                   </p>
                 </div>
@@ -485,7 +504,7 @@ ${isBooking
               <div>
                 <label
                   htmlFor="booking-notes"
-                  className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                  className="block text-xs font-mono font-extrabold uppercase tracking-wider text-slate-900 mb-1.5"
                 >
                   Special Notes or Requirements (Optional)
                 </label>
@@ -495,22 +514,25 @@ ${isBooking
                   value={specialRequest}
                   onChange={(e) => setSpecialRequest(e.target.value)}
                   placeholder="e.g. Airport pickup needed, prefer morning departure, vegetarian food preference"
-                  className="w-full px-3.5 py-2.5 min-h-[42px] text-sm text-slate-900 font-medium rounded-xl bg-slate-50/70 border border-slate-200 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                  style={{ border: '1.5px solid #000000' }}
+                  className="w-full px-3.5 py-2.5 min-h-[42px] text-sm text-slate-950 font-medium rounded-xl bg-slate-50 hover:bg-white transition-all focus:outline-none focus:ring-2 focus:ring-black focus:bg-white shadow-2xs"
                 />
               </div>
 
               {/* Inclusions & Guarantees summary badge */}
               <div
-                className="p-3.5 rounded-2xl text-xs sm:text-sm text-slate-700 flex flex-wrap items-center justify-between gap-3 bg-indigo-50/40 border border-indigo-100"
+                style={{ border: '1.5px solid #000000' }}
+                className="p-3.5 rounded-2xl text-xs sm:text-sm text-slate-800 flex flex-wrap items-center justify-between gap-3 bg-amber-50/60 shadow-2xs"
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+                  <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
                   <span>
-                    <strong className="text-slate-900 font-bold">What your ₹250 seat token secures:</strong> Guaranteed departure slot, instant itinerary price lock, verified hotel coordination, and 24/7 travel concierge.
+                    <strong className="text-slate-950 font-black">What your ₹250 seat token secures:</strong> Guaranteed departure slot, instant itinerary price lock, verified hotel coordination, and 24/7 travel concierge.
                   </span>
                 </div>
                 <div
-                  className="text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full shrink-0 shadow-2xs"
+                  style={{ border: '1px solid #000000' }}
+                  className="text-xs font-mono font-extrabold text-black bg-emerald-200 px-3 py-1 rounded-full shrink-0 shadow-2xs"
                 >
                   Fully Refundable within 24h
                 </div>
@@ -523,7 +545,8 @@ ${isBooking
                   type="submit"
                   id="pay-250-book-seat-btn"
                   disabled={isProcessingPayment}
-                  className="w-full sm:w-auto px-7 py-3.5 min-h-[48px] text-sm sm:text-base font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.99] group"
+                  style={{ border: '1.5px solid #000000' }}
+                  className="w-full sm:w-auto px-7 py-3.5 min-h-[48px] text-sm sm:text-base font-mono font-extrabold text-white bg-slate-950 hover:bg-black rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.99] group"
                 >
                   {isProcessingPayment ? (
                     <div className="flex items-center gap-2">
@@ -544,9 +567,10 @@ ${isBooking
                   type="button"
                   id="time-to-think-btn"
                   onClick={handleTimeThink}
-                  className="w-full sm:w-auto px-5 py-3.5 min-h-[48px] text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-2xs"
+                  style={{ border: '1.5px solid #000000' }}
+                  className="w-full sm:w-auto px-5 py-3.5 min-h-[48px] text-xs sm:text-sm font-mono font-bold text-slate-900 hover:text-black bg-slate-100 hover:bg-slate-200 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-2xs"
                 >
-                  <Clock className="w-4 h-4 text-slate-500" />
+                  <Clock className="w-4 h-4 text-slate-700" />
                   <span>Let give me time to think</span>
                 </button>
               </div>
@@ -560,8 +584,11 @@ ${isBooking
         <div id="thank-you-view" className="p-5 sm:p-7 text-center animate-fade-in">
           <div className="max-w-2xl mx-auto space-y-4">
             {/* Heart / Check badge */}
-            <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center shadow-xs">
-              <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600" />
+            <div
+              style={{ border: '1.5px solid #000000' }}
+              className="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-2xl bg-amber-50 text-slate-900 flex items-center justify-center shadow-2xs"
+            >
+              <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-slate-900" />
             </div>
 
             {/* BIG THANK YOU WORDING */}
@@ -570,7 +597,8 @@ ${isBooking
                 THANK YOU
               </h1>
               <div
-                className="inline-block px-3.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-mono text-xs font-semibold"
+                style={{ border: '1.2px solid #000000' }}
+                className="inline-block px-3.5 py-1 rounded-full bg-slate-100 text-slate-950 font-mono text-xs font-bold shadow-2xs"
               >
                 Inquiry Ref: {inquiryId}
               </div>
@@ -578,47 +606,50 @@ ${isBooking
 
             {/* Required user message */}
             <div
-              className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 space-y-1.5 text-left"
+              style={{ border: '1.5px solid #000000' }}
+              className="p-4 sm:p-5 rounded-2xl bg-slate-50 text-slate-900 space-y-1.5 text-left shadow-2xs"
             >
-              <p className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+              <p className="text-sm sm:text-base font-bold text-slate-950 leading-snug">
                 Thank you for visiting us! We will review your data and tell you if any seats are available for that date.
               </p>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
                 Our trip coordinators will check live local slot availability, transportation schedules, and accommodation options for{' '}
-                <strong className="text-slate-900 font-semibold">{destination}</strong> and notify you promptly via your provided details.
+                <strong className="text-slate-950 font-bold">{destination}</strong> and notify you promptly via your provided details.
               </p>
             </div>
 
             {/* Captured Inquiry Summary Recap Card */}
             <div
-              className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 text-left text-xs font-mono space-y-2 text-slate-800 shadow-2xs"
+              style={{ border: '1.5px solid #000000' }}
+              className="p-3.5 sm:p-4 rounded-2xl bg-white text-left text-xs font-mono space-y-2 text-slate-900 shadow-2xs"
             >
               <div
-                className="flex justify-between items-center pb-2 border-b border-slate-100 font-bold text-xs sm:text-sm"
+                className="flex justify-between items-center pb-2 border-b border-slate-200 font-bold text-xs sm:text-sm"
               >
-                <span className="text-slate-900">Inquiry Snapshot</span>
+                <span className="text-slate-950 font-black">Inquiry Snapshot</span>
                 <span
-                  className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full"
+                  style={{ border: '1px solid #000000' }}
+                  className="text-xs font-bold text-slate-950 bg-amber-200 px-2.5 py-0.5 rounded-full"
                 >
                   Status: Pending Review
                 </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-medium text-xs">
-                <div>
-                  <span className="text-slate-500 block text-[10px]">Destination:</span>
-                  <span className="font-bold text-slate-900 truncate block">{destination || tripSummary.destination}</span>
+                <div style={{ border: '1.2px solid #000000' }} className="p-2.5 rounded-xl bg-slate-50">
+                  <span className="text-slate-500 block text-[10px] uppercase font-bold">Destination:</span>
+                  <span className="font-bold text-slate-950 truncate block">{destination || tripSummary.destination}</span>
                 </div>
-                <div>
-                  <span className="text-slate-500 block text-[10px]">Date &amp; Day:</span>
-                  <span className="font-bold text-slate-900 truncate block">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
+                <div style={{ border: '1.2px solid #000000' }} className="p-2.5 rounded-xl bg-slate-50">
+                  <span className="text-slate-500 block text-[10px] uppercase font-bold">Date &amp; Day:</span>
+                  <span className="font-bold text-slate-950 truncate block">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
                 </div>
-                <div>
-                  <span className="text-slate-500 block text-[10px]">Travelers:</span>
-                  <span className="font-bold text-slate-900">{members} Person(s)</span>
+                <div style={{ border: '1.2px solid #000000' }} className="p-2.5 rounded-xl bg-slate-50">
+                  <span className="text-slate-500 block text-[10px] uppercase font-bold">Travelers:</span>
+                  <span className="font-bold text-slate-950">{members} Person(s)</span>
                 </div>
-                <div>
-                  <span className="text-slate-500 block text-[10px]">Estimated Budget:</span>
-                  <span className="font-bold text-slate-900">{confirmedBudget}</span>
+                <div style={{ border: '1.2px solid #000000' }} className="p-2.5 rounded-xl bg-slate-50">
+                  <span className="text-slate-500 block text-[10px] uppercase font-bold">Estimated Budget:</span>
+                  <span className="font-bold text-slate-950">{confirmedBudget}</span>
                 </div>
               </div>
             </div>
@@ -629,9 +660,10 @@ ${isBooking
                 type="button"
                 id="inquiry-download-btn"
                 onClick={() => handleDownloadReceipt('inquiry')}
-                className="px-4 py-2.5 min-h-[40px] text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+                style={{ border: '1.5px solid #000000' }}
+                className="px-4 py-2.5 min-h-[40px] text-xs sm:text-sm font-bold text-slate-900 hover:text-black bg-white hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
               >
-                <Download className="w-4 h-4 text-slate-500" />
+                <Download className="w-4 h-4 text-slate-900" />
                 <span>Download Inquiry Slip</span>
               </button>
 
@@ -639,9 +671,10 @@ ${isBooking
                 type="button"
                 id="open-screen-thankyou-btn"
                 onClick={() => setIsDirectModalOpen(true)}
-                className="px-4 py-2.5 min-h-[40px] text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+                style={{ border: '1.5px solid #000000' }}
+                className="px-4 py-2.5 min-h-[40px] text-xs sm:text-sm font-bold text-slate-900 hover:text-black bg-white hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
               >
-                <Sparkles className="w-4 h-4 text-indigo-600" />
+                <Sparkles className="w-4 h-4 text-slate-900" />
                 <span>View On Screen</span>
               </button>
 
@@ -649,7 +682,8 @@ ${isBooking
                 type="button"
                 id="inquiry-change-btn"
                 onClick={() => setViewState('form')}
-                className="px-5 py-2.5 min-h-[40px] text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                style={{ border: '1.5px solid #000000' }}
+                className="px-5 py-2.5 min-h-[40px] text-xs sm:text-sm font-extrabold text-white bg-slate-950 hover:bg-black rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
                 <RotateCcw className="w-4 h-4 text-white" />
                 <span>Ready to Book? Back to Form</span>
@@ -665,83 +699,99 @@ ${isBooking
           <div className="max-w-2xl mx-auto space-y-4">
             {/* Celebration Icon & Ribbons */}
             <div className="relative inline-block">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shadow-xs animate-bounce-slow">
-                <CheckCircle2 className="w-9 h-9 sm:w-11 sm:h-11 text-emerald-600" />
+              <div
+                style={{ border: '1.5px solid #000000' }}
+                className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-emerald-100 text-emerald-950 flex items-center justify-center shadow-xs animate-bounce-slow"
+              >
+                <CheckCircle2 className="w-9 h-9 sm:w-11 sm:h-11 text-emerald-900" />
               </div>
-              <span className="absolute -bottom-1 -right-2 px-2.5 py-0.5 bg-amber-100 text-amber-900 font-mono font-bold text-[10px] sm:text-xs rounded-full border border-amber-200 shadow-2xs">
+              <span
+                style={{ border: '1px solid #000000' }}
+                className="absolute -bottom-1 -right-2 px-2.5 py-0.5 bg-amber-200 text-slate-950 font-mono font-black text-[10px] sm:text-xs rounded-full shadow-2xs"
+              >
                 ★ 100% VERIFIED
               </span>
             </div>
 
             {/* Congratulations Banner */}
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-xs font-bold shadow-2xs">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <div
+                style={{ border: '1.2px solid #000000' }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-950 font-mono text-xs font-extrabold shadow-2xs"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-emerald-800" />
                 <span>OFFICIAL BOOKING CONFIRMED • ADVANCE ₹250 PAID</span>
               </div>
               
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 font-heading">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-950 font-heading">
                 🎉 CONGRATULATIONS! 🎉
               </h1>
               
-              <p className="text-sm sm:text-base font-bold text-indigo-900 max-w-xl mx-auto">
-                {name || 'Valued Traveler'}, your seat for <span className="underline decoration-indigo-500 decoration-2">{destination}</span> is locked in!
+              <p className="text-sm sm:text-base font-bold text-slate-900 max-w-xl mx-auto">
+                {name || 'Valued Traveler'}, your seat for <span className="underline decoration-black decoration-2">{destination}</span> is locked in!
               </p>
             </div>
 
             {/* Boarding Pass / Ticket Voucher Card */}
             <div
-              className="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 text-left space-y-3 shadow-xs"
+              style={{ border: '1.5px solid #000000' }}
+              className="rounded-2xl p-4 sm:p-5 bg-white text-left space-y-3 shadow-xs"
             >
               {/* Top Bar with Brand & Booking ID */}
               <div
-                className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-dashed border-slate-200"
+                className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-dashed border-slate-300"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+                  <div
+                    style={{ border: '1.2px solid #000000' }}
+                    className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-xs"
+                  >
                     TH
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono uppercase text-slate-400 block leading-none">Pass ID</span>
-                    <span className="text-base sm:text-lg font-mono font-black text-slate-900 tracking-wide">{bookingId}</span>
+                    <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block leading-none">Pass ID</span>
+                    <span className="text-base sm:text-lg font-mono font-black text-slate-950 tracking-wide">{bookingId}</span>
                   </div>
                 </div>
                 
-                <div className="text-right bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
-                  <span className="text-[10px] font-mono uppercase text-emerald-700 font-bold block leading-none">Token Status</span>
-                  <span className="text-xs sm:text-sm font-mono font-bold text-emerald-900">₹ 250 Paid (Secured)</span>
+                <div
+                  style={{ border: '1.2px solid #000000' }}
+                  className="text-right bg-emerald-100 px-3 py-1 rounded-xl shadow-2xs"
+                >
+                  <span className="text-[10px] font-mono uppercase text-emerald-950 font-bold block leading-none">Token Status</span>
+                  <span className="text-xs sm:text-sm font-mono font-extrabold text-emerald-950">₹ 250 Paid (Secured)</span>
                 </div>
               </div>
 
               {/* Grid with Trip Details */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                <div>
-                  <span className="text-[10px] font-medium uppercase text-slate-400 block">Destination</span>
-                  <p className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1 truncate">
-                    <MapPin className="w-3 h-3 text-indigo-600 shrink-0" />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div style={{ border: '1.2px solid #000000' }} className="p-2.5 rounded-xl bg-slate-50 shadow-2xs">
+                  <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block">Destination</span>
+                  <p className="text-xs sm:text-sm font-bold text-slate-950 flex items-center gap-1 truncate">
+                    <MapPin className="w-3 h-3 text-slate-900 shrink-0" />
                     <span className="truncate">{destination}</span>
                   </p>
                 </div>
 
-                <div>
-                  <span className="text-[10px] font-medium uppercase text-slate-400 block">Date &amp; Day</span>
-                  <p className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1 truncate">
-                    <Calendar className="w-3 h-3 text-indigo-600 shrink-0" />
+                <div style={{ border: '1.2px solid #000000' }} className="p-2.5 rounded-xl bg-slate-50 shadow-2xs">
+                  <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block">Date &amp; Day</span>
+                  <p className="text-xs sm:text-sm font-bold text-slate-950 flex items-center gap-1 truncate">
+                    <Calendar className="w-3 h-3 text-slate-900 shrink-0" />
                     <span className="truncate">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
                   </p>
                 </div>
 
-                <div>
-                  <span className="text-[10px] font-medium uppercase text-slate-400 block">Passengers</span>
-                  <p className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1">
-                    <Users className="w-3 h-3 text-indigo-600 shrink-0" />
+                <div style={{ border: '1.2px solid #000000' }} className="p-2.5 rounded-xl bg-slate-50 shadow-2xs">
+                  <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block">Passengers</span>
+                  <p className="text-xs sm:text-sm font-bold text-slate-950 flex items-center gap-1">
+                    <Users className="w-3 h-3 text-slate-900 shrink-0" />
                     <span>{members} Seat(s)</span>
                   </p>
                 </div>
 
-                <div>
-                  <span className="text-[10px] font-medium uppercase text-slate-400 block">Contact</span>
-                  <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                <div style={{ border: '1.2px solid #000000' }} className="p-2.5 rounded-xl bg-slate-50 shadow-2xs">
+                  <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block">Contact</span>
+                  <p className="text-xs sm:text-sm font-bold text-slate-950 truncate">
                     {name || 'Traveler'} ({contactNumber || 'Saved'})
                   </p>
                 </div>
@@ -749,11 +799,12 @@ ${isBooking
 
               {/* WhatsApp & Concierge Guarantee Notice */}
               <div
-                className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 flex items-center gap-2"
+                style={{ border: '1.2px solid #000000' }}
+                className="p-2.5 rounded-xl bg-emerald-50 text-xs text-emerald-950 flex items-center gap-2 shadow-2xs"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <p className="text-xs text-emerald-900 font-medium">
-                  Lead coordinator will WhatsApp <span className="font-bold text-slate-900">{contactNumber}</span> within 4 hours with hotel vouchers and driver details.
+                <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
+                <p className="text-xs text-emerald-950 font-medium">
+                  Lead coordinator will WhatsApp <span className="font-bold text-black">{contactNumber}</span> within 4 hours with hotel vouchers and driver details.
                 </p>
               </div>
             </div>
@@ -764,7 +815,8 @@ ${isBooking
                 type="button"
                 id="receipt-download-btn"
                 onClick={() => handleDownloadReceipt('booking')}
-                className="px-5 py-2.5 min-h-[42px] text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                style={{ border: '1.5px solid #000000' }}
+                className="px-5 py-2.5 min-h-[42px] text-xs sm:text-sm font-extrabold text-white bg-slate-950 hover:bg-black rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
                 <Download className="w-4 h-4 text-amber-300" />
                 <span>Download Ticket &amp; Receipt</span>
@@ -774,9 +826,10 @@ ${isBooking
                 type="button"
                 id="open-screen-ticket-btn"
                 onClick={() => setIsDirectModalOpen(true)}
-                className="px-4 py-2.5 min-h-[42px] text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+                style={{ border: '1.5px solid #000000' }}
+                className="px-4 py-2.5 min-h-[42px] text-xs sm:text-sm font-bold text-slate-900 hover:text-black bg-white hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
               >
-                <Sparkles className="w-4 h-4 text-indigo-600" />
+                <Sparkles className="w-4 h-4 text-slate-900" />
                 <span>View On Screen</span>
               </button>
 
@@ -784,9 +837,10 @@ ${isBooking
                 type="button"
                 id="back-to-plan-btn"
                 onClick={() => setViewState('form')}
-                className="px-4 py-2.5 min-h-[42px] text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+                style={{ border: '1.5px solid #000000' }}
+                className="px-4 py-2.5 min-h-[42px] text-xs sm:text-sm font-bold text-slate-900 hover:text-black bg-white hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
               >
-                <RotateCcw className="w-4 h-4 text-slate-500" />
+                <RotateCcw className="w-4 h-4 text-slate-700" />
                 <span>Book Another / Edit</span>
               </button>
             </div>
@@ -807,19 +861,23 @@ ${isBooking
         >
           <div
             id="direct-ticket-modal-content"
-            className="relative w-full max-w-xl sm:max-w-2xl rounded-3xl overflow-hidden my-auto max-h-[92vh] flex flex-col bg-white border border-slate-200 shadow-2xl text-slate-900"
+            style={{ border: '2px solid #000000' }}
+            className="relative w-full max-w-xl sm:max-w-2xl rounded-3xl overflow-hidden my-auto max-h-[92vh] flex flex-col bg-white shadow-2xl text-slate-900"
             role="dialog"
             aria-modal="true"
             aria-label={viewState === 'paid_confirmed' ? 'Congratulations Booking Ticket' : 'Thank You Inquiry'}
           >
             {/* Modal Header Bar - Compact */}
-            <div className="px-4 py-3 sm:px-6 bg-slate-50 border-b border-slate-100 text-slate-900 flex items-center justify-between shrink-0">
+            <div className="px-4 py-3 sm:px-6 bg-slate-50 border-b border-slate-200 text-slate-900 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+                <div
+                  style={{ border: '1.2px solid #000000' }}
+                  className="w-7 h-7 rounded-lg bg-black flex items-center justify-center text-white font-bold text-xs"
+                >
                   TH
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-indigo-600 block leading-none">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-600 block leading-none">
                     Tripholic Travel Pass
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
@@ -833,7 +891,8 @@ ${isBooking
                   type="button"
                   id="direct-modal-close-btn"
                   onClick={() => setIsDirectModalOpen(false)}
-                  className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all cursor-pointer border border-slate-200"
+                  style={{ border: '1.2px solid #000000' }}
+                  className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-900 flex items-center justify-center transition-all cursor-pointer"
                   title="Close Screen"
                 >
                   <X className="w-4 h-4" />
@@ -848,36 +907,41 @@ ${isBooking
                 <div className="space-y-3 text-center">
                   {/* Top Celebration Header */}
                   <div className="space-y-0.5">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10px] sm:text-xs font-bold">
-                      <Sparkles className="w-3 h-3 text-emerald-600" />
+                    <div
+                      style={{ border: '1.2px solid #000000' }}
+                      className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-950 font-mono text-[10px] sm:text-xs font-bold"
+                    >
+                      <Sparkles className="w-3 h-3 text-emerald-800" />
                       <span>OFFICIAL CONFIRMATION • ₹250 ADVANCE PAID</span>
-                      <Sparkles className="w-3 h-3 text-emerald-600" />
+                      <Sparkles className="w-3 h-3 text-emerald-800" />
                     </div>
 
-                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 font-heading">
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 font-heading">
                       🎉 CONGRATULATIONS! 🎉
                     </h2>
 
-                    <p className="text-xs sm:text-sm font-bold text-indigo-900">
-                      {name || 'Valued Traveler'}, your seat for <span className="underline decoration-indigo-500 decoration-2">{destination}</span> is reserved!
+                    <p className="text-xs sm:text-sm font-bold text-slate-900">
+                      {name || 'Valued Traveler'}, your seat for <span className="underline decoration-black decoration-2">{destination}</span> is reserved!
                     </p>
                   </div>
 
                   {/* Compact Boarding Pass Ticket */}
                   <div
-                    className="rounded-2xl p-3.5 sm:p-4 text-left space-y-2.5 bg-slate-50 border border-slate-200 shadow-2xs"
+                    style={{ border: '1.5px solid #000000' }}
+                    className="rounded-2xl p-3.5 sm:p-4 text-left space-y-2.5 bg-slate-50 shadow-2xs"
                   >
                     {/* Ticket Header Bar */}
-                    <div className="flex items-center justify-between gap-2 pb-2 border-b border-dashed border-slate-200">
+                    <div className="flex items-center justify-between gap-2 pb-2 border-b border-dashed border-slate-300">
                       <div className="flex items-center gap-2">
                         <div>
-                          <span className="text-[9px] font-mono uppercase text-slate-400 block leading-none">Booking ID</span>
-                          <span className="text-sm sm:text-base font-mono font-bold text-slate-900 tracking-wide">{bookingId}</span>
+                          <span className="text-[9px] font-mono uppercase text-slate-500 block leading-none font-bold">Booking ID</span>
+                          <span className="text-sm sm:text-base font-mono font-bold text-slate-950 tracking-wide">{bookingId}</span>
                         </div>
                         <button
                           type="button"
                           onClick={handleCopyBookingCode}
-                          className="text-[10px] px-2 py-0.5 bg-white hover:bg-slate-100 rounded border border-slate-200 font-mono font-medium flex items-center gap-1 transition-colors cursor-pointer text-slate-700"
+                          style={{ border: '1px solid #000000' }}
+                          className="text-[10px] px-2 py-0.5 bg-white hover:bg-slate-100 rounded font-mono font-bold flex items-center gap-1 transition-colors cursor-pointer text-slate-900"
                           title="Copy code"
                         >
                           {copiedCode ? <Check className="w-2.5 h-2.5 text-emerald-600" /> : <Copy className="w-2.5 h-2.5" />}
@@ -885,41 +949,44 @@ ${isBooking
                         </button>
                       </div>
 
-                      <div className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 text-right">
-                        <span className="text-[9px] font-mono uppercase text-emerald-700 font-bold block leading-none">Token Status</span>
-                        <span className="text-xs font-mono font-bold text-emerald-900">₹ 250 Paid (Locked)</span>
+                      <div
+                        style={{ border: '1px solid #000000' }}
+                        className="bg-emerald-100 px-2.5 py-1 rounded-lg text-right"
+                      >
+                        <span className="text-[9px] font-mono uppercase text-emerald-950 font-bold block leading-none">Token Status</span>
+                        <span className="text-xs font-mono font-bold text-emerald-950">₹ 250 Paid (Locked)</span>
                       </div>
                     </div>
 
                     {/* Trip Details 4-Column Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 rounded-xl bg-white border border-slate-100">
-                      <div>
-                        <span className="text-[9px] font-medium uppercase text-slate-400 block">Destination</span>
-                        <p className="text-xs font-bold text-slate-900 flex items-center gap-1 truncate">
-                          <MapPin className="w-3 h-3 text-indigo-600 shrink-0" />
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <div style={{ border: '1.2px solid #000000' }} className="p-2 rounded-xl bg-white shadow-2xs">
+                        <span className="text-[9px] font-mono font-bold uppercase text-slate-500 block">Destination</span>
+                        <p className="text-xs font-bold text-slate-950 flex items-center gap-1 truncate">
+                          <MapPin className="w-3 h-3 text-slate-900 shrink-0" />
                           <span className="truncate">{destination}</span>
                         </p>
                       </div>
 
-                      <div>
-                        <span className="text-[9px] font-medium uppercase text-slate-400 block">Travel Date</span>
-                        <p className="text-xs font-bold text-slate-900 flex items-center gap-1 truncate">
-                          <Calendar className="w-3 h-3 text-indigo-600 shrink-0" />
+                      <div style={{ border: '1.2px solid #000000' }} className="p-2 rounded-xl bg-white shadow-2xs">
+                        <span className="text-[9px] font-mono font-bold uppercase text-slate-500 block">Travel Date</span>
+                        <p className="text-xs font-bold text-slate-950 flex items-center gap-1 truncate">
+                          <Calendar className="w-3 h-3 text-slate-900 shrink-0" />
                           <span className="truncate">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
                         </p>
                       </div>
 
-                      <div>
-                        <span className="text-[9px] font-medium uppercase text-slate-400 block">Seats</span>
-                        <p className="text-xs font-bold text-slate-900 flex items-center gap-1">
-                          <Users className="w-3 h-3 text-indigo-600 shrink-0" />
+                      <div style={{ border: '1.2px solid #000000' }} className="p-2 rounded-xl bg-white shadow-2xs">
+                        <span className="text-[9px] font-mono font-bold uppercase text-slate-500 block">Seats</span>
+                        <p className="text-xs font-bold text-slate-950 flex items-center gap-1">
+                          <Users className="w-3 h-3 text-slate-900 shrink-0" />
                           <span>{members} Reserved</span>
                         </p>
                       </div>
 
-                      <div>
-                        <span className="text-[9px] font-medium uppercase text-slate-400 block">Contact</span>
-                        <p className="text-xs font-bold text-slate-900 truncate">
+                      <div style={{ border: '1.2px solid #000000' }} className="p-2 rounded-xl bg-white shadow-2xs">
+                        <span className="text-[9px] font-mono font-bold uppercase text-slate-500 block">Contact</span>
+                        <p className="text-xs font-bold text-slate-950 truncate">
                           {name} ({contactNumber})
                         </p>
                       </div>
@@ -927,21 +994,27 @@ ${isBooking
 
                     {/* Budget & Barcode Row */}
                     <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
-                      <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-400">
-                        <span>PASS CODE:</span>
-                        <span className="tracking-widest text-slate-600 select-none">|||| ||| |||| || |||</span>
+                      <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-500">
+                        <span className="font-bold">PASS CODE:</span>
+                        <span className="tracking-widest text-slate-900 select-none font-black">|||| ||| |||| || |||</span>
                       </div>
-                      <div className="flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                        <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                      <div
+                        style={{ border: '1px solid #000000' }}
+                        className="flex items-center gap-1 text-[11px] font-bold text-emerald-950 bg-emerald-100 px-2 py-0.5 rounded shadow-2xs"
+                      >
+                        <ShieldCheck className="w-3 h-3 text-emerald-700" />
                         <span>100% Guaranteed Slot • ₹{confirmedBudget} Est.</span>
                       </div>
                     </div>
 
                     {/* WhatsApp Notice - Single line */}
-                    <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-[11px] font-medium flex items-center gap-2">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <p className="truncate text-slate-700">
-                        Lead coordinator will WhatsApp <strong className="text-slate-900">{contactNumber}</strong> within 4 hours with hotel vouchers and driver info.
+                    <div
+                      style={{ border: '1px solid #000000' }}
+                      className="p-2 rounded-xl bg-emerald-50 text-emerald-950 text-[11px] font-medium flex items-center gap-2 shadow-2xs"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                      <p className="truncate text-slate-800">
+                        Lead coordinator will WhatsApp <strong className="text-slate-950">{contactNumber}</strong> within 4 hours with hotel vouchers and driver info.
                       </p>
                     </div>
                   </div>
@@ -949,15 +1022,21 @@ ${isBooking
               ) : (
                 /* THANK YOU ON-SCREEN CONTENT */
                 <div className="space-y-3 text-center">
-                  <div className="w-10 h-10 mx-auto rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center shadow-2xs">
-                    <Sparkles className="w-5 h-5 text-indigo-600" />
+                  <div
+                    style={{ border: '1.5px solid #000000' }}
+                    className="w-10 h-10 mx-auto rounded-xl bg-amber-50 text-slate-900 flex items-center justify-center shadow-2xs"
+                  >
+                    <Sparkles className="w-5 h-5 text-slate-900" />
                   </div>
 
                   <div className="space-y-0.5">
-                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 font-heading">
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 font-heading">
                       THANK YOU
                     </h2>
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-mono text-[10px] sm:text-xs font-semibold">
+                    <div
+                      style={{ border: '1.2px solid #000000' }}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-900 font-mono text-[10px] sm:text-xs font-bold"
+                    >
                       <span>Inquiry Ref: {inquiryId}</span>
                       <button
                         type="button"
@@ -970,40 +1049,49 @@ ${isBooking
                     </div>
                   </div>
 
-                  <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 space-y-1 text-left">
-                    <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                  <div
+                    style={{ border: '1.5px solid #000000' }}
+                    className="p-3 sm:p-3.5 rounded-xl bg-slate-50 text-slate-900 space-y-1 text-left shadow-2xs"
+                  >
+                    <p className="text-xs sm:text-sm font-bold text-slate-950 leading-snug">
                       Thank you for visiting us! We will review your data and tell you if any seats are available for that date.
                     </p>
-                    <p className="text-[11px] text-slate-600 font-normal leading-relaxed">
+                    <p className="text-[11px] text-slate-700 font-medium leading-relaxed">
                       Our trip coordinators will check live local slot availability, transportation schedules, and accommodation options for{' '}
-                      <strong className="text-slate-900 font-semibold">{destination}</strong> and notify you promptly via your provided details.
+                      <strong className="text-slate-950 font-bold">{destination}</strong> and notify you promptly via your provided details.
                     </p>
                   </div>
 
                   {/* Inquiry details summary */}
-                  <div className="p-2.5 rounded-xl bg-white border border-slate-200 text-left text-[11px] font-mono space-y-1 text-slate-800 shadow-2xs">
-                    <div className="flex justify-between items-center pb-1 border-b border-slate-100 font-bold">
-                      <span className="text-slate-900">Inquiry Summary</span>
-                      <span className="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10px]">
+                  <div
+                    style={{ border: '1.5px solid #000000' }}
+                    className="p-2.5 rounded-xl bg-white text-left text-[11px] font-mono space-y-1 text-slate-900 shadow-2xs"
+                  >
+                    <div className="flex justify-between items-center pb-1 border-b border-slate-200 font-bold">
+                      <span className="text-slate-950 font-black">Inquiry Summary</span>
+                      <span
+                        style={{ border: '1px solid #000000' }}
+                        className="text-slate-950 bg-amber-200 px-2 py-0.5 rounded text-[10px] font-bold"
+                      >
                         Status: Under Review
                       </span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1 font-medium">
-                      <div>
-                        <span className="text-slate-400 block text-[9px]">Destination:</span>
-                        <span className="font-bold text-slate-900 truncate block">{destination || tripSummary.destination}</span>
+                      <div style={{ border: '1.2px solid #000000' }} className="p-2 rounded-lg bg-slate-50">
+                        <span className="text-slate-500 block text-[9px] uppercase font-bold">Destination:</span>
+                        <span className="font-bold text-slate-950 truncate block">{destination || tripSummary.destination}</span>
                       </div>
-                      <div>
-                        <span className="text-slate-400 block text-[9px]">Date:</span>
-                        <span className="font-bold text-slate-900 truncate block">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
+                      <div style={{ border: '1.2px solid #000000' }} className="p-2 rounded-lg bg-slate-50">
+                        <span className="text-slate-500 block text-[9px] uppercase font-bold">Date:</span>
+                        <span className="font-bold text-slate-950 truncate block">{selectedDayInfo.day}, {selectedDayInfo.formattedDate}</span>
                       </div>
-                      <div>
-                        <span className="text-slate-400 block text-[9px]">Travelers:</span>
-                        <span className="font-bold text-slate-900">{members} Person(s)</span>
+                      <div style={{ border: '1.2px solid #000000' }} className="p-2 rounded-lg bg-slate-50">
+                        <span className="text-slate-500 block text-[9px] uppercase font-bold">Travelers:</span>
+                        <span className="font-bold text-slate-950">{members} Person(s)</span>
                       </div>
-                      <div>
-                        <span className="text-slate-400 block text-[9px]">Budget:</span>
-                        <span className="font-bold text-slate-900">{confirmedBudget}</span>
+                      <div style={{ border: '1.2px solid #000000' }} className="p-2 rounded-lg bg-slate-50">
+                        <span className="text-slate-500 block text-[9px] uppercase font-bold">Budget:</span>
+                        <span className="font-bold text-slate-950">{confirmedBudget}</span>
                       </div>
                     </div>
                   </div>
@@ -1012,13 +1100,14 @@ ${isBooking
             </div>
 
             {/* Modal Bottom Footer Actions - Compact */}
-            <div className="px-4 py-3 sm:px-6 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div className="px-4 py-3 sm:px-6 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   id="direct-modal-download-btn"
                   onClick={() => handleDownloadReceipt(viewState === 'paid_confirmed' ? 'booking' : 'inquiry')}
-                  className="px-3.5 py-1.5 min-h-[36px] text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                  style={{ border: '1.5px solid #000000' }}
+                  className="px-3.5 py-1.5 min-h-[36px] text-xs sm:text-sm font-extrabold text-white bg-slate-950 hover:bg-black rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <Download className="w-3.5 h-3.5 text-amber-300" />
                   <span>Download {viewState === 'paid_confirmed' ? 'Ticket' : 'Slip'}</span>
@@ -1029,10 +1118,11 @@ ${isBooking
                     type="button"
                     id="direct-modal-print-btn"
                     onClick={handlePrint}
-                    className="px-3 py-1.5 min-h-[36px] text-xs sm:text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all flex items-center gap-1 cursor-pointer shadow-2xs"
+                    style={{ border: '1.5px solid #000000' }}
+                    className="px-3 py-1.5 min-h-[36px] text-xs sm:text-sm font-bold text-slate-900 bg-white hover:bg-slate-50 rounded-xl transition-all flex items-center gap-1 cursor-pointer shadow-2xs"
                     title="Print ticket voucher"
                   >
-                    <Printer className="w-3.5 h-3.5 text-slate-500" />
+                    <Printer className="w-3.5 h-3.5 text-slate-700" />
                     <span className="hidden sm:inline">Print</span>
                   </button>
                 )}
@@ -1047,7 +1137,8 @@ ${isBooking
                       setIsDirectModalOpen(false);
                       setViewState('form');
                     }}
-                    className="px-3.5 py-1.5 min-h-[36px] text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                    style={{ border: '1.5px solid #000000' }}
+                    className="px-3.5 py-1.5 min-h-[36px] text-xs sm:text-sm font-extrabold text-white bg-slate-950 hover:bg-black rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
                   >
                     <Armchair className="w-3.5 h-3.5" />
                     <span>Ready to Book ₹250</span>
@@ -1057,7 +1148,8 @@ ${isBooking
                     type="button"
                     id="modal-close-explore-btn"
                     onClick={() => setIsDirectModalOpen(false)}
-                    className="px-3.5 py-1.5 min-h-[36px] text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all cursor-pointer shadow-2xs"
+                    style={{ border: '1.5px solid #000000' }}
+                    className="px-3.5 py-1.5 min-h-[36px] text-xs sm:text-sm font-bold text-slate-900 hover:text-black bg-white hover:bg-slate-50 rounded-xl transition-all cursor-pointer shadow-2xs"
                   >
                     Close &amp; View Plan
                   </button>

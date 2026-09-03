@@ -27,6 +27,7 @@ interface TripSummaryCardProps {
   onSaveTrip: (plan: TripPlan) => void;
   isSaved: boolean;
   onStartNewTrip: () => void;
+  onSelectSection?: (sectionId: string) => void;
 }
 
 export const TripSummaryCard: React.FC<TripSummaryCardProps> = ({
@@ -34,6 +35,7 @@ export const TripSummaryCard: React.FC<TripSummaryCardProps> = ({
   onSaveTrip,
   isSaved,
   onStartNewTrip,
+  onSelectSection,
 }) => {
   const [copied, setCopied] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
@@ -123,33 +125,42 @@ Plan generated with Tripholic AI Travel Planner.`;
   return (
     <div
       id="trip-summary-card"
-      className="rounded-3xl overflow-hidden mb-8 transition-all duration-300 bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.04)]"
+      style={{
+        border: '2px solid #000000',
+        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+      }}
+      className="rounded-3xl overflow-hidden mb-8 transition-all duration-300 bg-white"
     >
       {/* Light Clean Top Banner with Destination & Actions */}
       <div
-        className="p-5 sm:p-7 bg-gradient-to-r from-indigo-50/70 via-slate-50 to-purple-50/70 border-b border-slate-200/80 relative"
+        style={{
+          borderBottom: '2px solid #000000',
+        }}
+        className="p-5 sm:p-7 bg-gradient-to-r from-amber-50/60 via-indigo-50/50 to-purple-50/60 relative"
       >
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <span
-                className="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-700 bg-indigo-100/80 border border-indigo-200/60 rounded-full flex items-center gap-1.5 shadow-2xs"
+                style={{ border: '1.5px solid #000000' }}
+                className="px-3 py-1 text-xs font-mono font-extrabold uppercase tracking-wider text-black bg-white rounded-full flex items-center gap-1.5 shadow-2xs"
               >
                 <Sparkles className="w-3.5 h-3.5 fill-current text-indigo-600" />
                 <span>AI ITINERARY GENERATED</span>
               </span>
               <span
-                className="px-3 py-1 text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 rounded-full flex items-center gap-1.5 shadow-2xs"
+                style={{ border: '1.5px solid #000000' }}
+                className="px-3 py-1 text-xs font-mono font-extrabold text-black bg-amber-200 rounded-full flex items-center gap-1.5 shadow-2xs"
               >
-                <Sun className="w-3.5 h-3.5 text-amber-600" />
+                <Sun className="w-3.5 h-3.5 text-amber-700" />
                 <span>{tripSummary.bestSeason}</span>
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 mb-1 font-heading">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-950 mb-1 font-heading">
               {tripSummary.destination}
             </h1>
-            <p className="text-sm sm:text-base text-slate-600 max-w-2xl font-medium">
+            <p className="text-sm sm:text-base text-slate-700 max-w-2xl font-semibold">
               {tripSummary.tripVibe}
             </p>
           </div>
@@ -159,12 +170,15 @@ Plan generated with Tripholic AI Travel Planner.`;
             <button
               id="jump-to-seat-booking-btn"
               onClick={() => {
-                const el = document.getElementById('seat-booking-section');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth' });
+                if (onSelectSection) {
+                  onSelectSection('seat-booking');
+                } else {
+                  const el = document.getElementById('seat-booking-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+              style={{ border: '2px solid #000000' }}
+              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-extrabold bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
               title="Confirm your seat reservation now"
             >
               <Armchair className="w-4 h-4 text-amber-300" />
@@ -174,21 +188,22 @@ Plan generated with Tripholic AI Travel Planner.`;
             <button
               id="save-trip-btn"
               onClick={handleSave}
-              className={`px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95 border ${
+              style={{ border: '2px solid #000000' }}
+              className={`px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95 ${
                 isSaved || justSaved
-                  ? 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                  ? 'bg-amber-400 hover:bg-amber-500 text-black'
+                  : 'bg-white hover:bg-slate-100 text-black'
               }`}
               title="Save to local browser storage"
             >
               {isSaved || justSaved ? (
                 <>
-                  <BookmarkCheck className="w-4 h-4" />
+                  <BookmarkCheck className="w-4 h-4 text-black" />
                   <span>{justSaved ? 'Saved!' : 'Saved in Trips'}</span>
                 </>
               ) : (
                 <>
-                  <Bookmark className="w-4 h-4 text-slate-500" />
+                  <Bookmark className="w-4 h-4 text-black" />
                   <span>Save Trip</span>
                 </>
               )}
@@ -197,17 +212,18 @@ Plan generated with Tripholic AI Travel Planner.`;
             <button
               id="share-trip-btn"
               onClick={handleShare}
-              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+              style={{ border: '2px solid #000000' }}
+              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-extrabold text-black hover:bg-slate-100 bg-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
               title="Share or copy itinerary link"
             >
               {sharedToast || copied ? (
                 <>
-                  <Check className="w-4 h-4 text-emerald-600" />
-                  <span className="text-emerald-700 font-bold">Copied!</span>
+                  <Check className="w-4 h-4 text-emerald-700" />
+                  <span className="text-emerald-800 font-bold">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Share2 className="w-4 h-4 text-indigo-600" />
+                  <Share2 className="w-4 h-4 text-indigo-700" />
                   <span>Share Plan</span>
                 </>
               )}
@@ -216,20 +232,22 @@ Plan generated with Tripholic AI Travel Planner.`;
             <button
               id="print-plan-btn"
               onClick={() => window.print()}
-              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center gap-1.5 transition-all cursor-pointer print:hidden shadow-2xs"
+              style={{ border: '2px solid #000000' }}
+              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-extrabold text-black hover:bg-slate-100 bg-white flex items-center justify-center gap-1.5 transition-all cursor-pointer print:hidden shadow-2xs"
               title="Print or Save as PDF"
             >
-              <Printer className="w-4 h-4 text-slate-500" />
+              <Printer className="w-4 h-4 text-slate-700" />
               <span>Print / PDF</span>
             </button>
 
             <button
               id="start-new-trip-btn"
               onClick={onStartNewTrip}
-              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center gap-1 transition-all cursor-pointer shadow-2xs"
+              style={{ border: '2px solid #000000' }}
+              className="px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-extrabold text-black hover:bg-slate-100 bg-white flex items-center justify-center gap-1 transition-all cursor-pointer shadow-2xs"
               title="Create a new trip plan"
             >
-              <RotateCcw className="w-4 h-4 text-slate-500" />
+              <RotateCcw className="w-4 h-4 text-slate-700" />
               <span>New Trip</span>
             </button>
           </div>
@@ -237,69 +255,113 @@ Plan generated with Tripholic AI Travel Planner.`;
 
         {/* Key Metrics Strip */}
         <div
-          className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-5 border-t border-slate-200/70"
+          style={{ borderTop: '1.5px solid #000000' }}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-5"
         >
           <div
-            className="rounded-2xl p-3.5 bg-white border border-slate-200 shadow-2xs"
+            style={{ border: '1.5px solid #000000' }}
+            className="rounded-2xl p-3.5 bg-white shadow-2xs"
           >
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">Duration</span>
+            <span className="text-[11px] font-mono font-extrabold uppercase tracking-wider text-slate-600 block">Duration</span>
             <div className="flex items-center gap-1.5 mt-1">
-              <Calendar className="w-4 h-4 text-indigo-600 shrink-0" />
-              <span className="text-sm sm:text-base font-bold text-slate-900">
+              <Calendar className="w-4 h-4 text-indigo-700 shrink-0" />
+              <span className="text-sm sm:text-base font-extrabold text-black">
                 {tripSummary.duration} {tripSummary.duration === 1 ? 'Day' : 'Days'}
               </span>
             </div>
           </div>
 
           <div
-            className="rounded-2xl p-3.5 bg-white border border-slate-200 shadow-2xs"
+            style={{ border: '1.5px solid #000000' }}
+            className="rounded-2xl p-3.5 bg-white shadow-2xs"
           >
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">Travelers</span>
+            <span className="text-[11px] font-mono font-extrabold uppercase tracking-wider text-slate-600 block">Travelers</span>
             <div className="flex items-center gap-1.5 mt-1">
-              <Users className="w-4 h-4 text-indigo-600 shrink-0" />
-              <span className="text-sm sm:text-base font-bold text-slate-900 truncate">
+              <Users className="w-4 h-4 text-indigo-700 shrink-0" />
+              <span className="text-sm sm:text-base font-extrabold text-black truncate">
                 {tripSummary.travelers} {tripSummary.travelers === 1 ? 'Person' : 'People'}
               </span>
             </div>
           </div>
 
           <div
-            className="rounded-2xl p-3.5 bg-white border border-slate-200 shadow-2xs"
+            style={{ border: '1.5px solid #000000' }}
+            className="rounded-2xl p-3.5 bg-white shadow-2xs"
           >
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">Budget Cap</span>
+            <span className="text-[11px] font-mono font-extrabold uppercase tracking-wider text-slate-600 block">Budget Cap</span>
             <div className="flex items-center gap-1.5 mt-1">
-              <DollarSign className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span className="text-sm sm:text-base font-bold text-slate-900 truncate">{tripSummary.budgetFormatted}</span>
+              <DollarSign className="w-4 h-4 text-emerald-700 shrink-0" />
+              <span className="text-sm sm:text-base font-extrabold text-black truncate">{tripSummary.budgetFormatted}</span>
             </div>
             {perPersonPerDay > 0 && (
-              <span className="text-[11px] font-medium text-slate-500 block mt-0.5">
+              <span className="text-[11px] font-mono font-bold text-slate-600 block mt-0.5">
                 ~{budget.currency}{perPersonPerDay.toLocaleString()}/person/day
               </span>
             )}
           </div>
 
           <div
-            className="rounded-2xl p-3.5 bg-white border border-slate-200 shadow-2xs"
+            style={{ border: '1.5px solid #000000' }}
+            className="rounded-2xl p-3.5 bg-white shadow-2xs"
           >
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">Style & Diet</span>
+            <span className="text-[11px] font-mono font-extrabold uppercase tracking-wider text-slate-600 block">Style & Diet</span>
             <div className="flex items-center gap-1.5 mt-1" title={`Style: ${tripSummary.travelStyle} | Food: ${tripSummary.foodPreference}`}>
-              <Compass className="w-4 h-4 text-indigo-600 shrink-0" />
-              <span className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+              <Compass className="w-4 h-4 text-indigo-700 shrink-0" />
+              <span className="text-xs sm:text-sm font-extrabold text-black truncate">
                 {tripSummary.travelStyle} • {tripSummary.foodPreference}
               </span>
             </div>
           </div>
         </div>
+
+        {/* Quick 1-Click Jump Chips - Zero Scrolling Needed */}
+        {onSelectSection && (
+          <div
+            style={{ borderTop: '1.5px solid #000000' }}
+            className="mt-5 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
+          >
+            <span className="text-[11px] font-mono font-extrabold uppercase tracking-wider text-slate-700 shrink-0">
+              ⚡ Instant Jump (Avoid Scrolling):
+            </span>
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              {[
+                { id: 'itinerary', label: '📅 Itinerary' },
+                { id: 'places', label: '📍 Sights' },
+                { id: 'food', label: '🍽️ Food & Dining' },
+                { id: 'budget', label: '💰 Budget Breakdown' },
+                { id: 'tips', label: '💡 Travel Tips' },
+                { id: 'seat-booking', label: '🎟️ Reserve Seat (₹250)', highlight: true },
+              ].map((chip) => (
+                <button
+                  key={chip.id}
+                  type="button"
+                  onClick={() => onSelectSection(chip.id)}
+                  style={{
+                    border: '1.5px solid #000000',
+                    background: chip.highlight ? '#eef2ff' : '#ffffff',
+                    color: chip.highlight ? '#3730a3' : '#000000',
+                  }}
+                  className={`px-2.5 py-1 text-xs font-extrabold rounded-lg hover:bg-black hover:text-white transition-all cursor-pointer shadow-2xs ${
+                    chip.highlight ? 'font-black border-indigo-700' : ''
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Summary Narrative & Highlights */}
       <div className="p-5 sm:p-7">
         <div className="mb-5">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+          <h3 className="text-xs font-mono font-extrabold uppercase tracking-wider text-black mb-2">
             Trip Narrative & AI Synthesis
           </h3>
           <p
-            className="text-slate-700 text-sm sm:text-base leading-relaxed font-normal p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 shadow-2xs"
+            style={{ border: '1.5px solid #000000' }}
+            className="text-slate-900 text-sm sm:text-base leading-relaxed font-medium p-4 sm:p-5 rounded-2xl bg-slate-50 shadow-2xs"
           >
             {tripSummary.summary}
           </p>
@@ -308,16 +370,17 @@ Plan generated with Tripholic AI Travel Planner.`;
         {/* Highlights Pills */}
         {tripSummary.highlights && tripSummary.highlights.length > 0 && (
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5">
+            <h4 className="text-xs font-mono font-extrabold uppercase tracking-wider text-black mb-2.5">
               Key Itinerary Highlights
             </h4>
             <div className="flex flex-wrap gap-2">
               {tripSummary.highlights.map((highlight, idx) => (
                 <div
                   key={idx}
-                  className="px-3.5 py-1.5 rounded-xl text-slate-800 text-xs sm:text-sm font-medium flex items-center gap-2 bg-slate-50 border border-slate-200 shadow-2xs"
+                  style={{ border: '1.5px solid #000000' }}
+                  className="px-3.5 py-1.5 rounded-xl text-black text-xs sm:text-sm font-bold flex items-center gap-2 bg-white shadow-2xs"
                 >
-                  <span className="text-indigo-600 font-bold">▪</span>
+                  <span className="text-indigo-700 font-black">▪</span>
                   <span>{highlight}</span>
                 </div>
               ))}

@@ -18,23 +18,31 @@ export const RecommendedPlaces: React.FC<RecommendedPlacesProps> = ({
   return (
     <section
       id="recommended-places-section"
-      className="rounded-3xl p-5 sm:p-8 mb-8 transition-all bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.04)]"
+      style={{
+        border: '2px solid #000000',
+        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+      }}
+      className="rounded-3xl p-5 sm:p-8 mb-8 transition-all bg-white"
     >
       {/* Header */}
       <div
-        className="pb-5 sm:pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200"
+        style={{ borderBottom: '1.5px solid #000000' }}
+        className="pb-5 sm:pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
       >
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="p-1.5 rounded-xl bg-indigo-600 text-white shadow-xs">
+            <span
+              style={{ border: '1.5px solid #000000' }}
+              className="p-1.5 rounded-xl bg-amber-300 text-black shadow-2xs"
+            >
               <MapPin className="w-5 h-5" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-heading">
-              Recommended Places & Attractions
+            <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight font-heading">
+              Recommended Places &amp; Attractions
             </h2>
           </div>
-          <p className="text-xs sm:text-base text-slate-600 font-normal">
-            Handpicked spots curated for <span className="font-semibold text-slate-900">{destination}</span> aligned with your <span className="font-semibold text-slate-900">{travelStyle}</span> style.
+          <p className="text-xs sm:text-base text-slate-700 font-medium">
+            Handpicked spots curated for <span className="font-black text-black">{destination}</span> aligned with your <span className="font-black text-black">{travelStyle}</span> style.
           </p>
         </div>
       </div>
@@ -44,63 +52,74 @@ export const RecommendedPlaces: React.FC<RecommendedPlacesProps> = ({
         {places.map((place, idx) => (
           <div
             key={idx}
-            className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between"
+            style={{
+              border: '1.5px solid #000000',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.06)',
+            }}
+            className="p-4 sm:p-5 rounded-2xl bg-white hover:bg-slate-50/60 transition-all flex flex-col justify-between"
           >
             <div>
               {/* Tag and Location */}
               <div className="flex items-center justify-between gap-2 mb-2">
                 <span
-                  className="px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md"
+                  style={{ border: '1px solid #000000' }}
+                  className="px-2.5 py-0.5 text-[11px] font-mono font-extrabold uppercase tracking-wider text-black bg-amber-200 rounded-md"
                 >
                   {place.tag || 'MUST VISIT'}
                 </span>
                 {place.locationArea && (
-                  <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span
+                    style={{ border: '1px solid #000000' }}
+                    className="text-xs text-black font-bold flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md"
+                  >
+                    <MapPin className="w-3.5 h-3.5 text-indigo-700 shrink-0" />
                     <span className="truncate">{place.locationArea}</span>
                   </span>
                 )}
               </div>
 
               {/* Place Name */}
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">
+              <h3 className="text-base sm:text-lg font-black text-slate-950 mb-1">
                 {place.name}
               </h3>
 
               {/* Description */}
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3 sm:mb-4">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-3 sm:mb-4 font-medium">
                 {place.description}
               </p>
 
               {/* Why Suitable Box */}
               {place.whySuitable && (
                 <div
-                  className="p-3 rounded-xl mb-3 sm:mb-4 text-xs text-slate-700 bg-slate-50 border border-slate-200/80"
+                  style={{ border: '1px solid #000000' }}
+                  className="p-3 rounded-xl mb-3 sm:mb-4 text-xs text-slate-800 bg-indigo-50/70"
                 >
-                  <div className="flex items-center gap-1.5 font-semibold mb-0.5 text-indigo-700 text-[11px] uppercase tracking-wider">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <div className="flex items-center gap-1.5 font-extrabold mb-0.5 text-indigo-950 text-[11px] uppercase tracking-wider">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                     <span>Plan Alignment:</span>
                   </div>
-                  <p className="text-slate-600 leading-normal">{place.whySuitable}</p>
+                  <p className="text-slate-800 leading-normal font-medium">{place.whySuitable}</p>
                 </div>
               )}
             </div>
 
             {/* Bottom Meta */}
             <div
-              className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs"
+              style={{ borderTop: '1px solid #000000' }}
+              className="pt-3 flex flex-wrap items-center justify-between gap-2 text-xs"
             >
               {place.bestTimeToVisit && (
-                <div className="flex items-center gap-1.5 text-slate-500">
-                  <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                  <Clock className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                   <span>{place.bestTimeToVisit}</span>
                 </div>
               )}
               {place.estimatedEntryFee && (
                 <div
-                  className="flex items-center gap-1.5 text-slate-800 font-semibold text-xs px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200"
+                  style={{ border: '1px solid #000000' }}
+                  className="flex items-center gap-1.5 text-black font-mono font-extrabold text-xs px-2.5 py-1 rounded-md bg-amber-100"
                 >
-                  <Ticket className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <Ticket className="w-3.5 h-3.5 text-black shrink-0" />
                   <span>{place.estimatedEntryFee}</span>
                 </div>
               )}

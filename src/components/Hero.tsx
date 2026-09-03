@@ -229,6 +229,7 @@ export const Hero: React.FC<HeroProps> = ({
 
   return (
     <section
+      id="explore-section"
       className="relative overflow-hidden py-8 sm:py-10 mb-8 rounded-3xl transition-all bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.04)]"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-8 relative z-10">
