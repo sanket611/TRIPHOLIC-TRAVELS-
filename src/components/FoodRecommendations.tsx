@@ -13,6 +13,15 @@ export const FoodRecommendations: React.FC<FoodRecommendationsProps> = ({
 }) => {
   const { preferenceNote, breakfast, lunch, dinner, localSpecialties } = foodRecommendations;
 
+  // Split multiple dietary preferences (e.g., "Vegetarian & Seafood Special" -> ["Vegetarian", "Seafood Special"])
+  const dietList = React.useMemo(() => {
+    if (!foodPreference) return [];
+    return foodPreference
+      .split(/[,&+]| and /i)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }, [foodPreference]);
+
   return (
     <section
       id="food-recommendations-section"
@@ -25,7 +34,7 @@ export const FoodRecommendations: React.FC<FoodRecommendationsProps> = ({
       {/* Header */}
       <div
         style={{ borderBottom: '1.5px solid #000000' }}
-        className="pb-5 sm:pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+        className="pb-5 sm:pb-6 flex flex-col md:flex-row md:items-center justify-between gap-3"
       >
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -44,12 +53,28 @@ export const FoodRecommendations: React.FC<FoodRecommendationsProps> = ({
           </p>
         </div>
 
-        <div
-          style={{ border: '1.5px solid #000000' }}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-black bg-amber-200 text-xs sm:text-sm font-mono font-black self-start sm:self-auto shrink-0 shadow-2xs"
-        >
-          <CheckCircle2 className="w-4 h-4 text-emerald-800" />
-          <span>DIET: {foodPreference.toUpperCase()}</span>
+        {/* Selected Diets Badges (Supports Single & Multiple Selections) */}
+        <div className="flex flex-wrap items-center gap-1.5 self-start md:self-auto">
+          {dietList.length > 0 ? (
+            dietList.map((diet, idx) => (
+              <div
+                key={idx}
+                style={{ border: '1.5px solid #000000' }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-black bg-amber-200 text-xs font-mono font-black shadow-2xs"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-800" />
+                <span>{diet.toUpperCase()}</span>
+              </div>
+            ))
+          ) : (
+            <div
+              style={{ border: '1.5px solid #000000' }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-black bg-amber-200 text-xs sm:text-sm font-mono font-black shadow-2xs"
+            >
+              <CheckCircle2 className="w-4 h-4 text-emerald-800" />
+              <span>DIET: {foodPreference.toUpperCase()}</span>
+            </div>
+          )}
         </div>
       </div>
 

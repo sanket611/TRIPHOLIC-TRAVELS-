@@ -453,7 +453,7 @@ export const TripForm: React.FC<TripFormProps> = ({
 
   // Synchronize when initialValues change
   useEffect(() => {
-    if (initialValues) {
+    if (initialValues && Object.keys(initialValues).length > 0) {
       if (initialValues.destination !== undefined) setDestination(initialValues.destination);
       if (initialValues.startDate !== undefined) setStartDate(initialValues.startDate);
       if (initialValues.duration !== undefined) setDuration(initialValues.duration);
@@ -473,8 +473,14 @@ export const TripForm: React.FC<TripFormProps> = ({
           ).map((ts) => ts.id);
           setSelectedTravelStyles(matched.length > 0 ? matched : [initialValues.travelStyle as TravelStyle]);
         }
+      } else {
+        setSelectedTravelStyles([]);
       }
-      if (initialValues.interests !== undefined) setSelectedInterests(initialValues.interests);
+      if (initialValues.interests !== undefined) {
+        setSelectedInterests(initialValues.interests);
+      } else {
+        setSelectedInterests([]);
+      }
       if (initialValues.foodPreferences && initialValues.foodPreferences.length > 0) {
         setSelectedFoodPreferences(initialValues.foodPreferences);
       } else if (initialValues.foodPreference) {
@@ -488,8 +494,19 @@ export const TripForm: React.FC<TripFormProps> = ({
           ).map((fp) => fp.id);
           setSelectedFoodPreferences(matched.length > 0 ? matched : [initialValues.foodPreference as FoodPreference]);
         }
+      } else {
+        setSelectedFoodPreferences([]);
       }
       if (initialValues.notes !== undefined) setNotes(initialValues.notes || '');
+    } else {
+      // When anyone visits website or starts a new trip:
+      // All selective options get back to clean clickable state (do not remember previous options)
+      setSelectedTravelStyles([]);
+      setSelectedFoodPreferences([]);
+      setSelectedInterests([]);
+      setDestination('');
+      setNotes('');
+      setErrors({});
     }
   }, [initialValues]);
 
@@ -1409,6 +1426,70 @@ export const TripForm: React.FC<TripFormProps> = ({
               Select one or multiple vibes that match your journey. Activities and daily pacing will be curated around these styles.
             </p>
 
+            {/* Active Selected Styles Tray */}
+            {selectedTravelStyles.length > 0 ? (
+              <div
+                style={{
+                  border: '1.5px solid #000000',
+                  background: 'linear-gradient(to right, #f5f3ff, #ede9fe)',
+                }}
+                className="p-3 sm:p-3.5 rounded-xl shadow-xs space-y-2 animate-fade-in"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-mono font-black uppercase tracking-wider text-violet-950 flex items-center gap-1.5">
+                    <Compass className="w-3.5 h-3.5 text-violet-700" />
+                    <span>Selected Styles ({selectedTravelStyles.length}):</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTravelStyles([])}
+                    className="text-[11px] font-mono font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer"
+                  >
+                    Unselect All Styles
+                  </button>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {selectedTravelStyles.map((styleId) => {
+                    const styleObj = TRAVEL_STYLES.find((s) => s.id === styleId);
+                    return (
+                      <span
+                        key={styleId}
+                        style={{ border: '1.5px solid #000000' }}
+                        className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white text-black font-extrabold text-xs shadow-2xs hover:border-rose-600 transition-colors"
+                      >
+                        <span className="text-sm">{styleObj?.icon || '🧭'}</span>
+                        <span>{styleObj?.label || styleId}</span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTravelStyleToggle(styleId);
+                          }}
+                          className="w-4 h-4 rounded-full bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 text-[10px] font-black flex items-center justify-center cursor-pointer transition-colors"
+                          title={`Remove ${styleObj?.label || styleId}`}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{ border: '1.5px dashed #cbd5e1' }}
+                className="p-3 rounded-xl bg-slate-50 text-slate-700 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+              >
+                <span className="flex items-center gap-2 font-medium">
+                  <span className="text-base">🧭</span>
+                  <span>No styles selected yet. All options are ready to click — select 1 or more vibes below!</span>
+                </span>
+                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-200 px-2 py-0.5 rounded self-start sm:self-auto">
+                  Click cards below
+                </span>
+              </div>
+            )}
+
             {/* Category Filter Pills for Travel Styles */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
               <span className="text-[11px] font-mono font-extrabold text-slate-700 uppercase mr-1 shrink-0">
@@ -1599,66 +1680,176 @@ export const TripForm: React.FC<TripFormProps> = ({
             className="rounded-2xl p-4 sm:p-6 space-y-4 shadow-sm backdrop-blur-md animate-fade-in"
           >
             {/* Step Header */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-2 border-black">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-amber-400 text-black font-mono font-black text-xs flex items-center gap-1 border border-black">
-                  <Utensils className="w-3.5 h-3.5" />
-                  <span>STEP 3 OF 4: INDIVIDUAL OPTION</span>
-                </span>
-                <h3 className="text-base sm:text-lg font-black text-black font-heading">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-lg bg-amber-400 text-black font-mono font-black text-xs flex items-center gap-1 border border-black shadow-2xs">
+                    <Utensils className="w-3.5 h-3.5" />
+                    <span>STEP 3 OF 4: FOOD &amp; DINING</span>
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-500 font-mono text-[11px] font-black flex items-center gap-1 shadow-2xs">
+                    <Sparkles className="w-3 h-3 text-emerald-700 fill-emerald-500" />
+                    <span>Multiple Selection Supported</span>
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-xl font-black text-black font-heading">
                   Food &amp; Dining Preferences
                 </h3>
               </div>
+
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-mono font-extrabold px-2.5 py-0.5 rounded-full border ${
-                  selectedFoodPreferences.length === 0
-                    ? 'bg-rose-100 text-rose-800 border-rose-400 font-black'
-                    : 'bg-black text-amber-300 border-black'
-                }`}>
-                  {selectedFoodPreferences.length > 0 ? `${selectedFoodPreferences.length} Diets Selected` : 'None Selected (Pick at least 1)'}
+                <span
+                  style={{ border: '1.5px solid #000000' }}
+                  className={`text-xs font-mono font-black px-3 py-1 rounded-xl shadow-2xs ${
+                    selectedFoodPreferences.length === 0
+                      ? 'bg-rose-100 text-rose-900 border-rose-500'
+                      : 'bg-black text-amber-300'
+                  }`}
+                >
+                  {selectedFoodPreferences.length > 0
+                    ? `${selectedFoodPreferences.length} ${selectedFoodPreferences.length === 1 ? 'Diet' : 'Diets'} Selected`
+                    : 'None Selected (Pick 1 or More)'}
                 </span>
                 {selectedFoodPreferences.length > 0 && (
                   <button
                     type="button"
                     onClick={() => setSelectedFoodPreferences([])}
-                    className="text-[11px] font-mono font-bold text-slate-600 hover:text-rose-600 underline cursor-pointer"
+                    style={{ border: '1px solid #000000' }}
+                    className="px-2.5 py-1 text-xs font-mono font-extrabold bg-white hover:bg-rose-50 text-rose-700 rounded-lg cursor-pointer transition-all shadow-2xs flex items-center gap-1"
+                    title="Unselect all food preferences to start fresh"
                   >
-                    Clear
+                    <span>Clear All</span>
                   </button>
                 )}
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-800 font-medium">
-              Specify your culinary standards. Meal suggestions, breakfast spots, and signature dinner recommendations will strictly adhere to these choices.
-            </p>
+            {/* Explanatory Multi-Select Note */}
+            <div className="p-3 bg-amber-50/90 border border-amber-300 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <p className="text-xs sm:text-sm text-slate-800 font-medium">
+                <strong className="text-black font-extrabold">Choose as many as you like:</strong> Select 1, 2, or multiple diets (e.g. <em>Pure Veg + Street Food</em> or <em>Non-Veg + Seafood + Halal</em>). All daily meals and recommendations will adapt to cater to every selected diet.
+              </p>
+              <div className="text-[11px] font-mono font-bold text-amber-900 shrink-0 self-start sm:self-auto bg-amber-200/80 px-2 py-0.5 rounded border border-amber-400">
+                Click any card to toggle
+              </div>
+            </div>
 
-            {/* Dietary Group Filter Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              <span className="text-[11px] font-mono font-extrabold text-slate-700 uppercase mr-1 shrink-0">
-                Filter:
-              </span>
-              {[
-                { id: 'All', label: `All Diets (${FOOD_PREFERENCES.length})` },
-                { id: 'Pure Veg & Jain', label: 'Pure Veg & Jain' },
-                { id: 'Non-Vegetarian', label: 'Non-Vegetarian & Halal' },
-                { id: 'Plant-Based', label: 'Plant-Based & Healthy' },
-                { id: 'Specialty & Dining', label: 'Specialty & Gourmet' },
-              ].map((grp) => (
+            {/* Active Selected Diets Tray (Chips with remove button) */}
+            {selectedFoodPreferences.length > 0 ? (
+              <div
+                style={{
+                  border: '1.5px solid #000000',
+                  background: 'linear-gradient(to right, #fffbeb, #fef3c7)',
+                }}
+                className="p-3 sm:p-3.5 rounded-xl shadow-xs space-y-2 animate-fade-in"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-mono font-black uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
+                    <Utensils className="w-3.5 h-3.5 text-amber-700" />
+                    <span>Your Selected Diets ({selectedFoodPreferences.length}):</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedFoodPreferences([])}
+                    className="text-[11px] font-mono font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer"
+                  >
+                    Unselect All Options
+                  </button>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {selectedFoodPreferences.map((foodId) => {
+                    const foodObj = FOOD_PREFERENCES.find((f) => f.id === foodId);
+                    return (
+                      <span
+                        key={foodId}
+                        style={{ border: '1.5px solid #000000' }}
+                        className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white text-black font-extrabold text-xs shadow-2xs hover:border-rose-600 transition-colors"
+                      >
+                        <span className="text-sm">{foodObj?.icon || '🍽️'}</span>
+                        <span>{foodObj?.label || foodId}</span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFoodPreferenceToggle(foodId);
+                          }}
+                          className="w-4 h-4 rounded-full bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 text-[10px] font-black flex items-center justify-center cursor-pointer transition-colors"
+                          title={`Remove ${foodObj?.label || foodId}`}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{ border: '1.5px dashed #cbd5e1' }}
+                className="p-3 rounded-xl bg-slate-50 text-slate-700 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+              >
+                <span className="flex items-center gap-2 font-medium">
+                  <span className="text-base">🥗</span>
+                  <span>No diets selected yet. All options are ready to click — pick 1, 2, or more!</span>
+                </span>
+                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-200 px-2 py-0.5 rounded self-start sm:self-auto">
+                  Click cards below
+                </span>
+              </div>
+            )}
+
+            {/* Dietary Group Filter Pills & Batch Select */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                <span className="text-[11px] font-mono font-extrabold text-slate-700 uppercase mr-1 shrink-0">
+                  Category:
+                </span>
+                {[
+                  { id: 'All', label: `All Diets (${FOOD_PREFERENCES.length})` },
+                  { id: 'Pure Veg & Jain', label: 'Pure Veg & Jain' },
+                  { id: 'Non-Vegetarian', label: 'Non-Vegetarian & Halal' },
+                  { id: 'Plant-Based', label: 'Plant-Based & Healthy' },
+                  { id: 'Specialty & Dining', label: 'Specialty & Gourmet' },
+                ].map((grp) => (
+                  <button
+                    key={grp.id}
+                    type="button"
+                    onClick={() => setFoodGroupFilter(grp.id)}
+                    style={{
+                      border: foodGroupFilter === grp.id ? '1.5px solid #000000' : '1px solid #cbd5e1',
+                      background: foodGroupFilter === grp.id ? '#000000' : '#ffffff',
+                      color: foodGroupFilter === grp.id ? '#ffffff' : '#334155',
+                    }}
+                    className="px-2.5 py-1 rounded-lg text-xs font-extrabold whitespace-nowrap cursor-pointer transition-all shadow-2xs"
+                  >
+                    {grp.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Quick Category Action */}
+              <div className="flex items-center gap-2">
                 <button
-                  key={grp.id}
                   type="button"
-                  onClick={() => setFoodGroupFilter(grp.id)}
-                  style={{
-                    border: foodGroupFilter === grp.id ? '1.5px solid #000000' : '1px solid #cbd5e1',
-                    background: foodGroupFilter === grp.id ? '#000000' : '#ffffff',
-                    color: foodGroupFilter === grp.id ? '#ffffff' : '#334155',
+                  onClick={() => {
+                    const itemsInFilter = FOOD_PREFERENCES.filter(
+                      (food) => foodGroupFilter === 'All' || food.dietGroup === foodGroupFilter
+                    ).map((f) => f.id);
+                    setSelectedFoodPreferences((prev) => {
+                      const set = new Set([...prev, ...itemsInFilter]);
+                      return Array.from(set);
+                    });
+                    if (errors.foodPreference) {
+                      setErrors((prevErr) => ({ ...prevErr, foodPreference: '' }));
+                    }
                   }}
-                  className="px-2.5 py-1 rounded-lg text-xs font-extrabold whitespace-nowrap cursor-pointer transition-all shadow-2xs"
+                  style={{ border: '1px solid #000000' }}
+                  className="px-2.5 py-1 text-[11px] font-mono font-extrabold rounded-lg bg-amber-200 hover:bg-amber-300 text-black cursor-pointer transition-all shadow-2xs"
+                  title="Select all diets in this category"
                 >
-                  {grp.label}
+                  + Select All In View
                 </button>
-              ))}
+              </div>
             </div>
 
             {/* Popular 1-Click Food Combos */}
@@ -1666,9 +1857,9 @@ export const TripForm: React.FC<TripFormProps> = ({
               <div className="flex items-center justify-between gap-2 mb-2">
                 <span className="text-[11px] font-mono font-black text-amber-950 uppercase flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-amber-600 fill-amber-600" />
-                  <span>Popular 1-Click Food Combos:</span>
+                  <span>Popular Multi-Diet Pairings:</span>
                 </span>
-                <span className="text-[10px] text-slate-600 font-bold hidden sm:inline">Click to instantly apply</span>
+                <span className="text-[10px] text-slate-600 font-bold hidden sm:inline">1-Click Combinations</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {POPULAR_FOOD_COMBOS.map((combo) => {
@@ -1713,39 +1904,42 @@ export const TripForm: React.FC<TripFormProps> = ({
                     id={`food-btn-${food.id.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
                     onClick={() => handleFoodPreferenceToggle(food.id)}
                     style={{
-                      background: isSelected ? 'rgba(254, 243, 199, 0.95)' : '#ffffff',
+                      background: isSelected ? '#fef3c7' : '#ffffff',
                       border: isSelected ? '2px solid #000000' : '1.5px solid #cbd5e1',
                     }}
-                    className={`p-3 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between gap-2 shadow-2xs hover:border-black hover:shadow-xs active:scale-98 ${
-                      isSelected ? 'ring-2 ring-amber-500/30' : ''
+                    className={`p-3.5 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 shadow-2xs hover:border-black hover:shadow-xs active:scale-98 ${
+                      isSelected ? 'ring-2 ring-amber-500/40 shadow-xs' : ''
                     }`}
                   >
                     <div className="flex items-start justify-between gap-1.5 w-full">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl shrink-0 p-1 bg-amber-100 rounded-lg border border-amber-200">
+                        <span className="text-2xl shrink-0 p-1.5 bg-white rounded-xl border border-amber-200 shadow-2xs">
                           {food.icon}
                         </span>
                         <div>
                           <p className="text-xs sm:text-sm font-black text-black leading-tight">
                             {food.label}
                           </p>
-                          <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded border border-amber-300 inline-block mt-0.5">
+                          <span className="text-[10px] font-mono font-bold text-amber-900 bg-amber-200/90 px-1.5 py-0.2 rounded border border-amber-400 inline-block mt-0.5">
                             {food.badge}
                           </span>
                         </div>
                       </div>
                       <div className="shrink-0">
                         {isSelected ? (
-                          <span className="w-5 h-5 rounded-full bg-black text-amber-300 text-xs font-black flex items-center justify-center border border-black shadow-2xs">
-                            ✓
+                          <span className="px-2 py-0.5 rounded-full bg-black text-amber-300 text-[11px] font-mono font-black flex items-center gap-1 border border-black shadow-2xs">
+                            <span>✓</span>
+                            <span>Selected</span>
                           </span>
                         ) : (
-                          <span className="w-5 h-5 rounded-full border border-slate-300 bg-slate-50 flex items-center justify-center" />
+                          <span className="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-mono font-extrabold border border-slate-300 flex items-center gap-0.5">
+                            <span>+ Add</span>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    <p className="text-[11px] text-slate-600 font-semibold line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-slate-700 font-medium line-clamp-2 leading-relaxed">
                       {food.note}
                     </p>
                   </button>

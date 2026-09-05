@@ -81,10 +81,11 @@ export const CompactPreferencesBar: React.FC<CompactPreferencesBarProps> = ({
 
           <span
             style={{ border: '1.5px solid #000000' }}
-            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 text-amber-950 text-xs font-bold"
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 text-amber-950 text-xs font-bold max-w-sm truncate"
+            title={`Dietary Preferences: ${tripSummary.foodPreference}`}
           >
-            <Utensils className="w-3.5 h-3.5 text-amber-700" />
-            <span>{tripSummary.foodPreference}</span>
+            <Utensils className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+            <span className="truncate">{tripSummary.foodPreference}</span>
           </span>
         </div>
 
