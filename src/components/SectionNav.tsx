@@ -30,8 +30,8 @@ export interface SectionItem {
 
 export const SECTIONS_CONFIG: SectionItem[] = [
   { id: 'itinerary', label: 'Day Itinerary', icon: Calendar },
-  { id: 'places', label: 'Places to Visit', icon: MapPin },
   { id: 'food', label: 'Food & Dining', icon: Utensils },
+  { id: 'places', label: 'Places to Visit', icon: MapPin },
   { id: 'budget', label: 'Budget Cost', icon: DollarSign },
   { id: 'tips', label: 'Travel Tips', icon: Lightbulb },
   { id: 'seat-booking', label: 'Book Seat (₹250)', icon: Armchair, badge: 'Reserve', highlight: true },

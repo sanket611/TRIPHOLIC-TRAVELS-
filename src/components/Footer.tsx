@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, Compass, FileText, CheckCircle2, MessageCircle, Mail, ExternalLink } from 'lucide-react';
+import { SocialJoinUs } from './SocialJoinUs';
 
 interface FooterProps {
   onOpenDocs: () => void;
@@ -165,6 +166,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDocs, onOpenTests }) => {
             </ul>
           </div>
         </div>
+
+        {/* Join Us on WhatsApp, Instagram, Facebook, and X (logos only) */}
+        <SocialJoinUs variant="footer" />
 
         {/* Copyright */}
         <div

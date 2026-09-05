@@ -596,20 +596,20 @@ export function App() {
                   />
                 </div>
 
-                {/* 3. Recommended Places */}
+                {/* 3. Food Recommendations (Placed after Day by Day as requested) */}
+                <div id="section-food">
+                  <FoodRecommendations
+                    foodRecommendations={currentPlan.foodRecommendations}
+                    foodPreference={currentPlan.tripSummary.foodPreference}
+                  />
+                </div>
+
+                {/* 4. Recommended Places */}
                 <div id="section-places">
                   <RecommendedPlaces
                     places={currentPlan.recommendedPlaces}
                     destination={currentPlan.tripSummary.destination}
                     travelStyle={currentPlan.tripSummary.travelStyle}
-                  />
-                </div>
-
-                {/* 4. Food Recommendations */}
-                <div id="section-food">
-                  <FoodRecommendations
-                    foodRecommendations={currentPlan.foodRecommendations}
-                    foodPreference={currentPlan.tripSummary.foodPreference}
                   />
                 </div>
 

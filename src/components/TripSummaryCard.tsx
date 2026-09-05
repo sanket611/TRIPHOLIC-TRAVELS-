@@ -326,11 +326,11 @@ Plan generated with Tripholic AI Travel Planner.`;
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               {[
                 { id: 'itinerary', label: '📅 Itinerary' },
-                { id: 'places', label: '📍 Sights' },
                 { id: 'food', label: '🍽️ Food & Dining' },
+                { id: 'places', label: '📍 Sights' },
+                { id: 'seat-booking', label: '🎟️ Reserve Seat (₹250)', highlight: true },
                 { id: 'budget', label: '💰 Budget Breakdown' },
                 { id: 'tips', label: '💡 Travel Tips' },
-                { id: 'seat-booking', label: '🎟️ Reserve Seat (₹250)', highlight: true },
               ].map((chip) => (
                 <button
                   key={chip.id}

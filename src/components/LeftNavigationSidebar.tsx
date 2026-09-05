@@ -21,6 +21,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { TripPlan } from '../types';
+import { SocialJoinUs } from './SocialJoinUs';
 
 export type MainNavId =
   | 'explore'
@@ -369,48 +370,7 @@ export const LeftNavigationSidebar: React.FC<LeftNavigationSidebarProps> = ({
                   </span>
                 </button>
 
-                {/* 2. Food & Dining Option (Food before Day by Day as requested) */}
-                <button
-                  type="button"
-                  id="sidebar-nav-food"
-                  onClick={() => handleNavClick('food')}
-                  style={{
-                    border: activeNav === 'food' ? '2px solid #000000' : '1.5px solid transparent',
-                    background: activeNav === 'food' ? '#000000' : 'transparent',
-                    color: activeNav === 'food' ? '#ffffff' : '#0f172a',
-                  }}
-                  className={`w-full text-left p-2 sm:px-3 sm:py-2 min-h-[38px] rounded-xl flex items-center justify-center sm:justify-between transition-all cursor-pointer text-xs sm:text-sm font-bold ${
-                    activeNav === 'food'
-                      ? 'shadow-xs font-black'
-                      : 'hover:bg-slate-100 hover:border-black/20 text-slate-800'
-                  }`}
-                  title="Food Recommendations"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Utensils
-                      className={`w-4 h-4 shrink-0 ${
-                        activeNav === 'food' ? 'text-amber-300' : 'text-amber-600'
-                      }`}
-                    />
-                    <span className={isMobileExpanded ? 'block' : 'hidden sm:block'}>
-                      Food &amp; Dining
-                    </span>
-                  </div>
-                  <span
-                    style={{ border: '1px solid #000000' }}
-                    className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
-                      isMobileExpanded ? 'block' : 'hidden sm:block'
-                    } ${
-                      activeNav === 'food'
-                        ? 'bg-amber-300 text-black'
-                        : 'bg-slate-100 text-slate-800'
-                    }`}
-                  >
-                    {plan.foodRecommendations.length}
-                  </span>
-                </button>
-
-                {/* 3. Day by Day Option (After Food as requested) */}
+                {/* 2. Day by Day Option */}
                 <div
                   style={{
                     border:
@@ -520,6 +480,47 @@ export const LeftNavigationSidebar: React.FC<LeftNavigationSidebarProps> = ({
                     </div>
                   )}
                 </div>
+
+                {/* 3. Food & Dining Option (Placed after Day by Day as requested) */}
+                <button
+                  type="button"
+                  id="sidebar-nav-food"
+                  onClick={() => handleNavClick('food')}
+                  style={{
+                    border: activeNav === 'food' ? '2px solid #000000' : '1.5px solid transparent',
+                    background: activeNav === 'food' ? '#000000' : 'transparent',
+                    color: activeNav === 'food' ? '#ffffff' : '#0f172a',
+                  }}
+                  className={`w-full text-left p-2 sm:px-3 sm:py-2 min-h-[38px] rounded-xl flex items-center justify-center sm:justify-between transition-all cursor-pointer text-xs sm:text-sm font-bold ${
+                    activeNav === 'food'
+                      ? 'shadow-xs font-black'
+                      : 'hover:bg-slate-100 hover:border-black/20 text-slate-800'
+                  }`}
+                  title="Food Recommendations"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Utensils
+                      className={`w-4 h-4 shrink-0 ${
+                        activeNav === 'food' ? 'text-amber-300' : 'text-amber-600'
+                      }`}
+                    />
+                    <span className={isMobileExpanded ? 'block' : 'hidden sm:block'}>
+                      Food &amp; Dining
+                    </span>
+                  </div>
+                  <span
+                    style={{ border: '1px solid #000000' }}
+                    className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                      isMobileExpanded ? 'block' : 'hidden sm:block'
+                    } ${
+                      activeNav === 'food'
+                        ? 'bg-amber-300 text-black'
+                        : 'bg-slate-100 text-slate-800'
+                    }`}
+                  >
+                    {plan.foodRecommendations.length}
+                  </span>
+                </button>
 
                 {/* 4. Places to Visit Option (After Day by Day as requested) */}
                 <button
@@ -770,6 +771,9 @@ export const LeftNavigationSidebar: React.FC<LeftNavigationSidebarProps> = ({
               Help →
             </span>
           </button>
+
+          {/* End of the menu: Join Us on WhatsApp, Instagram, Facebook, and X (logos only) */}
+          <SocialJoinUs variant="sidebar" isMobileExpanded={isMobileExpanded} />
         </div>
       </aside>
     </>
