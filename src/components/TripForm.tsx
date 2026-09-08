@@ -159,15 +159,6 @@ const TRAVEL_STYLES: TravelStyleOption[] = [
   },
 ];
 
-const POPULAR_STYLE_COMBOS: Array<{ label: string; icon: string; styles: TravelStyle[] }> = [
-  { label: 'Beach & Chill', icon: '🏖️', styles: ['Relaxed', 'Romantic'] },
-  { label: 'Thrill & Nature', icon: '🧗', styles: ['Adventure', 'Nature & Wildlife'] },
-  { label: 'Heritage & Photo', icon: '🏛️', styles: ['Cultural & Heritage', 'Photography & Sightseeing'] },
-  { label: 'Luxury & Gourmet', icon: '✨', styles: ['Luxury', 'Foodie & Culinary'] },
-  { label: 'Solo Backpacker', icon: '🎒', styles: ['Solo Explorer', 'Backpacker & Budget'] },
-  { label: 'Spiritual Retreat', icon: '🧘', styles: ['Spiritual & Wellness', 'Relaxed'] },
-];
-
 const INTEREST_OPTIONS = [
   'Beaches',
   'Photography',
@@ -278,15 +269,6 @@ const FOOD_PREFERENCES: FoodPreferenceOption[] = [
   },
 ];
 
-const POPULAR_FOOD_COMBOS: Array<{ label: string; prefs: FoodPreference[] }> = [
-  { label: '🥗 + 🙏 Veg & Jain', prefs: ['Vegetarian', 'Jain'] },
-  { label: '🍗 + 🦐 Non-Veg & Seafood', prefs: ['Non-Vegetarian', 'Seafood Special'] },
-  { label: '🌱 + 🥑 Plant Vegan & Organic', prefs: ['Vegan', 'Organic & Healthy'] },
-  { label: '🍗 + 🌙 Halal Non-Veg', prefs: ['Halal', 'Non-Vegetarian'] },
-  { label: '🍳 + 🥘 Eggetarian & Street Food', prefs: ['Eggetarian', 'Street Food Lover'] },
-  { label: '🍷 + 🦐 Gourmet Seafood', prefs: ['Fine Dining Gourmet', 'Seafood Special'] },
-];
-
 const CURRENCIES = [
   { code: '₹', name: 'INR (₹)' },
   { code: '$', name: 'USD ($)' },
@@ -369,11 +351,11 @@ export const TripForm: React.FC<TripFormProps> = ({
   };
 
   const [destination, setDestination] = useState(initialValues?.destination || '');
-  const [startDate, setStartDate] = useState<string>(initialValues?.startDate || getTomorrowDateStr());
-  const [duration, setDuration] = useState<number | string>(initialValues?.duration ?? 4);
-  const [budget, setBudget] = useState<string>(initialValues?.budget ? initialValues.budget.toString() : '20000');
+  const [startDate, setStartDate] = useState<string>(initialValues?.startDate || '');
+  const [duration, setDuration] = useState<number | string>(initialValues?.duration !== undefined ? initialValues.duration : '');
+  const [budget, setBudget] = useState<string>(initialValues?.budget !== undefined ? initialValues.budget.toString() : '');
   const [currency, setCurrency] = useState(initialValues?.currency || '₹');
-  const [travelers, setTravelers] = useState<number>(initialValues?.travelers || 2);
+  const [travelers, setTravelers] = useState<number | string>(initialValues?.travelers !== undefined ? initialValues.travelers : '');
   const [selectedTravelStyles, setSelectedTravelStyles] = useState<TravelStyle[]>(getInitialTravelStyles);
   const [selectedInterests, setSelectedInterests] = useState<string[]>(
     initialValues?.interests || []
@@ -383,12 +365,18 @@ export const TripForm: React.FC<TripFormProps> = ({
   const [showDestinationSuggestions, setShowDestinationSuggestions] = useState(false);
   const destinationDropdownRef = useRef<HTMLDivElement>(null);
 
+  // "Let Me Think" draft state (saved for active browser session only; clean blank on next visit)
+  const [showThinkModal, setShowThinkModal] = useState<boolean>(false);
+  const [hasSessionDraft, setHasSessionDraft] = useState<boolean>(() => {
+    try {
+      return !!sessionStorage.getItem('tripholic_form_think_draft');
+    } catch {
+      return false;
+    }
+  });
+
   // Stepper / Individual option view mode
   const [activeStep, setActiveStep] = useState<FormStep>('logistics');
-
-  // Filter categories for the individual Travel Style & Food Preference options
-  const [styleCategoryFilter, setStyleCategoryFilter] = useState<string>('All');
-  const [foodGroupFilter, setFoodGroupFilter] = useState<string>('All');
 
   // Prop-driven target step change
   useEffect(() => {
@@ -500,11 +488,16 @@ export const TripForm: React.FC<TripFormProps> = ({
       if (initialValues.notes !== undefined) setNotes(initialValues.notes || '');
     } else {
       // When anyone visits website or starts a new trip:
-      // All selective options get back to clean clickable state (do not remember previous options)
+      // Give them all blank columns of selection so they can use their own mind to select what they want
       setSelectedTravelStyles([]);
       setSelectedFoodPreferences([]);
       setSelectedInterests([]);
       setDestination('');
+      setStartDate('');
+      setDuration('');
+      setBudget('');
+      setCurrency('₹');
+      setTravelers('');
       setNotes('');
       setErrors({});
     }
@@ -582,13 +575,14 @@ export const TripForm: React.FC<TripFormProps> = ({
     });
   };
 
+  // Clear all selection columns to 100% blank
   const handleClearForm = () => {
     setDestination('');
-    setStartDate(getTomorrowDateStr());
-    setDuration(3);
-    setBudget('15000');
+    setStartDate('');
+    setDuration('');
+    setBudget('');
     setCurrency('₹');
-    setTravelers(1);
+    setTravelers('');
     setSelectedTravelStyles([]);
     setSelectedInterests([]);
     setSelectedFoodPreferences([]);
@@ -597,6 +591,55 @@ export const TripForm: React.FC<TripFormProps> = ({
     if (onReset) {
       onReset();
     }
+  };
+
+  // "Let Me Think" option: saves current preferences to sessionStorage (active session only)
+  const handleLetMeThink = () => {
+    try {
+      sessionStorage.setItem(
+        'tripholic_form_think_draft',
+        JSON.stringify({
+          destination,
+          startDate,
+          duration,
+          budget,
+          currency,
+          travelers,
+          selectedTravelStyles,
+          selectedFoodPreferences,
+          selectedInterests,
+          notes,
+          savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        })
+      );
+      setHasSessionDraft(true);
+    } catch {}
+    setShowThinkModal(true);
+  };
+
+  // Restore choices saved during this session
+  const handleRestoreDraft = () => {
+    try {
+      const raw = sessionStorage.getItem('tripholic_form_think_draft');
+      if (raw) {
+        const draft = JSON.parse(raw);
+        if (draft.destination !== undefined) setDestination(draft.destination);
+        if (draft.startDate !== undefined) setStartDate(draft.startDate);
+        if (draft.duration !== undefined) setDuration(draft.duration);
+        if (draft.budget !== undefined) setBudget(draft.budget);
+        if (draft.currency !== undefined) setCurrency(draft.currency);
+        if (draft.travelers !== undefined) setTravelers(draft.travelers);
+        if (Array.isArray(draft.selectedTravelStyles)) setSelectedTravelStyles(draft.selectedTravelStyles);
+        if (Array.isArray(draft.selectedFoodPreferences)) setSelectedFoodPreferences(draft.selectedFoodPreferences);
+        if (Array.isArray(draft.selectedInterests)) setSelectedInterests(draft.selectedInterests);
+        if (draft.notes !== undefined) setNotes(draft.notes);
+      }
+    } catch {}
+  };
+
+  // Dismiss banner and keep current blank view
+  const handleDismissDraft = () => {
+    setHasSessionDraft(false);
   };
 
   const validateAndSubmit = (e?: React.FormEvent) => {
@@ -743,14 +786,63 @@ export const TripForm: React.FC<TripFormProps> = ({
               background: 'rgba(255, 255, 255, 0.95)',
               border: '1.5px solid #000000',
             }}
-            className="px-3.5 py-2 min-h-[42px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-            title="Reset form"
+            className="px-3 py-2 min-h-[42px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+            title="Reset all fields to blank"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Reset</span>
           </button>
+
+          <button
+            type="button"
+            id="think-form-header-btn"
+            onClick={handleLetMeThink}
+            style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              border: '1.5px solid #000000',
+            }}
+            className="px-3 py-2 min-h-[42px] text-xs sm:text-sm font-extrabold text-slate-900 hover:bg-slate-100 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+            title="Save your preferences to think about"
+          >
+            <Clock className="w-4 h-4 text-amber-700" />
+            <span>Let Me Think</span>
+          </button>
         </div>
       </div>
+
+      {/* "Let Me Think" Active Session Notification Banner */}
+      {hasSessionDraft && (
+        <div
+          style={{ borderBottom: '1.5px solid #000000' }}
+          className="px-4 py-2.5 bg-amber-50 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-900"
+        >
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-amber-800 shrink-0" />
+            <span>
+              You have a saved <strong>'Let Me Think'</strong> draft in this browser session. Current columns remain blank so you can select with your own mind.
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              id="restore-think-draft-btn"
+              onClick={handleRestoreDraft}
+              style={{ border: '1px solid #000000' }}
+              className="px-2.5 py-1 rounded-lg bg-white text-black font-extrabold text-[11px] hover:bg-slate-100 cursor-pointer shadow-2xs"
+            >
+              Restore Selections
+            </button>
+            <button
+              type="button"
+              id="dismiss-think-draft-btn"
+              onClick={handleDismissDraft}
+              className="text-[11px] font-bold text-slate-600 hover:text-rose-600 cursor-pointer underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Low-Scroll Step Tab Bar */}
       <div
@@ -1304,8 +1396,17 @@ export const TripForm: React.FC<TripFormProps> = ({
                       min="1"
                       max="20"
                       value={travelers}
+                      placeholder="e.g. 2"
                       onChange={(e) => {
-                        setTravelers(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)));
+                        const val = e.target.value;
+                        if (val === '') {
+                          setTravelers('');
+                        } else {
+                          const parsed = parseInt(val, 10);
+                          if (!isNaN(parsed)) {
+                            setTravelers(Math.max(1, Math.min(20, parsed)));
+                          }
+                        }
                         if (errors.travelers) setErrors({ ...errors, travelers: '' });
                       }}
                       style={{
@@ -1325,13 +1426,16 @@ export const TripForm: React.FC<TripFormProps> = ({
                       <button
                         key={p.count}
                         type="button"
-                        onClick={() => setTravelers(p.count)}
+                        onClick={() => {
+                          setTravelers(p.count);
+                          if (errors.travelers) setErrors({ ...errors, travelers: '' });
+                        }}
                         style={{
-                          background: travelers === p.count ? '#000000' : 'rgba(255, 255, 255, 0.95)',
+                          background: Number(travelers) === p.count ? '#000000' : 'rgba(255, 255, 255, 0.95)',
                           border: '1.5px solid #000000',
                         }}
                         className={`px-3 py-2 min-h-[40px] text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
-                          travelers === p.count
+                          Number(travelers) === p.count
                             ? 'bg-black text-white'
                             : 'text-black hover:bg-black hover:text-white'
                         }`}
@@ -1342,7 +1446,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                   </div>
                 </div>
                 <p className="mt-1 text-[11px] text-slate-700 font-bold">
-                  {travelers === 1 ? 'Solo Trip' : travelers === 2 ? 'Couple / 2 Friends' : `${travelers} People Group`}
+                  {!travelers ? 'Choose group size or enter number' : Number(travelers) === 1 ? 'Solo Trip' : Number(travelers) === 2 ? 'Couple / 2 Friends' : `${travelers} People Group`}
                 </p>
               </div>
             </div>
@@ -1422,10 +1526,6 @@ export const TripForm: React.FC<TripFormProps> = ({
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-800 font-medium">
-              Select one or multiple vibes that match your journey. Activities and daily pacing will be curated around these styles.
-            </p>
-
             {/* Active Selected Styles Tray */}
             {selectedTravelStyles.length > 0 ? (
               <div
@@ -1482,7 +1582,7 @@ export const TripForm: React.FC<TripFormProps> = ({
               >
                 <span className="flex items-center gap-2 font-medium">
                   <span className="text-base">🧭</span>
-                  <span>No styles selected yet. All options are ready to click — select 1 or more vibes below!</span>
+                  <span>No styles selected yet. All options are ready to click below.</span>
                 </span>
                 <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-200 px-2 py-0.5 rounded self-start sm:self-auto">
                   Click cards below
@@ -1490,79 +1590,9 @@ export const TripForm: React.FC<TripFormProps> = ({
               </div>
             )}
 
-            {/* Category Filter Pills for Travel Styles */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              <span className="text-[11px] font-mono font-extrabold text-slate-700 uppercase mr-1 shrink-0">
-                Filter:
-              </span>
-              {[
-                { id: 'All', label: `All Styles (${TRAVEL_STYLES.length})` },
-                { id: 'Active & Outdoor', label: 'Active & Outdoor' },
-                { id: 'Leisure & Comfort', label: 'Leisure & Comfort' },
-                { id: 'Culture & Heritage', label: 'Culture & Heritage' },
-                { id: 'Social & Explorer', label: 'Social & Explorer' },
-                { id: 'Specialty', label: 'Specialty' },
-              ].map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setStyleCategoryFilter(cat.id)}
-                  style={{
-                    border: styleCategoryFilter === cat.id ? '1.5px solid #000000' : '1px solid #cbd5e1',
-                    background: styleCategoryFilter === cat.id ? '#000000' : '#ffffff',
-                    color: styleCategoryFilter === cat.id ? '#ffffff' : '#334155',
-                  }}
-                  className="px-2.5 py-1 rounded-lg text-xs font-extrabold whitespace-nowrap cursor-pointer transition-all shadow-2xs"
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Popular 1-Click Travel Style Combos */}
-            <div className="p-3 bg-violet-50/80 border border-violet-200 rounded-xl">
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-[11px] font-mono font-black text-violet-900 uppercase flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-500 fill-amber-500" />
-                  <span>Popular 1-Click Style Combos:</span>
-                </span>
-                <span className="text-[10px] text-slate-600 font-bold hidden sm:inline">Click to instantly apply</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {POPULAR_STYLE_COMBOS.map((combo) => {
-                  const isFullyApplied = combo.styles.every((s) => selectedTravelStyles.includes(s));
-                  return (
-                    <button
-                      key={combo.label}
-                      type="button"
-                      onClick={() => {
-                        setSelectedTravelStyles((prev) => {
-                          const set = new Set(prev);
-                          combo.styles.forEach((s) => set.add(s));
-                          return Array.from(set);
-                        });
-                        setErrors((prev) => ({ ...prev, travelStyle: undefined }));
-                      }}
-                      style={{
-                        border: isFullyApplied ? '1.5px solid #000000' : '1px solid #c4b5fd',
-                        background: isFullyApplied ? '#000000' : '#ffffff',
-                        color: isFullyApplied ? '#fde047' : '#4338ca',
-                      }}
-                      className="px-2.5 py-1 text-xs font-extrabold rounded-lg hover:border-black cursor-pointer transition-all shadow-2xs flex items-center gap-1"
-                    >
-                      <span>{combo.label}</span>
-                      {isFullyApplied && <span className="text-[10px]">✓</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Travel Styles Grid (Individual Distinct Option Display) */}
+            {/* Travel Styles Grid - Direct Clean Display */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
-              {TRAVEL_STYLES.filter(
-                (style) => styleCategoryFilter === 'All' || style.category === styleCategoryFilter
-              ).map((style) => {
+              {TRAVEL_STYLES.map((style) => {
                 const isSelected = selectedTravelStyles.includes(style.id);
                 return (
                   <button
@@ -1687,10 +1717,6 @@ export const TripForm: React.FC<TripFormProps> = ({
                     <Utensils className="w-3.5 h-3.5" />
                     <span>STEP 3 OF 4: FOOD &amp; DINING</span>
                   </span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-500 font-mono text-[11px] font-black flex items-center gap-1 shadow-2xs">
-                    <Sparkles className="w-3 h-3 text-emerald-700 fill-emerald-500" />
-                    <span>Multiple Selection Supported</span>
-                  </span>
                 </div>
                 <h3 className="text-base sm:text-xl font-black text-black font-heading">
                   Food &amp; Dining Preferences
@@ -1721,16 +1747,6 @@ export const TripForm: React.FC<TripFormProps> = ({
                     <span>Clear All</span>
                   </button>
                 )}
-              </div>
-            </div>
-
-            {/* Explanatory Multi-Select Note */}
-            <div className="p-3 bg-amber-50/90 border border-amber-300 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <p className="text-xs sm:text-sm text-slate-800 font-medium">
-                <strong className="text-black font-extrabold">Choose as many as you like:</strong> Select 1, 2, or multiple diets (e.g. <em>Pure Veg + Street Food</em> or <em>Non-Veg + Seafood + Halal</em>). All daily meals and recommendations will adapt to cater to every selected diet.
-              </p>
-              <div className="text-[11px] font-mono font-bold text-amber-900 shrink-0 self-start sm:self-auto bg-amber-200/80 px-2 py-0.5 rounded border border-amber-400">
-                Click any card to toggle
               </div>
             </div>
 
@@ -1798,104 +1814,9 @@ export const TripForm: React.FC<TripFormProps> = ({
               </div>
             )}
 
-            {/* Dietary Group Filter Pills & Batch Select */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                <span className="text-[11px] font-mono font-extrabold text-slate-700 uppercase mr-1 shrink-0">
-                  Category:
-                </span>
-                {[
-                  { id: 'All', label: `All Diets (${FOOD_PREFERENCES.length})` },
-                  { id: 'Pure Veg & Jain', label: 'Pure Veg & Jain' },
-                  { id: 'Non-Vegetarian', label: 'Non-Vegetarian & Halal' },
-                  { id: 'Plant-Based', label: 'Plant-Based & Healthy' },
-                  { id: 'Specialty & Dining', label: 'Specialty & Gourmet' },
-                ].map((grp) => (
-                  <button
-                    key={grp.id}
-                    type="button"
-                    onClick={() => setFoodGroupFilter(grp.id)}
-                    style={{
-                      border: foodGroupFilter === grp.id ? '1.5px solid #000000' : '1px solid #cbd5e1',
-                      background: foodGroupFilter === grp.id ? '#000000' : '#ffffff',
-                      color: foodGroupFilter === grp.id ? '#ffffff' : '#334155',
-                    }}
-                    className="px-2.5 py-1 rounded-lg text-xs font-extrabold whitespace-nowrap cursor-pointer transition-all shadow-2xs"
-                  >
-                    {grp.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Quick Category Action */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const itemsInFilter = FOOD_PREFERENCES.filter(
-                      (food) => foodGroupFilter === 'All' || food.dietGroup === foodGroupFilter
-                    ).map((f) => f.id);
-                    setSelectedFoodPreferences((prev) => {
-                      const set = new Set([...prev, ...itemsInFilter]);
-                      return Array.from(set);
-                    });
-                    if (errors.foodPreference) {
-                      setErrors((prevErr) => ({ ...prevErr, foodPreference: '' }));
-                    }
-                  }}
-                  style={{ border: '1px solid #000000' }}
-                  className="px-2.5 py-1 text-[11px] font-mono font-extrabold rounded-lg bg-amber-200 hover:bg-amber-300 text-black cursor-pointer transition-all shadow-2xs"
-                  title="Select all diets in this category"
-                >
-                  + Select All In View
-                </button>
-              </div>
-            </div>
-
-            {/* Popular 1-Click Food Combos */}
-            <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-xl">
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-[11px] font-mono font-black text-amber-950 uppercase flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-600 fill-amber-600" />
-                  <span>Popular Multi-Diet Pairings:</span>
-                </span>
-                <span className="text-[10px] text-slate-600 font-bold hidden sm:inline">1-Click Combinations</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {POPULAR_FOOD_COMBOS.map((combo) => {
-                  const isFullyApplied = combo.prefs.every((p) => selectedFoodPreferences.includes(p));
-                  return (
-                    <button
-                      key={combo.label}
-                      type="button"
-                      onClick={() => {
-                        setSelectedFoodPreferences((prev) => {
-                          const set = new Set(prev);
-                          combo.prefs.forEach((p) => set.add(p));
-                          return Array.from(set);
-                        });
-                        setErrors((prev) => ({ ...prev, foodPreference: undefined }));
-                      }}
-                      style={{
-                        border: isFullyApplied ? '1.5px solid #000000' : '1px solid #fcd34d',
-                        background: isFullyApplied ? '#000000' : '#ffffff',
-                        color: isFullyApplied ? '#fde047' : '#78350f',
-                      }}
-                      className="px-2.5 py-1 text-xs font-extrabold rounded-lg hover:border-black cursor-pointer transition-all shadow-2xs flex items-center gap-1"
-                    >
-                      <span>{combo.label}</span>
-                      {isFullyApplied && <span className="text-[10px]">✓</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Food Preferences Grid (Individual Distinct Option Display) */}
+            {/* Food Preferences Grid - Direct Clean Display */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-              {FOOD_PREFERENCES.filter(
-                (food) => foodGroupFilter === 'All' || food.dietGroup === foodGroupFilter
-              ).map((food) => {
+              {FOOD_PREFERENCES.map((food) => {
                 const isSelected = selectedFoodPreferences.includes(food.id);
                 return (
                   <button
@@ -1946,6 +1867,15 @@ export const TripForm: React.FC<TripFormProps> = ({
                 );
               })}
             </div>
+
+            {/* End-of-card selection counter */}
+            {selectedFoodPreferences.length > 0 && (
+              <div className="pt-2 px-1 flex items-center justify-end text-xs text-slate-500 font-medium border-t border-slate-200">
+                <span className="font-mono font-bold text-slate-700">
+                  {selectedFoodPreferences.length} chosen
+                </span>
+              </div>
+            )}
 
             {errors.foodPreference && (
               <div className="p-3 rounded-xl bg-rose-100 border-2 border-rose-600 text-rose-950 text-xs font-black flex items-center gap-2 animate-bounce-slow">
@@ -2051,9 +1981,11 @@ export const TripForm: React.FC<TripFormProps> = ({
                   <Tag className="w-4 h-4 text-violet-700" />
                   <span>Activities &amp; Interests <span className="text-rose-600">*</span></span>
                 </label>
-                <span className={`text-xs font-mono font-extrabold ${selectedInterests.length === 0 ? 'text-rose-700' : 'text-slate-800'}`}>
-                  Select what you enjoy
-                </span>
+                {selectedInterests.length > 0 && (
+                  <span className="text-xs font-mono font-extrabold text-slate-800">
+                    {selectedInterests.length} selected
+                  </span>
+                )}
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {INTEREST_OPTIONS.map((interest) => {
@@ -2174,15 +2106,196 @@ export const TripForm: React.FC<TripFormProps> = ({
                 background: 'rgba(255, 255, 255, 0.95)',
                 border: '1.5px solid #000000',
               }}
-              className="w-full sm:w-auto px-5 py-3 min-h-[50px] rounded-2xl font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-              title="Reset all form fields"
+              className="w-full sm:w-auto px-4 py-3 min-h-[50px] rounded-2xl font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              title="Reset all form fields to blank"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Reset</span>
             </button>
+
+            <button
+              type="button"
+              id="think-bottom-btn"
+              onClick={handleLetMeThink}
+              style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                border: '1.5px solid #000000',
+              }}
+              className="w-full sm:w-auto px-4 py-3 min-h-[50px] rounded-2xl font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider text-slate-900 hover:bg-slate-100 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              title="Save current choices to think about later"
+            >
+              <Clock className="w-4 h-4 text-amber-700" />
+              <span>Let Me Think</span>
+            </button>
           </div>
         )}
       </form>
+
+      {/* "Let Me Think" Preference Snapshot Modal - Colourful & Special */}
+      {showThinkModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div
+            style={{ border: '2.5px solid #000000', boxShadow: '0 25px 60px rgba(0,0,0,0.3)' }}
+            className="bg-white rounded-3xl max-w-lg w-full overflow-hidden text-center animate-fade-in"
+          >
+            {/* Colourful Top Gradient Ribbon */}
+            <div className="h-3 bg-gradient-to-r from-amber-400 via-rose-500 to-indigo-600 w-full" />
+
+            <div className="p-6 space-y-4">
+              <div className="flex justify-center">
+                <div
+                  style={{ border: '2px solid #000000' }}
+                  className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-300 via-orange-400 to-rose-400 text-slate-950 flex items-center justify-center shadow-xs"
+                >
+                  <Clock className="w-7 h-7 text-slate-950" />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <span
+                  style={{ border: '1.2px solid #000000' }}
+                  className="px-3 py-0.5 rounded-full bg-amber-300 text-slate-950 font-mono text-xs font-black inline-flex items-center gap-1 shadow-2xs"
+                >
+                  <Sparkles className="w-3.5 h-3.5 fill-current text-slate-950" />
+                  <span>THOUGHTFUL TRAVELER PASS • NO RUSH</span>
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-950 font-heading">
+                  Take All The Time You Need!
+                </h3>
+                <p className="text-xs text-slate-600 font-medium">
+                  Your customized choices are saved securely for this browser session.
+                </p>
+              </div>
+
+              {/* Colourful Multi-Tile Selections Snapshot */}
+              <div
+                style={{ border: '2px solid #000000' }}
+                className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-amber-50/40 text-left text-xs font-mono space-y-3"
+              >
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="text-[11px] font-black text-slate-700 uppercase tracking-wider">
+                    Session Selections Snapshot
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                    Saved in Browser
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div
+                    style={{ border: '1px solid #10b981' }}
+                    className="p-2.5 rounded-xl bg-emerald-50/90 text-emerald-950"
+                  >
+                    <span className="text-[10px] text-emerald-700 font-bold block uppercase">Destination</span>
+                    <strong className="text-sm font-black text-emerald-950 truncate block mt-0.5">
+                      {destination || '(Blank)'}
+                    </strong>
+                  </div>
+
+                  <div
+                    style={{ border: '1px solid #0ea5e9' }}
+                    className="p-2.5 rounded-xl bg-sky-50/90 text-sky-950"
+                  >
+                    <span className="text-[10px] text-sky-700 font-bold block uppercase">Duration</span>
+                    <strong className="text-sm font-black text-sky-950 block mt-0.5">
+                      {duration ? `${duration} Days` : '(Blank)'}
+                    </strong>
+                  </div>
+
+                  <div
+                    style={{ border: '1px solid #f59e0b' }}
+                    className="p-2.5 rounded-xl bg-amber-50/90 text-amber-950"
+                  >
+                    <span className="text-[10px] text-amber-700 font-bold block uppercase">Target Budget</span>
+                    <strong className="text-sm font-black text-amber-950 block mt-0.5">
+                      {budget ? `${currency}${budget}` : '(Blank)'}
+                    </strong>
+                  </div>
+
+                  <div
+                    style={{ border: '1px solid #8b5cf6' }}
+                    className="p-2.5 rounded-xl bg-violet-50/90 text-violet-950"
+                  >
+                    <span className="text-[10px] text-violet-700 font-bold block uppercase">Travelers</span>
+                    <strong className="text-sm font-black text-violet-950 block mt-0.5">
+                      {travelers ? `${travelers} Person(s)` : '(Blank)'}
+                    </strong>
+                  </div>
+                </div>
+
+                {/* Diets and Styles Badges */}
+                <div className="space-y-1.5 pt-1">
+                  {selectedTravelStyles.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1">
+                      <span className="text-[10px] text-slate-500 font-bold">Styles:</span>
+                      {selectedTravelStyles.map((st) => (
+                        <span
+                          key={st}
+                          className="px-2 py-0.5 bg-violet-100 text-violet-900 border border-violet-300 rounded-md text-[10px] font-bold"
+                        >
+                          {st}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {selectedFoodPreferences.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1">
+                      <span className="text-[10px] text-slate-500 font-bold">Food:</span>
+                      {selectedFoodPreferences.map((fp) => (
+                        <span
+                          key={fp}
+                          className="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-md text-[10px] font-bold"
+                        >
+                          {fp}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Reassurance Banner with Warm Saffron/Yellow Tint */}
+              <div
+                style={{ border: '1.5px solid #000000' }}
+                className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-100 via-orange-50 to-amber-100 text-xs text-slate-900 text-left font-medium leading-relaxed flex items-start gap-2.5 shadow-2xs"
+              >
+                <Sparkles className="w-5 h-5 text-amber-800 shrink-0 mt-0.5" />
+                <p>
+                  <strong>Fresh Mind Promise:</strong> When you exit and visit the website again, all columns will be given completely blank so you can choose freely with your own mind!
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+                <button
+                  type="button"
+                  id="close-think-modal-btn"
+                  onClick={() => setShowThinkModal(false)}
+                  style={{
+                    border: '1.5px solid #000000',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  }}
+                  className="px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-700 to-violet-700 hover:from-indigo-800 hover:to-violet-800 text-white font-black text-xs sm:text-sm cursor-pointer transition-all active:scale-95"
+                >
+                  Keep Thinking &amp; Continue
+                </button>
+                <button
+                  type="button"
+                  id="reset-from-think-modal-btn"
+                  onClick={() => {
+                    handleClearForm();
+                    setShowThinkModal(false);
+                  }}
+                  style={{ border: '1.5px solid #000000' }}
+                  className="px-4 py-3 rounded-2xl bg-white text-rose-700 font-black text-xs sm:text-sm hover:bg-rose-50 cursor-pointer shadow-2xs transition-all active:scale-95"
+                >
+                  Reset All to Blank Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

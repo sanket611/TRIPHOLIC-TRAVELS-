@@ -70,8 +70,9 @@ async function callGeminiWithResilience(
     throw new Error('No GEMINI_API_KEY available');
   }
 
-  // Model cascade: Primary standard model -> Fast Lite fallback
-  const candidateModels = ['gemini-3.7-flash', 'gemini-3.1-flash-lite'];
+  // Model cascade based on @google/genai guidelines:
+  // Primary standard text model: 'gemini-3.8-flash' -> Alias 'gemini-flash-latest' -> Lite fallback 'gemini-3.1-flash-lite'
+  const candidateModels = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
   let lastError: any = null;
 
   for (const model of candidateModels) {
@@ -98,6 +99,11 @@ async function callGeminiWithResilience(
       lastError = err;
       const errMessage = err?.message || String(err);
       console.warn(`[Gemini Route] Model "${model}" failed, cascading to next model:`, errMessage);
+
+      // Brief backoff if experiencing high demand (503/429) before trying next model
+      if (errMessage.includes('503') || errMessage.includes('429') || errMessage.includes('UNAVAILABLE')) {
+        await new Promise((resolve) => setTimeout(resolve, 350));
+      }
       // Fallback to next candidate model
       continue;
     }

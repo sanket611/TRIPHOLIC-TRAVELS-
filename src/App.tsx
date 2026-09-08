@@ -73,6 +73,35 @@ export function App() {
     }
   });
 
+  // Dark Mode State
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const savedTheme = localStorage.getItem('tripgenie_theme');
+      if (savedTheme === 'dark' || savedTheme === 'light') return savedTheme;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } catch {
+      return 'light';
+    }
+  });
+
+  // Synchronize dark mode class on <html> element
+  useEffect(() => {
+    try {
+      localStorage.setItem('tripgenie_theme', theme);
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {
+      console.error('Failed to sync theme', e);
+    }
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   const resultsRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -357,6 +386,8 @@ export function App() {
         onOpenDocs={() => setIsPromptDocsOpen(true)}
         onOpenTests={() => setIsTestSuiteOpen(true)}
         onStartNewTrip={handleStartNewTrip}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       {/* Main Container with Permanent Left Sidebar */}
@@ -374,6 +405,8 @@ export function App() {
               onOpenSavedTrips={() => setIsSavedTripsOpen(true)}
               onOpenDestinationsModal={() => setIsDestinationsModalOpen(true)}
               onStartNewTrip={handleStartNewTrip}
+              theme={theme}
+              onToggleTheme={handleToggleTheme}
             />
           </div>
 
