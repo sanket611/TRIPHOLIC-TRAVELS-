@@ -365,15 +365,17 @@ export const TripForm: React.FC<TripFormProps> = ({
   const [showDestinationSuggestions, setShowDestinationSuggestions] = useState(false);
   const destinationDropdownRef = useRef<HTMLDivElement>(null);
 
-  // "Let Me Think" draft state (saved for active browser session only; clean blank on next visit)
+  // "Let Me Think" draft state
   const [showThinkModal, setShowThinkModal] = useState<boolean>(false);
-  const [hasSessionDraft, setHasSessionDraft] = useState<boolean>(() => {
+  const [hasSessionDraft, setHasSessionDraft] = useState<boolean>(false);
+
+  // Clear any older drafts from session on mount to guarantee a fresh, blank start on every refresh or visit
+  useEffect(() => {
     try {
-      return !!sessionStorage.getItem('tripholic_form_think_draft');
-    } catch {
-      return false;
-    }
-  });
+      sessionStorage.removeItem('tripholic_form_think_draft');
+      sessionStorage.removeItem('tripholic_booking_think_draft');
+    } catch {}
+  }, []);
 
   // Stepper / Individual option view mode
   const [activeStep, setActiveStep] = useState<FormStep>('logistics');
@@ -415,15 +417,7 @@ export const TripForm: React.FC<TripFormProps> = ({
     setDuration(dest.idealDuration);
     setCurrency(dest.currency);
     setBudget(dest.currency === '₹' ? dest.typicalBudgetINR.toString() : dest.typicalBudgetUSD.toString());
-    if (dest.recommendedStyles && dest.recommendedStyles.length > 0) {
-      setSelectedTravelStyles(dest.recommendedStyles);
-    }
-    if (dest.recommendedInterests && dest.recommendedInterests.length > 0) {
-      setSelectedInterests(dest.recommendedInterests);
-    }
-    if (dest.foodPreference) {
-      setSelectedFoodPreferences([dest.foodPreference]);
-    }
+    // Keep travel styles, food preferences, and activities blank so user can select freely
     setShowDestinationSuggestions(false);
     if (errors.destination) {
       setErrors((prev) => ({ ...prev, destination: '' }));
@@ -993,7 +987,7 @@ export const TripForm: React.FC<TripFormProps> = ({
       </div>
 
       {/* Main Form Body */}
-      <form onSubmit={validateAndSubmit} className="p-3 sm:p-6 space-y-6">
+      <form onSubmit={validateAndSubmit} autoComplete="off" className="p-3 sm:p-6 space-y-6">
         {/* ========================================================================= */}
         {/* STEP 1: DESTINATION, TIMELINE & BUDGET */}
         {/* ========================================================================= */}

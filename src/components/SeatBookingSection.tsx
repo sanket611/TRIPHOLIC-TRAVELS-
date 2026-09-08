@@ -66,6 +66,13 @@ export const SeatBookingSection: React.FC<SeatBookingSectionProps> = ({ plan }) 
   // Multiple selection booking options: starts blank / unselected on open
   const [selectedBookingOptions, setSelectedBookingOptions] = useState<string[]>([]);
 
+  // Clear any older drafts from session on mount to guarantee fresh blank state
+  useEffect(() => {
+    try {
+      sessionStorage.removeItem('tripholic_booking_think_draft');
+    } catch {}
+  }, []);
+
   const handleToggleBookingOption = (id: string) => {
     setSelectedBookingOptions((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -364,7 +371,7 @@ ${isBooking
               </div>
             </div>
 
-            <form onSubmit={handlePayAndBookSeat} className="space-y-3" id="seat-booking-form">
+            <form onSubmit={handlePayAndBookSeat} autoComplete="off" className="space-y-3" id="seat-booking-form">
               {/* Form Grid: 3 columns, 2 clean rows with vibrant colorful cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                 {/* 1. Destination Field - Rose Accent */}

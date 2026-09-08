@@ -84,6 +84,14 @@ export function App() {
     }
   });
 
+  // On website visit or refresh: guarantee clean start, wipe temporary session drafts so all form options start blank
+  useEffect(() => {
+    try {
+      sessionStorage.removeItem('tripholic_form_think_draft');
+      sessionStorage.removeItem('tripholic_booking_think_draft');
+    } catch {}
+  }, []);
+
   // Synchronize dark mode class on <html> element
   useEffect(() => {
     try {
@@ -731,7 +739,6 @@ export function App() {
             destination: dest.name,
             duration: dest.suggestedDuration,
             budget: dest.estimatedBudgetRange,
-            travelStyle: dest.style,
           });
           setIsDestinationsModalOpen(false);
           formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });

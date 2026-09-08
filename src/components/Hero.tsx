@@ -324,7 +324,13 @@ export const Hero: React.FC<HeroProps> = ({
                 <button
                   key={dest.destination}
                   onClick={() => {
-                    onSelectPreset(dest);
+                    onSelectPreset({
+                      destination: dest.destination,
+                      duration: dest.duration,
+                      budget: dest.budget,
+                      currency: dest.currency,
+                      travelers: dest.travelers,
+                    });
                     if (onScrollToForm) onScrollToForm();
                   }}
                   className="group relative overflow-hidden rounded-2xl p-2.5 text-left hover:scale-[1.02] active:scale-98 transition-all cursor-pointer bg-white border border-slate-200/90 hover:border-indigo-300 shadow-xs hover:shadow-md flex flex-col justify-between h-44"
