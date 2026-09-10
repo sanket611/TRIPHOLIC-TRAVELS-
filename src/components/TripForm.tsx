@@ -659,37 +659,21 @@ export const TripForm: React.FC<TripFormProps> = ({
       newErrors.travelers = 'Please enter at least 1 traveler.';
     }
 
-    if (selectedTravelStyles.length === 0) {
-      newErrors.travelStyle = 'Please select at least 1 travel style option.';
-    }
-
-    if (selectedFoodPreferences.length === 0) {
-      newErrors.foodPreference = 'Please select at least 1 food & dining preference.';
-    }
-
-    if (selectedInterests.length === 0) {
-      newErrors.interests = 'Please select at least 1 activity or interest.';
-    }
-
+    // Trip preferences (Travel Style, Food, Activities) are optional - user is free to pick any or none
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      // Auto switch to specific individual step with error
-      if (newErrors.destination || newErrors.duration || newErrors.budget || newErrors.travelers) {
-        if (activeStep !== 'all') changeStep('logistics');
-      } else if (newErrors.travelStyle) {
-        if (activeStep !== 'all') changeStep('travel-style');
-      } else if (newErrors.foodPreference) {
-        if (activeStep !== 'all') changeStep('food-preference');
-      } else if (newErrors.interests) {
-        if (activeStep !== 'all') changeStep('custom');
-      }
+      if (activeStep !== 'all') changeStep('logistics');
       return;
     }
 
     setErrors({});
 
-    const formattedTravelStyle = selectedTravelStyles.join(' & ');
-    const formattedFoodPref = selectedFoodPreferences.join(' & ');
+    const formattedTravelStyle = selectedTravelStyles.length > 0
+      ? selectedTravelStyles.join(' & ')
+      : 'Balanced Explorer';
+    const formattedFoodPref = selectedFoodPreferences.length > 0
+      ? selectedFoodPreferences.join(' & ')
+      : 'All Cuisines & Local Delights';
     const dateInfo = formatDateAndDay(startDate);
 
     const formData: TravelPreferences = {
@@ -700,7 +684,7 @@ export const TripForm: React.FC<TripFormProps> = ({
       travelers: travelersNum,
       travelStyle: formattedTravelStyle,
       travelStyles: selectedTravelStyles,
-      interests: selectedInterests,
+      interests: selectedInterests.length > 0 ? selectedInterests : ['Highlights & Local Culture'],
       foodPreference: formattedFoodPref,
       foodPreferences: selectedFoodPreferences,
       startDate: startDate || undefined,
@@ -720,40 +704,46 @@ export const TripForm: React.FC<TripFormProps> = ({
   return (
     <div
       id="planner-form-section"
-      style={{
-        background: 'rgba(255, 255, 255, 0.25)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        border: '2px solid #000000',
-        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.16)',
-      }}
-      className="rounded-[28px] overflow-hidden transition-all duration-300"
+      className="rounded-3xl overflow-hidden transition-all duration-300 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-[0_20px_50px_-15px_rgba(15,23,42,0.07)]"
     >
+      {/* Executive Top Accent Ribbon */}
+      <div className="h-1 bg-gradient-to-r from-slate-900 via-indigo-600 to-slate-900 w-full" />
+
+      {/* Official Business Statement Metadata Header Line */}
+      <div className="px-4 py-2 sm:px-7 sm:py-2.5 bg-slate-900 text-slate-200 text-[10px] sm:text-xs font-mono flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 tracking-wider">
+        <div className="flex items-center gap-2">
+          <span className="px-1.5 py-0.5 rounded bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 font-black">
+            STATEMENT REF: TS-2026-SPEC
+          </span>
+          <span className="text-slate-400 hidden sm:inline">
+            // CONFIDENTIAL ITINERARY SPECIFICATION DIRECTIVE
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-slate-300">
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-bold text-emerald-400">SPECIFICATION DRAFT</span>
+          </span>
+          <span className="text-slate-500 hidden md:inline">|</span>
+          <span className="text-slate-400 hidden md:inline">REV: 1.0</span>
+        </div>
+      </div>
+
       {/* Translucent Card Header with Quick Actions & Step Switcher */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.85)',
-          borderBottom: '2px solid #000000',
-        }}
-        className="px-4 py-4 sm:px-7 sm:py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4"
-      >
+      <div className="px-4 py-4 sm:px-7 sm:py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4 border-b border-slate-100 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60">
         <div>
           <div className="flex items-center gap-2 mb-0.5 sm:mb-1">
-            <span className="p-1.5 bg-gradient-to-tr from-violet-700 to-indigo-700 text-white rounded-xl shadow-md flex items-center justify-center border border-black">
-              <Compass className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="p-2 bg-slate-950 dark:bg-indigo-600 text-white rounded-xl shadow-xs flex items-center justify-center border border-slate-800 dark:border-indigo-500">
+              <Compass className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-indigo-400 dark:text-amber-300" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 font-heading">
-              Trip Preferences
-            </h2>
-            <span
-              style={{ border: '1.5px solid #000000' }}
-              className="text-[11px] font-mono font-extrabold px-2 py-0.5 rounded-full bg-amber-200 text-black hidden sm:inline-block"
-            >
-              Easy Compact Mode
-            </span>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 dark:text-white font-heading">
+                Trip Preferences &amp; Logistics Statement
+              </h2>
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-slate-800 font-bold">
-            Configure destination, budget, group size, and custom travel parameters.
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium ml-0.5">
+            Formalized travel parameters, dietary compliance directives, and experiential archetype constraints.
           </p>
         </div>
 
@@ -762,10 +752,7 @@ export const TripForm: React.FC<TripFormProps> = ({
             type="button"
             id="try-example-btn"
             onClick={handleTryExample}
-            style={{
-              border: '1.5px solid #000000',
-            }}
-            className="flex-1 md:flex-none px-3.5 py-2 min-h-[42px] text-xs sm:text-sm font-extrabold bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 text-white rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+            className="flex-1 md:flex-none px-3.5 py-2 min-h-[40px] text-xs sm:text-sm font-bold bg-slate-950 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer border border-slate-800 dark:border-indigo-500"
             title="Auto-fill with sample Goa Trip"
           >
             <Zap className="w-4 h-4 fill-current text-amber-300" />
@@ -776,14 +763,10 @@ export const TripForm: React.FC<TripFormProps> = ({
             type="button"
             id="clear-form-btn"
             onClick={handleClearForm}
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              border: '1.5px solid #000000',
-            }}
-            className="px-3 py-2 min-h-[42px] text-xs sm:text-sm font-extrabold text-black hover:bg-black hover:text-white rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+            className="px-3 py-2 min-h-[40px] text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
             title="Reset all fields to blank"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4 text-slate-500" />
             <span>Reset</span>
           </button>
 
@@ -791,14 +774,10 @@ export const TripForm: React.FC<TripFormProps> = ({
             type="button"
             id="think-form-header-btn"
             onClick={handleLetMeThink}
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              border: '1.5px solid #000000',
-            }}
-            className="px-3 py-2 min-h-[42px] text-xs sm:text-sm font-extrabold text-slate-900 hover:bg-slate-100 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+            className="px-3 py-2 min-h-[40px] text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
             title="Save your preferences to think about"
           >
-            <Clock className="w-4 h-4 text-amber-700" />
+            <Clock className="w-4 h-4 text-amber-600" />
             <span>Let Me Think</span>
           </button>
         </div>
@@ -806,12 +785,9 @@ export const TripForm: React.FC<TripFormProps> = ({
 
       {/* "Let Me Think" Active Session Notification Banner */}
       {hasSessionDraft && (
-        <div
-          style={{ borderBottom: '1.5px solid #000000' }}
-          className="px-4 py-2.5 bg-amber-50 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-900"
-        >
+        <div className="px-4 py-2.5 bg-amber-50/80 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-950 dark:text-amber-200">
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-amber-800 shrink-0" />
+            <Clock className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0" />
             <span>
               You have a saved <strong>'Let Me Think'</strong> draft in this browser session. Current columns remain blank so you can select with your own mind.
             </span>
@@ -821,8 +797,7 @@ export const TripForm: React.FC<TripFormProps> = ({
               type="button"
               id="restore-think-draft-btn"
               onClick={handleRestoreDraft}
-              style={{ border: '1px solid #000000' }}
-              className="px-2.5 py-1 rounded-lg bg-white text-black font-extrabold text-[11px] hover:bg-slate-100 cursor-pointer shadow-2xs"
+              className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-700 text-amber-950 dark:text-amber-200 font-bold text-[11px] hover:bg-amber-100 cursor-pointer shadow-2xs"
             >
               Restore Selections
             </button>
@@ -838,28 +813,21 @@ export const TripForm: React.FC<TripFormProps> = ({
         </div>
       )}
 
-      {/* Low-Scroll Step Tab Bar */}
-      <div
-        style={{
-          background: 'rgba(248, 250, 252, 0.95)',
-          borderBottom: '1.5px solid #000000',
-        }}
-        className="px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2"
-      >
-        <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto scrollbar-none w-full sm:w-auto">
+      {/* Low-Scroll Step Tab Bar - Executive Segmented Audit Ribbon */}
+      <div className="px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/40">
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none w-full sm:w-auto">
           <button
             type="button"
             id="step-tab-logistics"
             onClick={() => changeStep('logistics')}
-            style={{
-              border: activeStep === 'logistics' ? '2px solid #000000' : '1.5px solid #000000',
-              background: activeStep === 'logistics' ? '#000000' : '#ffffff',
-              color: activeStep === 'logistics' ? '#ffffff' : '#000000',
-            }}
-            className="px-3 py-1.5 min-h-[38px] rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer transition-all shrink-0 shadow-2xs"
+            className={`px-3 py-1.5 min-h-[38px] rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer transition-all shrink-0 border ${
+              activeStep === 'logistics'
+                ? 'bg-slate-950 text-white dark:bg-indigo-600 dark:text-white border-slate-950 dark:border-indigo-500 shadow-2xs'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-800 hover:border-slate-400'
+            }`}
           >
             <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-mono font-black ${
-              activeStep === 'logistics' ? 'bg-amber-300 text-black' : 'bg-slate-200 text-slate-900'
+              activeStep === 'logistics' ? 'bg-amber-300 text-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
             }`}>
               1
             </span>
@@ -873,15 +841,14 @@ export const TripForm: React.FC<TripFormProps> = ({
             type="button"
             id="step-tab-travel-style"
             onClick={() => changeStep('travel-style')}
-            style={{
-              border: (activeStep === 'travel-style' || activeStep === 'preferences') ? '2px solid #000000' : '1.5px solid #000000',
-              background: (activeStep === 'travel-style' || activeStep === 'preferences') ? '#000000' : '#ffffff',
-              color: (activeStep === 'travel-style' || activeStep === 'preferences') ? '#ffffff' : '#000000',
-            }}
-            className="px-3 py-1.5 min-h-[38px] rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer transition-all shrink-0 shadow-2xs"
+            className={`px-3 py-1.5 min-h-[38px] rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer transition-all shrink-0 border ${
+              (activeStep === 'travel-style' || activeStep === 'preferences')
+                ? 'bg-slate-950 text-white dark:bg-indigo-600 dark:text-white border-slate-950 dark:border-indigo-500 shadow-2xs'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-800 hover:border-slate-400'
+            }`}
           >
             <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-mono font-black ${
-              (activeStep === 'travel-style' || activeStep === 'preferences') ? 'bg-amber-300 text-black' : 'bg-slate-200 text-slate-900'
+              (activeStep === 'travel-style' || activeStep === 'preferences') ? 'bg-amber-300 text-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
             }`}>
               2
             </span>
@@ -889,13 +856,10 @@ export const TripForm: React.FC<TripFormProps> = ({
             <span>Travel Style</span>
             {selectedTravelStyles.length > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-black ${
-                (activeStep === 'travel-style' || activeStep === 'preferences') ? 'bg-violet-700 text-white' : 'bg-slate-200 text-slate-900'
+                (activeStep === 'travel-style' || activeStep === 'preferences') ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-700'
               }`}>
                 {selectedTravelStyles.length}
               </span>
-            )}
-            {errors.travelStyle && (
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             )}
           </button>
 
@@ -903,15 +867,14 @@ export const TripForm: React.FC<TripFormProps> = ({
             type="button"
             id="step-tab-food-preference"
             onClick={() => changeStep('food-preference')}
-            style={{
-              border: activeStep === 'food-preference' ? '2px solid #000000' : '1.5px solid #000000',
-              background: activeStep === 'food-preference' ? '#000000' : '#ffffff',
-              color: activeStep === 'food-preference' ? '#ffffff' : '#000000',
-            }}
-            className="px-3 py-1.5 min-h-[38px] rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer transition-all shrink-0 shadow-2xs"
+            className={`px-3 py-1.5 min-h-[38px] rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer transition-all shrink-0 border ${
+              activeStep === 'food-preference'
+                ? 'bg-slate-950 text-white border-slate-950 shadow-2xs'
+                : 'bg-white text-slate-700 border-slate-200/90 hover:border-slate-400'
+            }`}
           >
             <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-mono font-black ${
-              activeStep === 'food-preference' ? 'bg-amber-300 text-black' : 'bg-slate-200 text-slate-900'
+              activeStep === 'food-preference' ? 'bg-amber-300 text-black' : 'bg-slate-100 text-slate-700'
             }`}>
               3
             </span>
@@ -919,13 +882,10 @@ export const TripForm: React.FC<TripFormProps> = ({
             <span>Food Preference</span>
             {selectedFoodPreferences.length > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-black ${
-                activeStep === 'food-preference' ? 'bg-amber-400 text-black' : 'bg-slate-200 text-slate-900'
+                activeStep === 'food-preference' ? 'bg-amber-400 text-black' : 'bg-slate-100 text-slate-700'
               }`}>
                 {selectedFoodPreferences.length}
               </span>
-            )}
-            {errors.foodPreference && (
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             )}
           </button>
 
@@ -933,15 +893,14 @@ export const TripForm: React.FC<TripFormProps> = ({
             type="button"
             id="step-tab-custom"
             onClick={() => changeStep('custom')}
-            style={{
-              border: activeStep === 'custom' ? '2px solid #000000' : '1.5px solid #000000',
-              background: activeStep === 'custom' ? '#000000' : '#ffffff',
-              color: activeStep === 'custom' ? '#ffffff' : '#000000',
-            }}
-            className="px-3 py-1.5 min-h-[38px] rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer transition-all shrink-0 shadow-2xs"
+            className={`px-3 py-1.5 min-h-[38px] rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer transition-all shrink-0 border ${
+              activeStep === 'custom'
+                ? 'bg-slate-950 text-white dark:bg-indigo-600 dark:text-white border-slate-950 dark:border-indigo-500 shadow-2xs'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-800 hover:border-slate-400'
+            }`}
           >
             <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-mono font-black ${
-              activeStep === 'custom' ? 'bg-amber-300 text-black' : 'bg-slate-200 text-slate-900'
+              activeStep === 'custom' ? 'bg-amber-300 text-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
             }`}>
               4
             </span>
@@ -949,7 +908,7 @@ export const TripForm: React.FC<TripFormProps> = ({
             <span>Activities &amp; Notes</span>
             {selectedInterests.length > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-black ${
-                activeStep === 'custom' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-900'
+                activeStep === 'custom' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
               }`}>
                 {selectedInterests.length}
               </span>
@@ -963,12 +922,11 @@ export const TripForm: React.FC<TripFormProps> = ({
             type="button"
             id="step-tab-all"
             onClick={() => changeStep(activeStep === 'all' ? 'logistics' : 'all')}
-            style={{
-              border: '1.5px solid #000000',
-              background: activeStep === 'all' ? '#000000' : '#ffffff',
-              color: activeStep === 'all' ? '#ffffff' : '#000000',
-            }}
-            className="px-2.5 py-1 rounded-lg text-xs font-extrabold flex items-center gap-1 cursor-pointer transition-all"
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-all border ${
+              activeStep === 'all'
+                ? 'bg-slate-900 dark:bg-indigo-600 text-white border-slate-900 dark:border-indigo-500'
+                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+            }`}
             title="Toggle between single step view or full page scroll view"
           >
             {activeStep === 'all' ? (
@@ -994,23 +952,25 @@ export const TripForm: React.FC<TripFormProps> = ({
         {(activeStep === 'logistics' || activeStep === 'all') && (
           <div
             id="form-step-logistics"
-            style={{
-              background: 'rgba(255, 255, 255, 0.85)',
-              border: '1.5px solid #000000',
-            }}
-            className="rounded-2xl p-4 sm:p-6 space-y-5 shadow-sm backdrop-blur-md animate-fade-in"
+            className="rounded-2xl p-4 sm:p-6 space-y-6 shadow-xs bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 animate-fade-in"
           >
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-black/10">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-black text-amber-300 font-mono font-black text-xs">
-                  STEP 1 OF 4
-                </span>
-                <h3 className="text-base sm:text-lg font-black text-black font-heading">
-                  Destination, Dates &amp; Budget
-                </h3>
+            {/* Step Header with Executive Directive Meta */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200/90 dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <span className="w-1.5 h-6 rounded-full bg-indigo-600 shrink-0" />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono font-bold text-[10px] tracking-wider uppercase">
+                      SEC 01 // PARAMETERS
+                    </span>
+                    <h3 className="text-base sm:text-lg font-black text-slate-950 dark:text-white font-heading">
+                      Geographic &amp; Schedule Logistics
+                    </h3>
+                  </div>
+                </div>
               </div>
-              <span className="text-xs font-mono font-bold text-slate-700">
-                Core Travel Logistics
+              <span className="text-[11px] font-mono text-slate-600 dark:text-slate-400 hidden sm:inline">
+                DIRECTIVE REF: LOG-SPEC-01
               </span>
             </div>
 
@@ -1019,24 +979,24 @@ export const TripForm: React.FC<TripFormProps> = ({
               {/* Destination Field with Autocomplete & Explorer */}
               <div className="md:col-span-5 relative" ref={destinationDropdownRef}>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black" htmlFor="destination-input">
-                    Destination <span className="text-rose-600">*</span>
+                  <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300" htmlFor="destination-input">
+                    Target Destination <span className="text-rose-500">*</span>
                   </label>
                   {onOpenDestinationsModal && (
                     <button
                       type="button"
                       onClick={onOpenDestinationsModal}
-                      className="text-xs font-mono font-extrabold text-violet-800 hover:text-black flex items-center gap-1 cursor-pointer hover:underline"
+                      className="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 flex items-center gap-1 cursor-pointer hover:underline"
                     >
                       <Grid className="w-3.5 h-3.5" />
-                      <span>See All Places</span>
+                      <span>Browse Catalog</span>
                     </button>
                   )}
                 </div>
 
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-violet-700">
-                    <MapPin className="w-5 h-5 text-violet-700 font-bold" />
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-indigo-600 dark:text-indigo-400">
+                    <MapPin className="w-4 h-4" />
                   </div>
                   <input
                     id="destination-input"
@@ -1048,25 +1008,18 @@ export const TripForm: React.FC<TripFormProps> = ({
                       setShowDestinationSuggestions(true);
                       if (errors.destination) setErrors({ ...errors, destination: '' });
                     }}
-                    placeholder="e.g. Goa, Manali, Kerala, Kashmir, Jaipur, Bali, Paris..."
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      border: errors.destination ? '2px solid #e11d48' : '1.5px solid #000000',
-                    }}
-                    className="w-full pl-11 pr-4 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 font-bold placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-black text-sm sm:text-base shadow-sm"
+                    placeholder="e.g. Goa, Manali, Kerala, Kashmir, Jaipur, Bali..."
+                    className={`w-full pl-10 pr-4 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 dark:text-white bg-white dark:bg-slate-850 font-semibold placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 text-sm sm:text-base shadow-2xs border transition-colors ${
+                      errors.destination
+                        ? 'border-rose-500 dark:border-rose-500 focus:border-rose-600'
+                        : 'border-slate-300 dark:border-slate-700 focus:border-indigo-600'
+                    }`}
                   />
 
                   {/* Autocomplete Dropdown */}
                   {showDestinationSuggestions && matchingSuggestions.length > 0 && (
-                    <div
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.98)',
-                        border: '2px solid #000000',
-                        boxShadow: '0 16px 36px rgba(0, 0, 0, 0.2)',
-                      }}
-                      className="absolute left-0 right-0 top-full mt-1 rounded-2xl p-2 z-50 backdrop-blur-xl animate-fade-in max-h-56 overflow-y-auto"
-                    >
-                      <div className="flex items-center justify-between px-2.5 py-1 mb-1 border-b border-black/10 text-[11px] font-mono font-extrabold text-slate-600">
+                    <div className="absolute left-0 right-0 top-full mt-1.5 rounded-2xl p-2 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-[0_16px_36px_rgba(15,23,42,0.15)] backdrop-blur-xl animate-fade-in max-h-56 overflow-y-auto">
+                      <div className="flex items-center justify-between px-2.5 py-1 mb-1 border-b border-slate-100 dark:border-slate-800 text-[11px] font-mono font-bold text-slate-500">
                         <span>AVAILABLE DESTINATIONS</span>
                         {onOpenDestinationsModal && (
                           <button
@@ -1075,7 +1028,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                               setShowDestinationSuggestions(false);
                               onOpenDestinationsModal();
                             }}
-                            className="text-violet-700 hover:underline cursor-pointer"
+                            className="text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
                           >
                             Catalog →
                           </button>
@@ -1087,7 +1040,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                             key={sug.id}
                             type="button"
                             onClick={() => handleSelectPredefinedDestination(sug)}
-                            className="w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-violet-50 transition-colors cursor-pointer border border-transparent hover:border-black/20 group"
+                            className="w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 group"
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
                               <img
@@ -1097,15 +1050,15 @@ export const TripForm: React.FC<TripFormProps> = ({
                                 className="w-8 h-8 rounded-lg object-cover shrink-0"
                               />
                               <div className="min-w-0">
-                                <p className="text-xs sm:text-sm font-extrabold text-black truncate group-hover:text-violet-900">
+                                <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                                   {sug.name}
                                 </p>
-                                <p className="text-[10px] text-slate-600 truncate font-semibold">
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
                                   {sug.stateOrCountry} • {sug.category}
                                 </p>
                               </div>
                             </div>
-                            <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-black text-amber-300 shrink-0">
+                            <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0 border border-slate-200 dark:border-slate-700">
                               {sug.idealDuration}D
                             </span>
                           </button>
@@ -1115,13 +1068,13 @@ export const TripForm: React.FC<TripFormProps> = ({
                   )}
                 </div>
                 {errors.destination ? (
-                  <p className="mt-1 text-xs text-rose-800 font-extrabold flex items-center gap-1">
+                  <p className="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5" />
                     {errors.destination}
                   </p>
                 ) : (
-                  <p className="mt-1 text-[11px] text-slate-700 font-bold">
-                    Select verified destinations or type any city globally.
+                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                    Select verified destinations or enter any global location.
                   </p>
                 )}
               </div>
@@ -1129,43 +1082,33 @@ export const TripForm: React.FC<TripFormProps> = ({
               {/* Date & Day Column */}
               <div className="md:col-span-4">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black" htmlFor="start-date-input">
+                  <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300" htmlFor="start-date-input">
                     Travel Date &amp; Day
                   </label>
                   {startDayName && (
-                    <span
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.95)',
-                        border: '1.5px solid #000000',
-                      }}
-                      className="text-xs font-mono font-extrabold px-2 py-0.5 text-black rounded-md shadow-2xs"
-                    >
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 text-indigo-900 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 rounded-md border border-indigo-200 dark:border-indigo-800/80 shadow-2xs">
                       {startDayName}
                     </span>
                   )}
                 </div>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-violet-700">
-                    <Calendar className="w-4 h-4 text-violet-700 font-bold" />
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-indigo-600 dark:text-indigo-400">
+                    <Calendar className="w-4 h-4" />
                   </div>
                   <input
                     id="start-date-input"
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      border: '1.5px solid #000000',
-                    }}
-                    className="w-full pl-10 pr-3 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 font-bold focus:outline-hidden focus:ring-2 focus:ring-black text-sm sm:text-base shadow-sm"
+                    className="w-full pl-10 pr-3 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 dark:text-white bg-white dark:bg-slate-850 font-semibold border border-slate-300 dark:border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 text-sm sm:text-base shadow-2xs"
                   />
                 </div>
-                <div className="mt-1 flex items-center justify-between text-[11px] text-slate-800 font-bold">
+                <div className="mt-1 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                   <span>{formattedStartDate ? `Starts ${formattedStartDate}` : 'Select departure'}</span>
                   <button
                     type="button"
                     onClick={() => setStartDate(getTomorrowDateStr())}
-                    className="text-indigo-950 hover:text-black font-extrabold cursor-pointer uppercase font-mono hover:underline"
+                    className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 font-bold cursor-pointer uppercase font-mono hover:underline"
                   >
                     Tomorrow
                   </button>
@@ -1175,23 +1118,17 @@ export const TripForm: React.FC<TripFormProps> = ({
               {/* Duration Field */}
               <div className="md:col-span-3">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black" htmlFor="duration-input">
-                    Duration <span className="text-rose-600">*</span>
+                  <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300" htmlFor="duration-input">
+                    Duration <span className="text-rose-500">*</span>
                   </label>
-                  <span
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      border: '1.5px solid #000000',
-                    }}
-                    className="text-xs font-mono font-extrabold px-2 py-0.5 text-black rounded-md shadow-2xs"
-                  >
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 text-slate-900 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 rounded-md border border-slate-200 dark:border-slate-700 shadow-2xs">
                     {duration}D
                   </span>
                 </div>
                 <div className="relative flex items-center gap-1.5">
                   <div className="relative flex-1">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-violet-700">
-                      <Clock className="w-4 h-4 text-violet-700 font-bold" />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-indigo-600 dark:text-indigo-400">
+                      <Clock className="w-4 h-4" />
                     </div>
                     <input
                       id="duration-input"
@@ -1211,11 +1148,11 @@ export const TripForm: React.FC<TripFormProps> = ({
                         }
                         if (errors.duration) setErrors({ ...errors, duration: '' });
                       }}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.95)',
-                        border: errors.duration ? '2px solid #e11d48' : '1.5px solid #000000',
-                      }}
-                      className="w-full pl-9 pr-2 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 font-bold focus:outline-hidden focus:ring-2 focus:ring-black text-sm sm:text-base shadow-sm"
+                      className={`w-full pl-9 pr-2 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 dark:text-white bg-white dark:bg-slate-850 font-semibold focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 text-sm sm:text-base shadow-2xs border transition-colors ${
+                        errors.duration
+                          ? 'border-rose-500 dark:border-rose-500'
+                          : 'border-slate-300 dark:border-slate-700 focus:border-indigo-600'
+                      }`}
                     />
                   </div>
 
@@ -1229,11 +1166,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                         });
                         if (errors.duration) setErrors({ ...errors, duration: '' });
                       }}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.95)',
-                        border: '1.5px solid #000000',
-                      }}
-                      className="w-10 h-10 min-h-[40px] min-w-[40px] rounded-xl hover:bg-black hover:text-white text-black font-extrabold text-lg flex items-center justify-center cursor-pointer shadow-xs"
+                      className="w-10 h-10 min-h-[40px] min-w-[40px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-base flex items-center justify-center cursor-pointer shadow-2xs transition-colors"
                     >
                       -
                     </button>
@@ -1246,11 +1179,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                         });
                         if (errors.duration) setErrors({ ...errors, duration: '' });
                       }}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.95)',
-                        border: '1.5px solid #000000',
-                      }}
-                      className="w-10 h-10 min-h-[40px] min-w-[40px] rounded-xl hover:bg-black hover:text-white text-black font-extrabold text-lg flex items-center justify-center cursor-pointer shadow-xs"
+                      className="w-10 h-10 min-h-[40px] min-w-[40px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-base flex items-center justify-center cursor-pointer shadow-2xs transition-colors"
                     >
                       +
                     </button>
@@ -1267,13 +1196,10 @@ export const TripForm: React.FC<TripFormProps> = ({
                         setDuration(d);
                         if (errors.duration) setErrors({ ...errors, duration: '' });
                       }}
-                      style={{
-                        border: '1px solid #000000',
-                      }}
-                      className={`px-1.5 py-0.5 text-[11px] font-mono font-extrabold rounded-md transition-all cursor-pointer ${
+                      className={`px-2 py-0.5 text-[11px] font-mono font-bold rounded-md transition-all cursor-pointer border ${
                         Number(duration) === d
-                          ? 'bg-black text-amber-300'
-                          : 'bg-white text-black hover:bg-black hover:text-white'
+                          ? 'bg-slate-950 dark:bg-indigo-600 text-white border-slate-950 dark:border-indigo-500'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-400'
                       }`}
                     >
                       {d}D
@@ -1288,11 +1214,11 @@ export const TripForm: React.FC<TripFormProps> = ({
               {/* Budget Field */}
               <div className="md:col-span-7">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black" htmlFor="budget-input">
-                    Total Budget <span className="text-rose-600">*</span>
+                  <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300" htmlFor="budget-input">
+                    Total Target Budget <span className="text-rose-500">*</span>
                   </label>
-                  <span className="text-[11px] font-mono font-bold text-slate-700">
-                    Any Amount Supported
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                    Supported globally
                   </span>
                 </div>
                 <div className="flex gap-2">
@@ -1300,11 +1226,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                     id="currency-select"
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      border: '1.5px solid #000000',
-                    }}
-                    className="w-24 sm:w-32 px-2 py-2.5 min-h-[44px] rounded-xl font-extrabold text-black focus:outline-hidden focus:ring-2 focus:ring-black text-xs sm:text-sm font-mono shrink-0 shadow-sm"
+                    className="w-24 sm:w-32 px-2 py-2.5 min-h-[44px] rounded-xl font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 text-xs sm:text-sm font-mono shrink-0 shadow-2xs"
                   >
                     {CURRENCIES.map((c) => (
                       <option key={c.code} value={c.code}>
@@ -1314,8 +1236,8 @@ export const TripForm: React.FC<TripFormProps> = ({
                   </select>
 
                   <div className="relative flex-1">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-800 font-extrabold">
-                      <DollarSign className="w-4 h-4 text-emerald-800 font-extrabold" />
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-600 dark:text-emerald-400 font-bold">
+                      <DollarSign className="w-4 h-4" />
                     </div>
                     <input
                       id="budget-input"
@@ -1326,19 +1248,19 @@ export const TripForm: React.FC<TripFormProps> = ({
                         setBudget(e.target.value);
                         if (errors.budget) setErrors({ ...errors, budget: '' });
                       }}
-                      placeholder="Budget amount..."
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.95)',
-                        border: errors.budget ? '2px solid #e11d48' : '1.5px solid #000000',
-                      }}
-                      className="w-full pl-10 pr-3 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-black font-extrabold focus:outline-hidden focus:ring-2 focus:ring-black font-mono text-sm sm:text-base shadow-sm"
+                      placeholder="Enter budget..."
+                      className={`w-full pl-10 pr-3 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 dark:text-white bg-white dark:bg-slate-850 font-semibold focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 font-mono text-sm sm:text-base shadow-2xs border transition-colors ${
+                        errors.budget
+                          ? 'border-rose-500 dark:border-rose-500'
+                          : 'border-slate-300 dark:border-slate-700 focus:border-indigo-600'
+                      }`}
                     />
                   </div>
                 </div>
 
                 {/* Quick Budget Suggestion Chips */}
                 <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                  <span className="text-[11px] font-mono text-black font-extrabold uppercase mr-0.5">Quick:</span>
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 uppercase mr-0.5">Presets:</span>
                   {(currency === '₹'
                     ? [
                         { label: 'Moderate', val: '15000' },
@@ -1358,14 +1280,10 @@ export const TripForm: React.FC<TripFormProps> = ({
                         setBudget(preset.val);
                         if (errors.budget) setErrors({ ...errors, budget: '' });
                       }}
-                      style={{
-                        background: budget === preset.val ? '#000000' : 'rgba(255, 255, 255, 0.95)',
-                        border: '1.5px solid #000000',
-                      }}
-                      className={`px-2.5 py-1 text-xs font-mono rounded-lg transition-all cursor-pointer ${
+                      className={`px-2.5 py-1 text-xs font-mono rounded-lg transition-all cursor-pointer border ${
                         budget === preset.val
-                          ? 'bg-black text-white font-extrabold'
-                          : 'text-black hover:bg-black hover:text-white'
+                          ? 'bg-slate-950 dark:bg-indigo-600 text-white font-bold border-slate-950 dark:border-indigo-500 shadow-2xs'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-400'
                       }`}
                     >
                       {preset.label} ({currency}{Number(preset.val).toLocaleString()})
@@ -1376,13 +1294,13 @@ export const TripForm: React.FC<TripFormProps> = ({
 
               {/* Travelers Field */}
               <div className="md:col-span-5">
-                <label className="block text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black mb-1.5" htmlFor="travelers-input">
-                  Travelers <span className="text-rose-600">*</span>
+                <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="travelers-input">
+                  Travelers <span className="text-rose-500">*</span>
                 </label>
                 <div className="flex items-center gap-2">
                   <div className="relative flex-1">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-violet-700">
-                      <Users className="w-4 h-4 text-violet-700 font-bold" />
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-indigo-600 dark:text-indigo-400">
+                      <Users className="w-4 h-4" />
                     </div>
                     <input
                       id="travelers-input"
@@ -1403,11 +1321,11 @@ export const TripForm: React.FC<TripFormProps> = ({
                         }
                         if (errors.travelers) setErrors({ ...errors, travelers: '' });
                       }}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.95)',
-                        border: errors.travelers ? '2px solid #e11d48' : '1.5px solid #000000',
-                      }}
-                      className="w-full pl-10 pr-2 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 font-bold focus:outline-hidden focus:ring-2 focus:ring-black text-sm sm:text-base shadow-sm"
+                      className={`w-full pl-10 pr-2 py-2.5 sm:py-3 min-h-[44px] rounded-xl text-slate-950 dark:text-white bg-white dark:bg-slate-850 font-semibold focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 text-sm sm:text-base shadow-2xs border transition-colors ${
+                        errors.travelers
+                          ? 'border-rose-500 dark:border-rose-500'
+                          : 'border-slate-300 dark:border-slate-700 focus:border-indigo-600'
+                      }`}
                     />
                   </div>
 
@@ -1424,14 +1342,10 @@ export const TripForm: React.FC<TripFormProps> = ({
                           setTravelers(p.count);
                           if (errors.travelers) setErrors({ ...errors, travelers: '' });
                         }}
-                        style={{
-                          background: Number(travelers) === p.count ? '#000000' : 'rgba(255, 255, 255, 0.95)',
-                          border: '1.5px solid #000000',
-                        }}
-                        className={`px-3 py-2 min-h-[40px] text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
+                        className={`px-3 py-2 min-h-[40px] text-xs font-bold rounded-xl transition-all cursor-pointer border ${
                           Number(travelers) === p.count
-                            ? 'bg-black text-white'
-                            : 'text-black hover:bg-black hover:text-white'
+                            ? 'bg-slate-950 dark:bg-indigo-600 text-white border-slate-950 dark:border-indigo-500 shadow-2xs'
+                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-400'
                         }`}
                       >
                         {p.label}
@@ -1439,7 +1353,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                     ))}
                   </div>
                 </div>
-                <p className="mt-1 text-[11px] text-slate-700 font-bold">
+                <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
                   {!travelers ? 'Choose group size or enter number' : Number(travelers) === 1 ? 'Solo Trip' : Number(travelers) === 2 ? 'Couple / 2 Friends' : `${travelers} People Group`}
                 </p>
               </div>
@@ -1447,15 +1361,14 @@ export const TripForm: React.FC<TripFormProps> = ({
 
             {/* Quick Step 1 Navigation Buttons (Avoids scrolling) */}
             {activeStep === 'logistics' && (
-              <div className="pt-3 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="pt-3 border-t border-slate-200/90 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <button
                   type="button"
                   id="step1-next-btn"
                   onClick={() => changeStep('travel-style')}
-                  style={{ border: '2px solid #000000' }}
-                  className="w-full sm:w-auto px-5 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-black bg-white hover:bg-slate-100 text-black flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  className="w-full sm:w-auto px-5 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
                 >
-                  <span>Customize Travel Style →</span>
+                  <span>Specify Travel Style →</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
@@ -1465,12 +1378,11 @@ export const TripForm: React.FC<TripFormProps> = ({
                   id="step1-fast-generate-btn"
                   onClick={() => validateAndSubmit()}
                   disabled={isLoading}
-                  style={{ border: '2px solid #000000' }}
-                  className="w-full sm:w-auto px-6 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 text-white flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                  className="w-full sm:w-auto px-6 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-bold bg-slate-950 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white flex items-center justify-center gap-2 cursor-pointer shadow-xs border border-slate-800 dark:border-indigo-500"
                   title="Generate instantly with smart default preferences"
                 >
                   <Sparkles className="w-4 h-4 text-amber-300 fill-amber-300" />
-                  <span>{isLoading ? 'Calculating...' : 'Generate Trip (Fast)'}</span>
+                  <span>{isLoading ? 'Compiling Directive...' : 'Generate Itinerary (Fast)'}</span>
                 </button>
               </div>
             )}
@@ -1483,36 +1395,35 @@ export const TripForm: React.FC<TripFormProps> = ({
         {(activeStep === 'travel-style' || activeStep === 'preferences' || activeStep === 'all') && (
           <div
             id="form-step-travel-style"
-            style={{
-              background: 'rgba(255, 255, 255, 0.90)',
-              border: errors.travelStyle ? '2.5px solid #e11d48' : '2px solid #000000',
-            }}
-            className="rounded-2xl p-4 sm:p-6 space-y-4 shadow-sm backdrop-blur-md animate-fade-in"
+            className="rounded-2xl p-4 sm:p-6 space-y-5 shadow-xs bg-white border border-slate-200/90 transition-colors animate-fade-in"
           >
-            {/* Step Header */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-2 border-black">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-violet-900 text-amber-300 font-mono font-black text-xs flex items-center gap-1 border border-black">
-                  <Compass className="w-3.5 h-3.5" />
-                  <span>STEP 2 OF 4: INDIVIDUAL OPTION</span>
-                </span>
-                <h3 className="text-base sm:text-lg font-black text-black font-heading">
-                  Travel Style Options
-                </h3>
+            {/* Step Header with Executive Directive Meta */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200/90">
+              <div className="flex items-center gap-2.5">
+                <span className="w-1.5 h-6 rounded-full bg-indigo-600 shrink-0" />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono font-bold text-[10px] tracking-wider uppercase">
+                      SEC 02 // DIRECTIVE
+                    </span>
+                    <h3 className="text-base sm:text-lg font-black text-slate-950 font-heading">
+                      Travel Style Archetypes
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Select any style to customize your pace, or leave open for a balanced journey.
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-mono font-extrabold px-2.5 py-0.5 rounded-full border ${
-                  selectedTravelStyles.length === 0
-                    ? 'bg-rose-100 text-rose-800 border-rose-400 font-black'
-                    : 'bg-black text-amber-300 border-black'
-                }`}>
-                  {selectedTravelStyles.length > 0 ? `${selectedTravelStyles.length} Styles Selected` : 'None Selected (Pick at least 1)'}
+                <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border bg-slate-100 text-slate-700 border-slate-200">
+                  {selectedTravelStyles.length > 0 ? `${selectedTravelStyles.length} Selected` : 'Optional • Any'}
                 </span>
                 {selectedTravelStyles.length > 0 && (
                   <button
                     type="button"
                     onClick={() => setSelectedTravelStyles([])}
-                    className="text-[11px] font-mono font-bold text-slate-600 hover:text-rose-600 underline cursor-pointer"
+                    className="text-[11px] font-mono font-bold text-rose-600 hover:text-rose-700 underline cursor-pointer"
                   >
                     Clear
                   </button>
@@ -1523,23 +1434,19 @@ export const TripForm: React.FC<TripFormProps> = ({
             {/* Active Selected Styles Tray */}
             {selectedTravelStyles.length > 0 ? (
               <div
-                style={{
-                  border: '1.5px solid #000000',
-                  background: 'linear-gradient(to right, #f5f3ff, #ede9fe)',
-                }}
-                className="p-3 sm:p-3.5 rounded-xl shadow-xs space-y-2 animate-fade-in"
+                className="p-3 sm:p-3.5 rounded-xl border border-indigo-200/90 dark:border-indigo-800/80 bg-gradient-to-r from-indigo-50/70 via-slate-50 to-indigo-50/70 dark:from-indigo-950/30 dark:via-slate-900 dark:to-indigo-950/30 space-y-2 shadow-2xs animate-fade-in"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-mono font-black uppercase tracking-wider text-violet-950 flex items-center gap-1.5">
-                    <Compass className="w-3.5 h-3.5 text-violet-700" />
-                    <span>Selected Styles ({selectedTravelStyles.length}):</span>
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-indigo-950 dark:text-indigo-200 flex items-center gap-1.5">
+                    <Compass className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>Specified Directives ({selectedTravelStyles.length}):</span>
                   </span>
                   <button
                     type="button"
                     onClick={() => setSelectedTravelStyles([])}
-                    className="text-[11px] font-mono font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer"
+                    className="text-[11px] font-mono font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 underline cursor-pointer"
                   >
-                    Unselect All Styles
+                    Unselect All
                   </button>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -1548,8 +1455,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                     return (
                       <span
                         key={styleId}
-                        style={{ border: '1.5px solid #000000' }}
-                        className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white text-black font-extrabold text-xs shadow-2xs hover:border-rose-600 transition-colors"
+                        className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-bold text-xs border border-indigo-200 dark:border-indigo-800 shadow-2xs hover:border-rose-400 transition-colors"
                       >
                         <span className="text-sm">{styleObj?.icon || '🧭'}</span>
                         <span>{styleObj?.label || styleId}</span>
@@ -1559,7 +1465,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                             e.stopPropagation();
                             handleTravelStyleToggle(styleId);
                           }}
-                          className="w-4 h-4 rounded-full bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 text-[10px] font-black flex items-center justify-center cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-600 dark:text-slate-400 text-[10px] font-bold flex items-center justify-center cursor-pointer transition-colors"
                           title={`Remove ${styleObj?.label || styleId}`}
                         >
                           ✕
@@ -1571,14 +1477,13 @@ export const TripForm: React.FC<TripFormProps> = ({
               </div>
             ) : (
               <div
-                style={{ border: '1.5px dashed #cbd5e1' }}
-                className="p-3 rounded-xl bg-slate-50 text-slate-700 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                className="p-3 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
               >
                 <span className="flex items-center gap-2 font-medium">
                   <span className="text-base">🧭</span>
                   <span>No styles selected yet. All options are ready to click below.</span>
                 </span>
-                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-200 px-2 py-0.5 rounded self-start sm:self-auto">
+                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded self-start sm:self-auto">
                   Click cards below
                 </span>
               </div>
@@ -1594,40 +1499,41 @@ export const TripForm: React.FC<TripFormProps> = ({
                     type="button"
                     id={`style-btn-${style.id.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
                     onClick={() => handleTravelStyleToggle(style.id)}
-                    style={{
-                      background: isSelected ? 'rgba(238, 242, 255, 0.98)' : '#ffffff',
-                      border: isSelected ? '2px solid #000000' : '1.5px solid #cbd5e1',
-                    }}
-                    className={`p-3 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between gap-2 shadow-2xs hover:border-black hover:shadow-xs active:scale-98 ${
-                      isSelected ? 'ring-2 ring-violet-600/30' : ''
+                    className={`p-3.5 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 shadow-2xs hover:shadow-xs active:scale-98 ${
+                      isSelected
+                        ? 'border-2 border-indigo-600 dark:border-indigo-500 bg-gradient-to-b from-indigo-50/70 to-white dark:from-indigo-950/40 dark:to-slate-900 ring-2 ring-indigo-500/15'
+                        : 'border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-300 dark:hover:border-indigo-700'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-1.5 w-full">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl shrink-0 p-1 bg-slate-100 rounded-lg border border-slate-200">
+                        <span className="text-2xl shrink-0 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
                           {style.icon}
                         </span>
                         <div>
-                          <p className="text-xs sm:text-sm font-black text-black leading-tight">
+                          <p className="text-xs sm:text-sm font-bold text-slate-950 dark:text-white leading-tight">
                             {style.label}
                           </p>
-                          <span className="text-[10px] font-mono font-bold text-violet-700 bg-violet-100 px-1.5 py-0.2 rounded border border-violet-200 inline-block mt-0.5">
+                          <span className="text-[10px] font-mono font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/70 px-1.5 py-0.2 rounded border border-indigo-200/80 dark:border-indigo-800/80 inline-block mt-0.5">
                             {style.category}
                           </span>
                         </div>
                       </div>
                       <div className="shrink-0">
                         {isSelected ? (
-                          <span className="w-5 h-5 rounded-full bg-black text-amber-300 text-xs font-black flex items-center justify-center border border-black shadow-2xs">
-                            ✓
+                          <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-mono font-bold flex items-center gap-1 shadow-2xs">
+                            <span>✓</span>
+                            <span>Active</span>
                           </span>
                         ) : (
-                          <span className="w-5 h-5 rounded-full border border-slate-300 bg-slate-50 flex items-center justify-center" />
+                          <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-mono border border-slate-200 dark:border-slate-700 flex items-center gap-0.5">
+                            <span>+ Add</span>
+                          </span>
                         )}
                       </div>
                     </div>
 
-                    <p className="text-[11px] text-slate-600 font-semibold line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium line-clamp-2 leading-relaxed">
                       {style.desc}
                     </p>
                   </button>
@@ -1635,40 +1541,25 @@ export const TripForm: React.FC<TripFormProps> = ({
               })}
             </div>
 
-            {errors.travelStyle && (
-              <div className="p-3 rounded-xl bg-rose-100 border-2 border-rose-600 text-rose-950 text-xs font-black flex items-center gap-2 animate-bounce-slow">
-                <AlertCircle className="w-4 h-4 text-rose-800 shrink-0" />
-                <span>Please select at least 1 Travel Style to shape your itinerary.</span>
-              </div>
-            )}
-
             {/* Travel Style Step Stepper Navigation */}
             {(activeStep === 'travel-style' || activeStep === 'preferences') && (
-              <div className="pt-3 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+              <div className="pt-3 border-t border-slate-200/90 flex flex-col sm:flex-row items-center justify-between gap-2.5">
                 <button
                   type="button"
                   id="travel-style-prev-btn"
                   onClick={() => changeStep('logistics')}
-                  style={{ border: '1.5px solid #000000' }}
-                  className="w-full sm:w-auto px-4 py-2 min-h-[42px] rounded-xl text-xs sm:text-sm font-extrabold text-black bg-white hover:bg-slate-100 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  className="w-full sm:w-auto px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold text-slate-800 bg-white hover:bg-slate-50 border border-slate-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span>← Back: Where &amp; When</span>
+                  <span>← Back: Logistics</span>
                 </button>
 
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                   <button
                     type="button"
                     id="travel-style-next-btn"
-                    onClick={() => {
-                      if (selectedTravelStyles.length === 0) {
-                        setErrors((prev) => ({ ...prev, travelStyle: 'Please select at least 1 travel style.' }));
-                      } else {
-                        changeStep('food-preference');
-                      }
-                    }}
-                    style={{ border: '2px solid #000000' }}
-                    className="flex-1 sm:flex-none px-5 py-2 min-h-[42px] rounded-xl text-xs sm:text-sm font-black text-black bg-amber-300 hover:bg-amber-400 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    onClick={() => changeStep('food-preference')}
+                    className="flex-1 sm:flex-none px-5 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold text-white bg-slate-950 hover:bg-slate-800 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border border-slate-800"
                   >
                     <span>Next: Food Preference →</span>
                     <ArrowRight className="w-4 h-4" />
@@ -1679,8 +1570,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                     id="travel-style-generate-btn"
                     onClick={() => validateAndSubmit()}
                     disabled={isLoading}
-                    style={{ border: '2px solid #000000' }}
-                    className="flex-1 sm:flex-none px-5 py-2 min-h-[42px] rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                    className="flex-1 sm:flex-none px-5 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border border-indigo-500"
                   >
                     <Sparkles className="w-4 h-4 text-amber-300 fill-amber-300" />
                     <span>Generate Fast</span>
@@ -1697,48 +1587,41 @@ export const TripForm: React.FC<TripFormProps> = ({
         {(activeStep === 'food-preference' || activeStep === 'all') && (
           <div
             id="form-step-food-preference"
-            style={{
-              background: 'rgba(255, 255, 255, 0.90)',
-              border: errors.foodPreference ? '2.5px solid #e11d48' : '2px solid #000000',
-            }}
-            className="rounded-2xl p-4 sm:p-6 space-y-4 shadow-sm backdrop-blur-md animate-fade-in"
+            className="rounded-2xl p-4 sm:p-6 space-y-5 shadow-xs bg-white border border-slate-200/90 transition-colors animate-fade-in"
           >
-            {/* Step Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black">
-              <div className="space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-lg bg-amber-400 text-black font-mono font-black text-xs flex items-center gap-1 border border-black shadow-2xs">
-                    <Utensils className="w-3.5 h-3.5" />
-                    <span>STEP 3 OF 4: FOOD &amp; DINING</span>
-                  </span>
+            {/* Step Header with Executive Directive Meta */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200/90">
+              <div className="flex items-center gap-2.5">
+                <span className="w-1.5 h-6 rounded-full bg-amber-500 shrink-0" />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono font-bold text-[10px] tracking-wider uppercase">
+                      SEC 03 // PROTOCOL
+                    </span>
+                    <h3 className="text-base sm:text-lg font-black text-slate-950 font-heading">
+                      Food &amp; Dining Directives
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Select any diet or cuisine, or leave open to experience all local culinary options.
+                  </p>
                 </div>
-                <h3 className="text-base sm:text-xl font-black text-black font-heading">
-                  Food &amp; Dining Preferences
-                </h3>
               </div>
 
               <div className="flex items-center gap-2">
-                <span
-                  style={{ border: '1.5px solid #000000' }}
-                  className={`text-xs font-mono font-black px-3 py-1 rounded-xl shadow-2xs ${
-                    selectedFoodPreferences.length === 0
-                      ? 'bg-rose-100 text-rose-900 border-rose-500'
-                      : 'bg-black text-amber-300'
-                  }`}
-                >
+                <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border bg-slate-100 text-slate-700 border-slate-200">
                   {selectedFoodPreferences.length > 0
                     ? `${selectedFoodPreferences.length} ${selectedFoodPreferences.length === 1 ? 'Diet' : 'Diets'} Selected`
-                    : 'None Selected (Pick 1 or More)'}
+                    : 'Optional • Any'}
                 </span>
                 {selectedFoodPreferences.length > 0 && (
                   <button
                     type="button"
                     onClick={() => setSelectedFoodPreferences([])}
-                    style={{ border: '1px solid #000000' }}
-                    className="px-2.5 py-1 text-xs font-mono font-extrabold bg-white hover:bg-rose-50 text-rose-700 rounded-lg cursor-pointer transition-all shadow-2xs flex items-center gap-1"
+                    className="text-[11px] font-mono font-bold text-rose-600 hover:text-rose-700 underline cursor-pointer"
                     title="Unselect all food preferences to start fresh"
                   >
-                    <span>Clear All</span>
+                    Clear All
                   </button>
                 )}
               </div>
@@ -1747,23 +1630,19 @@ export const TripForm: React.FC<TripFormProps> = ({
             {/* Active Selected Diets Tray (Chips with remove button) */}
             {selectedFoodPreferences.length > 0 ? (
               <div
-                style={{
-                  border: '1.5px solid #000000',
-                  background: 'linear-gradient(to right, #fffbeb, #fef3c7)',
-                }}
-                className="p-3 sm:p-3.5 rounded-xl shadow-xs space-y-2 animate-fade-in"
+                className="p-3 sm:p-3.5 rounded-xl border border-amber-200/90 dark:border-amber-800/80 bg-gradient-to-r from-amber-50/70 via-slate-50 to-amber-50/70 dark:from-amber-950/30 dark:via-slate-900 dark:to-amber-950/30 space-y-2 shadow-2xs animate-fade-in"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-mono font-black uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
-                    <Utensils className="w-3.5 h-3.5 text-amber-700" />
-                    <span>Your Selected Diets ({selectedFoodPreferences.length}):</span>
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-950 dark:text-amber-200 flex items-center gap-1.5">
+                    <Utensils className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    <span>Specified Dietary Directives ({selectedFoodPreferences.length}):</span>
                   </span>
                   <button
                     type="button"
                     onClick={() => setSelectedFoodPreferences([])}
-                    className="text-[11px] font-mono font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer"
+                    className="text-[11px] font-mono font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 underline cursor-pointer"
                   >
-                    Unselect All Options
+                    Unselect All
                   </button>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -1772,8 +1651,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                     return (
                       <span
                         key={foodId}
-                        style={{ border: '1.5px solid #000000' }}
-                        className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white text-black font-extrabold text-xs shadow-2xs hover:border-rose-600 transition-colors"
+                        className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-bold text-xs border border-amber-200 dark:border-amber-800 shadow-2xs hover:border-rose-400 transition-colors"
                       >
                         <span className="text-sm">{foodObj?.icon || '🍽️'}</span>
                         <span>{foodObj?.label || foodId}</span>
@@ -1783,7 +1661,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                             e.stopPropagation();
                             handleFoodPreferenceToggle(foodId);
                           }}
-                          className="w-4 h-4 rounded-full bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 text-[10px] font-black flex items-center justify-center cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-600 dark:text-slate-400 text-[10px] font-bold flex items-center justify-center cursor-pointer transition-colors"
                           title={`Remove ${foodObj?.label || foodId}`}
                         >
                           ✕
@@ -1795,14 +1673,13 @@ export const TripForm: React.FC<TripFormProps> = ({
               </div>
             ) : (
               <div
-                style={{ border: '1.5px dashed #cbd5e1' }}
-                className="p-3 rounded-xl bg-slate-50 text-slate-700 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                className="p-3 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
               >
                 <span className="flex items-center gap-2 font-medium">
                   <span className="text-base">🥗</span>
                   <span>No diets selected yet. All options are ready to click — pick 1, 2, or more!</span>
                 </span>
-                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-200 px-2 py-0.5 rounded self-start sm:self-auto">
+                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded self-start sm:self-auto">
                   Click cards below
                 </span>
               </div>
@@ -1818,43 +1695,41 @@ export const TripForm: React.FC<TripFormProps> = ({
                     type="button"
                     id={`food-btn-${food.id.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
                     onClick={() => handleFoodPreferenceToggle(food.id)}
-                    style={{
-                      background: isSelected ? '#fef3c7' : '#ffffff',
-                      border: isSelected ? '2px solid #000000' : '1.5px solid #cbd5e1',
-                    }}
-                    className={`p-3.5 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 shadow-2xs hover:border-black hover:shadow-xs active:scale-98 ${
-                      isSelected ? 'ring-2 ring-amber-500/40 shadow-xs' : ''
+                    className={`p-3.5 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 shadow-2xs hover:shadow-xs active:scale-98 ${
+                      isSelected
+                        ? 'border-2 border-amber-600 dark:border-amber-500 bg-gradient-to-b from-amber-50/70 to-white dark:from-amber-950/40 dark:to-slate-900 ring-2 ring-amber-500/15'
+                        : 'border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-amber-400 dark:hover:border-amber-600'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-1.5 w-full">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl shrink-0 p-1.5 bg-white rounded-xl border border-amber-200 shadow-2xs">
+                        <span className="text-2xl shrink-0 p-1.5 bg-amber-50/70 dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-slate-700 shadow-2xs">
                           {food.icon}
                         </span>
                         <div>
-                          <p className="text-xs sm:text-sm font-black text-black leading-tight">
+                          <p className="text-xs sm:text-sm font-bold text-slate-950 dark:text-white leading-tight">
                             {food.label}
                           </p>
-                          <span className="text-[10px] font-mono font-bold text-amber-900 bg-amber-200/90 px-1.5 py-0.2 rounded border border-amber-400 inline-block mt-0.5">
+                          <span className="text-[10px] font-mono font-bold text-amber-800 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/70 px-1.5 py-0.2 rounded border border-amber-300/80 dark:border-amber-800/80 inline-block mt-0.5">
                             {food.badge}
                           </span>
                         </div>
                       </div>
                       <div className="shrink-0">
                         {isSelected ? (
-                          <span className="px-2 py-0.5 rounded-full bg-black text-amber-300 text-[11px] font-mono font-black flex items-center gap-1 border border-black shadow-2xs">
+                          <span className="px-2 py-0.5 rounded-full bg-amber-600 text-white text-[10px] font-mono font-bold flex items-center gap-1 shadow-2xs">
                             <span>✓</span>
-                            <span>Selected</span>
+                            <span>Active</span>
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-mono font-extrabold border border-slate-300 flex items-center gap-0.5">
+                          <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-mono border border-slate-200 dark:border-slate-700 flex items-center gap-0.5">
                             <span>+ Add</span>
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <p className="text-[11px] text-slate-700 font-medium line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium line-clamp-2 leading-relaxed">
                       {food.note}
                     </p>
                   </button>
@@ -1864,29 +1739,21 @@ export const TripForm: React.FC<TripFormProps> = ({
 
             {/* End-of-card selection counter */}
             {selectedFoodPreferences.length > 0 && (
-              <div className="pt-2 px-1 flex items-center justify-end text-xs text-slate-500 font-medium border-t border-slate-200">
+              <div className="pt-2 px-1 flex items-center justify-end text-xs text-slate-500 font-medium border-t border-slate-200/80">
                 <span className="font-mono font-bold text-slate-700">
                   {selectedFoodPreferences.length} chosen
                 </span>
               </div>
             )}
 
-            {errors.foodPreference && (
-              <div className="p-3 rounded-xl bg-rose-100 border-2 border-rose-600 text-rose-950 text-xs font-black flex items-center gap-2 animate-bounce-slow">
-                <AlertCircle className="w-4 h-4 text-rose-800 shrink-0" />
-                <span>Please select at least 1 Food &amp; Dining preference to proceed.</span>
-              </div>
-            )}
-
             {/* Food Preference Step Stepper Navigation */}
             {activeStep === 'food-preference' && (
-              <div className="pt-3 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+              <div className="pt-3 border-t border-slate-200/90 flex flex-col sm:flex-row items-center justify-between gap-2.5">
                 <button
                   type="button"
                   id="food-preference-prev-btn"
                   onClick={() => changeStep('travel-style')}
-                  style={{ border: '1.5px solid #000000' }}
-                  className="w-full sm:w-auto px-4 py-2 min-h-[42px] rounded-xl text-xs sm:text-sm font-extrabold text-black bg-white hover:bg-slate-100 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  className="w-full sm:w-auto px-4 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold text-slate-800 bg-white hover:bg-slate-50 border border-slate-300 flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>← Back: Travel Style</span>
@@ -1896,15 +1763,8 @@ export const TripForm: React.FC<TripFormProps> = ({
                   <button
                     type="button"
                     id="food-preference-next-btn"
-                    onClick={() => {
-                      if (selectedFoodPreferences.length === 0) {
-                        setErrors((prev) => ({ ...prev, foodPreference: 'Please select at least 1 food preference.' }));
-                      } else {
-                        changeStep('custom');
-                      }
-                    }}
-                    style={{ border: '2px solid #000000' }}
-                    className="flex-1 sm:flex-none px-5 py-2 min-h-[42px] rounded-xl text-xs sm:text-sm font-black text-black bg-amber-300 hover:bg-amber-400 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    onClick={() => changeStep('custom')}
+                    className="flex-1 sm:flex-none px-5 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold text-white bg-slate-950 hover:bg-slate-800 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border border-slate-800"
                   >
                     <span>Next: Activities &amp; Notes →</span>
                     <ArrowRight className="w-4 h-4" />
@@ -1915,8 +1775,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                     id="food-preference-generate-btn"
                     onClick={() => validateAndSubmit()}
                     disabled={isLoading}
-                    style={{ border: '2px solid #000000' }}
-                    className="flex-1 sm:flex-none px-5 py-2 min-h-[42px] rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                    className="flex-1 sm:flex-none px-5 py-2.5 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border border-indigo-500"
                   >
                     <Sparkles className="w-4 h-4 text-amber-300 fill-amber-300" />
                     <span>Generate Fast</span>
@@ -1933,50 +1792,39 @@ export const TripForm: React.FC<TripFormProps> = ({
         {(activeStep === 'custom' || activeStep === 'all') && (
           <div
             id="form-step-custom"
-            style={{
-              background: 'rgba(255, 255, 255, 0.85)',
-              border: '2px solid #000000',
-            }}
-            className="rounded-2xl p-4 sm:p-6 space-y-5 shadow-sm backdrop-blur-md animate-fade-in"
+            className="rounded-2xl p-4 sm:p-6 space-y-5 shadow-xs bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 animate-fade-in"
           >
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-2 border-black">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-black text-amber-300 font-mono font-black text-xs">
-                  STEP 4 OF 4
-                </span>
-                <h3 className="text-base sm:text-lg font-black text-black font-heading">
-                  Activities &amp; Special Desires
-                </h3>
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200/90 dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <span className="w-1.5 h-6 rounded-full bg-slate-900 dark:bg-slate-300 shrink-0" />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono font-bold text-[10px] tracking-wider uppercase">
+                      SEC 04 // PROTOCOL
+                    </span>
+                    <h3 className="text-base sm:text-lg font-black text-slate-950 dark:text-white font-heading">
+                      Activities &amp; Special Desires
+                    </h3>
+                  </div>
+                </div>
               </div>
-              <span className={`text-xs font-mono font-extrabold px-2 py-0.5 rounded ${
-                selectedInterests.length === 0
-                  ? 'bg-rose-200 text-rose-900 border border-rose-400 font-black'
-                  : 'bg-black text-amber-300'
-              }`}>
-                {selectedInterests.length > 0 ? `${selectedInterests.length} Chosen` : 'None Selected'}
+              <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border bg-slate-100 text-slate-700 border-slate-200">
+                {selectedInterests.length > 0 ? `${selectedInterests.length} Chosen` : 'Optional • Any'}
               </span>
             </div>
 
-            {/* Interests Chips Card with Red Background if Unselected */}
+            {/* Interests Chips Card */}
             <div
               id="interests-selection-card"
-              style={{
-                border: errors.interests ? '2.5px solid #e11d48' : '1.5px solid #000000',
-                background: errors.interests ? '#ffe4e6' : 'rgba(255, 255, 255, 0.95)',
-              }}
-              className={`p-4 sm:p-5 rounded-2xl transition-all space-y-3 ${
-                errors.interests
-                  ? 'ring-4 ring-rose-500/40 shadow-md'
-                  : 'shadow-2xs'
-              }`}
+              className="p-4 sm:p-5 rounded-2xl transition-all space-y-3 border bg-slate-50/50 border-slate-200/90"
             >
               <div className="flex items-center justify-between">
-                <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black flex items-center gap-1.5">
-                  <Tag className="w-4 h-4 text-violet-700" />
-                  <span>Activities &amp; Interests <span className="text-rose-600">*</span></span>
+                <label className="text-xs sm:text-sm font-mono font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                  <Tag className="w-4 h-4 text-indigo-600" />
+                  <span>Activities &amp; Interests <span className="text-slate-500 text-xs font-normal lowercase tracking-normal">(optional)</span></span>
                 </label>
                 {selectedInterests.length > 0 && (
-                  <span className="text-xs font-mono font-extrabold text-slate-800">
+                  <span className="text-xs font-mono font-bold text-slate-700">
                     {selectedInterests.length} selected
                   </span>
                 )}
@@ -1989,39 +1837,28 @@ export const TripForm: React.FC<TripFormProps> = ({
                       key={interest}
                       type="button"
                       onClick={() => handleInterestToggle(interest)}
-                      style={{
-                        background: isSelected ? '#000000' : 'rgba(255, 255, 255, 0.95)',
-                        border: '1.5px solid #000000',
-                      }}
-                      className={`px-3 py-1.5 min-h-[36px] rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1 shadow-2xs ${
+                      className={`px-3 py-1.5 min-h-[36px] rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs ${
                         isSelected
-                          ? 'bg-black text-white shadow-xs'
-                          : 'text-black hover:bg-black hover:text-white'
+                          ? 'bg-slate-950 text-white border-2 border-slate-950 shadow-xs'
+                          : 'bg-white text-slate-800 border border-slate-200/90 hover:border-slate-400 hover:bg-slate-50'
                       }`}
                     >
                       <span>{interest}</span>
-                      {isSelected && <span className="text-[10px] font-black text-amber-300">✓</span>}
+                      {isSelected && <span className="text-[10px] font-bold text-amber-300">✓</span>}
                     </button>
                   );
                 })}
               </div>
-
-              {errors.interests && (
-                <div className="p-2.5 rounded-xl bg-rose-200 border-2 border-rose-600 text-rose-950 text-xs font-black flex items-center gap-2 animate-bounce-slow">
-                  <AlertCircle className="w-4 h-4 text-rose-800 shrink-0" />
-                  <span>Please select at least 1 activity or interest.</span>
-                </div>
-              )}
             </div>
 
             {/* Custom Notes */}
-            <div className="space-y-1.5 pt-3 border-t border-black/15">
-              <label className="text-xs sm:text-sm font-mono font-extrabold uppercase tracking-wider text-black flex items-center justify-between" htmlFor="special-notes-input">
+            <div className="space-y-1.5 pt-3 border-t border-slate-200/90 dark:border-slate-800">
+              <label className="text-xs sm:text-sm font-mono font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center justify-between" htmlFor="special-notes-input">
                 <span className="flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-violet-700" />
+                  <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                   <span>Custom Requests (Optional)</span>
                 </span>
-                <span className="text-slate-600 text-xs font-normal">pace, accessibility, celebration</span>
+                <span className="text-slate-500 dark:text-slate-400 text-xs font-normal">pace, accessibility, celebration</span>
               </label>
               <input
                 id="special-notes-input"
@@ -2029,23 +1866,18 @@ export const TripForm: React.FC<TripFormProps> = ({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="e.g. Easy walking pace, anniversary dinner, scenic photography spots..."
-                style={{
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  border: '1.5px solid #000000',
-                }}
-                className="w-full px-4 py-2.5 rounded-xl text-slate-950 font-bold placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-black text-sm shadow-sm"
+                className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-950 dark:text-white font-medium placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 text-sm shadow-2xs transition-all"
               />
             </div>
 
             {/* Step 4 Stepper Navigation */}
             {activeStep === 'custom' && (
-              <div className="pt-3 border-t border-black/10 flex items-center justify-between gap-2">
+              <div className="pt-3 border-t border-slate-200/90 dark:border-slate-800 flex items-center justify-between gap-2">
                 <button
                   type="button"
                   id="step4-prev-btn"
                   onClick={() => changeStep('food-preference')}
-                  style={{ border: '1.5px solid #000000' }}
-                  className="px-4 py-2 min-h-[40px] rounded-xl text-xs sm:text-sm font-extrabold text-black bg-white hover:bg-slate-100 flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  className="px-4 py-2.5 min-h-[40px] rounded-xl text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 flex items-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>← Back: Food Preference</span>
@@ -2056,8 +1888,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                   id="step3-generate-btn"
                   onClick={() => validateAndSubmit()}
                   disabled={isLoading}
-                  style={{ border: '2px solid #000000' }}
-                  className="px-6 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-violet-700 to-indigo-700 hover:from-violet-800 hover:to-indigo-800 text-white flex items-center gap-2 cursor-pointer shadow-md"
+                  className="px-6 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2 cursor-pointer shadow-xs border border-indigo-500"
                 >
                   <Sparkles className="w-4 h-4 text-amber-300 fill-amber-300" />
                   <span>{isLoading ? 'Calculating...' : 'Generate My Trip'}</span>
@@ -2070,22 +1901,16 @@ export const TripForm: React.FC<TripFormProps> = ({
         {/* Global Submit Bar (Shown in All Steps Mode or as bottom anchor) */}
         {(activeStep === 'all' || activeStep === 'custom') && (
           <div
-            style={{
-              borderTop: '1.5px solid #000000',
-            }}
-            className="pt-4 flex flex-col sm:flex-row items-center gap-3"
+            className="pt-4 border-t border-slate-200/90 dark:border-slate-800 flex flex-col sm:flex-row items-center gap-3"
           >
             <button
               type="submit"
               id="generate-my-trip-btn"
               disabled={isLoading}
-              style={{
-                border: '2px solid #000000',
-              }}
-              className={`flex-1 w-full py-3.5 min-h-[50px] px-6 sm:px-8 rounded-2xl font-black text-base sm:text-lg text-white shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer ${
+              className={`flex-1 w-full py-3.5 min-h-[50px] px-6 sm:px-8 rounded-2xl font-bold text-base sm:text-lg text-white shadow-md transition-all flex items-center justify-center gap-2.5 cursor-pointer border border-indigo-500 ${
                 isLoading
-                  ? 'bg-indigo-900/80 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-violet-700 via-indigo-700 to-blue-700 hover:from-violet-800 hover:via-indigo-800 hover:to-blue-800 active:scale-[0.99]'
+                  ? 'bg-slate-700 cursor-not-allowed'
+                  : 'bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99]'
               }`}
             >
               <Sparkles className="w-5 h-5 text-amber-300 fill-amber-300" />
@@ -2096,11 +1921,7 @@ export const TripForm: React.FC<TripFormProps> = ({
               type="button"
               id="reset-all-bottom-btn"
               onClick={handleClearForm}
-              style={{
-                background: 'rgba(255, 255, 255, 0.95)',
-                border: '1.5px solid #000000',
-              }}
-              className="w-full sm:w-auto px-4 py-3 min-h-[50px] rounded-2xl font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              className="w-full sm:w-auto px-5 py-3 min-h-[50px] rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
               title="Reset all form fields to blank"
             >
               <RotateCcw className="w-4 h-4" />
@@ -2111,107 +1932,95 @@ export const TripForm: React.FC<TripFormProps> = ({
               type="button"
               id="think-bottom-btn"
               onClick={handleLetMeThink}
-              style={{
-                background: 'rgba(255, 255, 255, 0.95)',
-                border: '1.5px solid #000000',
-              }}
-              className="w-full sm:w-auto px-4 py-3 min-h-[50px] rounded-2xl font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider text-slate-900 hover:bg-slate-100 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              className="w-full sm:w-auto px-5 py-3 min-h-[50px] rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
               title="Save current choices to think about later"
             >
-              <Clock className="w-4 h-4 text-amber-700" />
+              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>Let Me Think</span>
             </button>
           </div>
         )}
       </form>
 
-      {/* "Let Me Think" Preference Snapshot Modal - Colourful & Special */}
+      {/* "Let Me Think" Preference Snapshot Modal - Executive Docket Dialog */}
       {showThinkModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div
-            style={{ border: '2.5px solid #000000', boxShadow: '0 25px 60px rgba(0,0,0,0.3)' }}
-            className="bg-white rounded-3xl max-w-lg w-full overflow-hidden text-center animate-fade-in"
+            className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full overflow-hidden text-center border border-slate-200/90 dark:border-slate-800 shadow-2xl animate-fade-in"
           >
-            {/* Colourful Top Gradient Ribbon */}
-            <div className="h-3 bg-gradient-to-r from-amber-400 via-rose-500 to-indigo-600 w-full" />
+            {/* Top Accent Ribbon */}
+            <div className="h-1.5 bg-gradient-to-r from-indigo-600 via-violet-600 to-amber-500 w-full" />
 
             <div className="p-6 space-y-4">
               <div className="flex justify-center">
                 <div
-                  style={{ border: '2px solid #000000' }}
-                  className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-300 via-orange-400 to-rose-400 text-slate-950 flex items-center justify-center shadow-xs"
+                  className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 flex items-center justify-center shadow-2xs"
                 >
-                  <Clock className="w-7 h-7 text-slate-950" />
+                  <Clock className="w-6 h-6" />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <span
-                  style={{ border: '1.2px solid #000000' }}
-                  className="px-3 py-0.5 rounded-full bg-amber-300 text-slate-950 font-mono text-xs font-black inline-flex items-center gap-1 shadow-2xs"
+                  className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px] font-bold inline-flex items-center gap-1 border border-slate-200 dark:border-slate-700"
                 >
-                  <Sparkles className="w-3.5 h-3.5 fill-current text-slate-950" />
-                  <span>THOUGHTFUL TRAVELER PASS • NO RUSH</span>
+                  <Sparkles className="w-3 h-3 text-amber-500 fill-amber-500" />
+                  <span>TRAVEL SPECIFICATION DOSSIER • SAVED</span>
                 </span>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-950 font-heading">
-                  Take All The Time You Need!
+                <h3 className="text-xl sm:text-2xl font-black text-slate-950 dark:text-white font-heading">
+                  Take All The Time You Need
                 </h3>
-                <p className="text-xs text-slate-600 font-medium">
+                <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
                   Your customized choices are saved securely for this browser session.
                 </p>
               </div>
 
-              {/* Colourful Multi-Tile Selections Snapshot */}
+              {/* Multi-Tile Selections Snapshot */}
               <div
-                style={{ border: '2px solid #000000' }}
-                className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-amber-50/40 text-left text-xs font-mono space-y-3"
+                className="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-950/50 border border-slate-200/90 dark:border-slate-800 text-left text-xs font-mono space-y-3"
               >
-                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                  <span className="text-[11px] font-black text-slate-700 uppercase tracking-wider">
-                    Session Selections Snapshot
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Session Audit Snapshot
                   </span>
-                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
                     Saved in Browser
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div
-                    style={{ border: '1px solid #10b981' }}
-                    className="p-2.5 rounded-xl bg-emerald-50/90 text-emerald-950"
+                    className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
                   >
-                    <span className="text-[10px] text-emerald-700 font-bold block uppercase">Destination</span>
-                    <strong className="text-sm font-black text-emerald-950 truncate block mt-0.5">
+                    <span className="text-[10px] text-slate-500 font-medium block uppercase">Destination</span>
+                    <strong className="text-xs font-bold text-slate-900 dark:text-white truncate block mt-0.5">
                       {destination || '(Blank)'}
                     </strong>
                   </div>
 
                   <div
-                    style={{ border: '1px solid #0ea5e9' }}
-                    className="p-2.5 rounded-xl bg-sky-50/90 text-sky-950"
+                    className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
                   >
-                    <span className="text-[10px] text-sky-700 font-bold block uppercase">Duration</span>
-                    <strong className="text-sm font-black text-sky-950 block mt-0.5">
+                    <span className="text-[10px] text-slate-500 font-medium block uppercase">Duration</span>
+                    <strong className="text-xs font-bold text-slate-900 dark:text-white block mt-0.5">
                       {duration ? `${duration} Days` : '(Blank)'}
                     </strong>
                   </div>
 
                   <div
-                    style={{ border: '1px solid #f59e0b' }}
-                    className="p-2.5 rounded-xl bg-amber-50/90 text-amber-950"
+                    className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
                   >
-                    <span className="text-[10px] text-amber-700 font-bold block uppercase">Target Budget</span>
-                    <strong className="text-sm font-black text-amber-950 block mt-0.5">
+                    <span className="text-[10px] text-slate-500 font-medium block uppercase">Target Budget</span>
+                    <strong className="text-xs font-bold text-slate-900 dark:text-white block mt-0.5">
                       {budget ? `${currency}${budget}` : '(Blank)'}
                     </strong>
                   </div>
 
                   <div
-                    style={{ border: '1px solid #8b5cf6' }}
-                    className="p-2.5 rounded-xl bg-violet-50/90 text-violet-950"
+                    className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
                   >
-                    <span className="text-[10px] text-violet-700 font-bold block uppercase">Travelers</span>
-                    <strong className="text-sm font-black text-violet-950 block mt-0.5">
+                    <span className="text-[10px] text-slate-500 font-medium block uppercase">Travelers</span>
+                    <strong className="text-xs font-bold text-slate-900 dark:text-white block mt-0.5">
                       {travelers ? `${travelers} Person(s)` : '(Blank)'}
                     </strong>
                   </div>
@@ -2225,7 +2034,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                       {selectedTravelStyles.map((st) => (
                         <span
                           key={st}
-                          className="px-2 py-0.5 bg-violet-100 text-violet-900 border border-violet-300 rounded-md text-[10px] font-bold"
+                          className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-md text-[10px] font-bold"
                         >
                           {st}
                         </span>
@@ -2238,7 +2047,7 @@ export const TripForm: React.FC<TripFormProps> = ({
                       {selectedFoodPreferences.map((fp) => (
                         <span
                           key={fp}
-                          className="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-md text-[10px] font-bold"
+                          className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded-md text-[10px] font-bold"
                         >
                           {fp}
                         </span>
@@ -2248,14 +2057,13 @@ export const TripForm: React.FC<TripFormProps> = ({
                 </div>
               </div>
 
-              {/* Reassurance Banner with Warm Saffron/Yellow Tint */}
+              {/* Reassurance Banner with Executive Neutral Tone */}
               <div
-                style={{ border: '1.5px solid #000000' }}
-                className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-100 via-orange-50 to-amber-100 text-xs text-slate-900 text-left font-medium leading-relaxed flex items-start gap-2.5 shadow-2xs"
+                className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 text-left font-medium leading-relaxed flex items-start gap-2.5"
               >
-                <Sparkles className="w-5 h-5 text-amber-800 shrink-0 mt-0.5" />
+                <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
                 <p>
-                  <strong>Fresh Mind Promise:</strong> When you exit and visit the website again, all columns will be given completely blank so you can choose freely with your own mind!
+                  <strong>Fresh Session State:</strong> Whenever you refresh or visit again in the future, all fields default to pristine blank state so you can construct your itinerary from scratch.
                 </p>
               </div>
 
@@ -2265,13 +2073,9 @@ export const TripForm: React.FC<TripFormProps> = ({
                   type="button"
                   id="close-think-modal-btn"
                   onClick={() => setShowThinkModal(false)}
-                  style={{
-                    border: '1.5px solid #000000',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  }}
-                  className="px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-700 to-violet-700 hover:from-indigo-800 hover:to-violet-800 text-white font-black text-xs sm:text-sm cursor-pointer transition-all active:scale-95"
+                  className="px-5 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm cursor-pointer transition-all shadow-xs"
                 >
-                  Keep Thinking &amp; Continue
+                  Continue Editing
                 </button>
                 <button
                   type="button"
@@ -2280,10 +2084,9 @@ export const TripForm: React.FC<TripFormProps> = ({
                     handleClearForm();
                     setShowThinkModal(false);
                   }}
-                  style={{ border: '1.5px solid #000000' }}
-                  className="px-4 py-3 rounded-2xl bg-white text-rose-700 font-black text-xs sm:text-sm hover:bg-rose-50 cursor-pointer shadow-2xs transition-all active:scale-95"
+                  className="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-rose-600 hover:text-rose-700 dark:text-rose-400 font-bold text-xs sm:text-sm border border-slate-200 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer shadow-2xs transition-all"
                 >
-                  Reset All to Blank Now
+                  Reset All to Blank
                 </button>
               </div>
             </div>

@@ -9,8 +9,6 @@ import {
   Menu,
   X,
   Sparkles,
-  Moon,
-  Sun,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -21,8 +19,6 @@ interface HeaderProps {
   onStartNewTrip?: () => void;
   hasActiveTrip?: boolean;
   savedTripsCount: number;
-  theme?: 'light' | 'dark';
-  onToggleTheme?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -33,8 +29,6 @@ export const Header: React.FC<HeaderProps> = ({
   onStartNewTrip,
   hasActiveTrip,
   savedTripsCount,
-  theme = 'light',
-  onToggleTheme,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -42,8 +36,6 @@ export const Header: React.FC<HeaderProps> = ({
     action();
     setMobileMenuOpen(false);
   };
-
-  const isDark = theme === 'dark';
 
   return (
     <header
@@ -126,35 +118,6 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Contact Us</span>
           </button>
 
-          {/* Dedicated Eye-Comfort Dark Mode Switcher */}
-          {onToggleTheme && (
-            <button
-              id="theme-toggle-btn"
-              type="button"
-              onClick={onToggleTheme}
-              style={{ border: isDark ? '1.5px solid #d97706' : '1px solid #cbd5e1' }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[36px] text-xs font-extrabold rounded-xl transition-all cursor-pointer shadow-2xs ${
-                isDark
-                  ? 'bg-amber-400/10 text-amber-300 hover:bg-amber-400/20'
-                  : 'bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-              }`}
-              title={isDark ? 'Switch to Light Mode' : 'Switch to Comfortable Dark Mode'}
-              aria-label="Toggle dark mode"
-            >
-              {isDark ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-400 animate-spin-slow" />
-                  <span>Light Mode</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>Dark Mode</span>
-                </>
-              )}
-            </button>
-          )}
-
           {hasActiveTrip && onStartNewTrip && (
             <button
               id="nav-new-trip-btn"
@@ -180,22 +143,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Quick Action Strip + Hamburger Button */}
         <div className="flex md:hidden items-center gap-1.5">
-          {/* Quick Dark Mode Toggle on Mobile */}
-          {onToggleTheme && (
-            <button
-              id="mobile-theme-toggle-btn"
-              type="button"
-              onClick={onToggleTheme}
-              className={`p-2 min-h-[40px] min-w-[40px] flex items-center justify-center border rounded-xl transition-colors cursor-pointer shadow-xs ${
-                isDark ? 'bg-slate-800 text-amber-400 border-amber-500/50' : 'bg-white text-slate-700 border-slate-200'
-              }`}
-              title={isDark ? 'Light Mode' : 'Dark Mode'}
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
-            </button>
-          )}
-
           {/* Quick Saved Trips Button on Mobile */}
           <button
             id="mobile-nav-saved-btn"
@@ -233,27 +180,6 @@ export const Header: React.FC<HeaderProps> = ({
           className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-xl shadow-xl animate-fade-in divide-y divide-slate-100"
         >
           <div className="p-3 space-y-2">
-            {/* Mobile Drawer Theme Toggle */}
-            {onToggleTheme && (
-              <button
-                type="button"
-                id="mobile-drawer-theme-toggle"
-                onClick={() => {
-                  onToggleTheme();
-                }}
-                className="w-full flex items-center justify-between p-3 min-h-[44px] rounded-xl text-left text-sm font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-colors cursor-pointer shadow-xs"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-200">
-                    {isDark ? <Sun className="w-4 h-4 text-amber-600" /> : <Moon className="w-4 h-4 text-indigo-600" />}
-                  </div>
-                  <span>Appearance: {isDark ? 'Dark Mode (Active)' : 'Light Mode'}</span>
-                </div>
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-800">
-                  {isDark ? 'Switch Light' : 'Switch Dark'}
-                </span>
-              </button>
-            )}
 
             <button
               id="mobile-drawer-saved-btn"

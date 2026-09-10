@@ -21,8 +21,6 @@ import {
   ChevronLeft,
   Eye,
   Search,
-  Moon,
-  Sun,
 } from 'lucide-react';
 import { TripPlan } from '../types';
 import { SocialJoinUs } from './SocialJoinUs';
@@ -50,8 +48,6 @@ interface LeftNavigationSidebarProps {
   onOpenSavedTrips: () => void;
   onOpenDestinationsModal: () => void;
   onStartNewTrip: () => void;
-  theme?: 'light' | 'dark';
-  onToggleTheme?: () => void;
 }
 
 export const LeftNavigationSidebar: React.FC<LeftNavigationSidebarProps> = ({
@@ -64,15 +60,12 @@ export const LeftNavigationSidebar: React.FC<LeftNavigationSidebarProps> = ({
   onOpenSavedTrips,
   onOpenDestinationsModal,
   onStartNewTrip,
-  theme = 'light',
-  onToggleTheme,
 }) => {
   const [isDaysSubmenuOpen, setIsDaysSubmenuOpen] = useState(true);
   const [isMobileExpanded, setIsMobileExpanded] = useState(false);
   const [menuFilter, setMenuFilter] = useState('');
   const tripOptionsRef = useRef<HTMLDivElement>(null);
-
-  const isDark = theme === 'dark';
+  const isDark = false;
 
   // Auto scroll the sidebar to trip options when plan is generated
   useEffect(() => {
@@ -179,33 +172,6 @@ export const LeftNavigationSidebar: React.FC<LeftNavigationSidebarProps> = ({
                 </button>
               )}
             </div>
-
-            {/* In-Menu Eye-Comfort Dark Mode Switch */}
-            {onToggleTheme && (
-              <button
-                type="button"
-                id="sidebar-theme-toggle-btn"
-                onClick={onToggleTheme}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
-                  isDark
-                    ? 'bg-amber-400/10 text-amber-300 border-amber-500/40 hover:bg-amber-400/20'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300/80'
-                }`}
-                title={isDark ? 'Switch to Light Mode' : 'Switch to Comfortable Dark Mode'}
-              >
-                <div className="flex items-center gap-2">
-                  {isDark ? (
-                    <Sun className="w-3.5 h-3.5 text-amber-400 animate-spin-slow" />
-                  ) : (
-                    <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                  )}
-                  <span>{isDark ? 'Comfort Dark Mode' : 'Standard Light Mode'}</span>
-                </div>
-                <span className="text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10">
-                  {isDark ? 'ON' : 'OFF'}
-                </span>
-              </button>
-            )}
           </div>
 
           {/* SECTION 1: FIRST PAGE OPTIONS (Always available) */}
